@@ -1,7 +1,10 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,6 +26,7 @@ namespace CustomerService
 		public const int MAX_CONNECTION = 2;
 		public const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
+		
 		public Main()
 		{
 			InitializeComponent();
@@ -130,6 +134,43 @@ namespace CustomerService
 
 		private void Main_Load(object sender, EventArgs e)
 		{
+			MySqlConnection conn = Function.GetConnection();
+			conn.Open();
+			string sql = "select * from cus_current";
+			MySqlCommand cm = new MySqlCommand(sql,conn);
+			using (DbDataReader reader = cm.ExecuteReader())
+			{
+				if (reader.HasRows)
+				{
+
+					while (reader.Read())
+					{
+						// Chỉ số (index) của cột Emp_ID trong câu lệnh SQL.
+						int empIdIndex = reader.GetOrdinal("Emp_Id"); // 0
+
+
+						long empId = Convert.ToInt64(reader.GetValue(0));
+
+						// Cột Emp_No có index = 1.
+						string empNo = reader.GetString(1);
+						int empNameIndex = reader.GetOrdinal("Emp_Name");// 2
+						string empName = reader.GetString(empNameIndex);
+
+						// Chỉ số (index) của cột Mng_Id trong câu lệnh SQL.
+						int mngIdIndex = reader.GetOrdinal("Mng_Id");
+
+						long? mngId = null;
+
+						// Kiểm tra giá trị của cột này có thể null hay không.
+						if (!reader.IsDBNull(mngIdIndex))
+						{
+							mngId = Convert.ToInt64(reader.GetValue(mngIdIndex));
+						}
+					
+					}
+				}
+			}
+
 
 		}
 

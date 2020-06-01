@@ -38,9 +38,9 @@ namespace CustomerService
 		}
 		public static void DoWork()
 		{
-			while (true)
-			{
-				Socket soc = listener.AcceptSocket();
+			//while (true)
+		//	{
+				Socket soc = listener.AcceptSocket(); 
 				
 					var stream = new NetworkStream(soc);
 					var reader = new StreamReader(stream);
@@ -54,7 +54,7 @@ namespace CustomerService
 					//{
 						string id = reader.ReadLine();
 						num++;
-					//	writer.WriteLine("tessttt " + num);				
+						writer.WriteLine("id "+id +" --- tessttt " + num);				
 						
 						sound();
 				//MessageBox.Show("tessttt: " + id);
@@ -63,8 +63,8 @@ namespace CustomerService
 				
 				
 				
-				//soc.Close();
-			}
+				soc.Close();
+			//}
 		}
 		public static void sound()
 		{
@@ -79,50 +79,44 @@ namespace CustomerService
 			mp.URL = moi;
 			mp.controls.play();
 
-		//	mp.controls.stop();
+			
 			Thread.Sleep(1600);
 
 			WMPLib.WindowsMediaPlayer mp1 = new WMPLib.WindowsMediaPlayer();
 			string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
 			mp1.URL = sokhachnghin;
 			mp1.controls.play();
-			//mp1.controls.stop();
 			Thread.Sleep(700);
 
 			WMPLib.WindowsMediaPlayer mp11 = new WMPLib.WindowsMediaPlayer();
 			string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
 			mp11.URL = sokhachtram;
 			mp11.controls.play();
-			//mp1.controls.stop();
 			Thread.Sleep(700);
 
 			WMPLib.WindowsMediaPlayer mp12 = new WMPLib.WindowsMediaPlayer();
 			string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
 			mp12.URL = sokhachchuc;
 			mp12.controls.play();
-			//mp1.controls.stop();
 			Thread.Sleep(700);
 
 			WMPLib.WindowsMediaPlayer mp13 = new WMPLib.WindowsMediaPlayer();
 			string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
 			mp13.URL = sokhachdonvi;
 			mp13.controls.play();
-			//mp1.controls.stop();
 			Thread.Sleep(700);
 
 			WMPLib.WindowsMediaPlayer mp2 = new WMPLib.WindowsMediaPlayer();
 			string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
 			mp2.URL = vaocua;
 			mp2.controls.play();
-		//	mp2.controls.stop();
 			Thread.Sleep(1100);
 
 			WMPLib.WindowsMediaPlayer mp3 = new WMPLib.WindowsMediaPlayer();
 			string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
-			
+
 			mp3.URL = socua;
 			mp3.controls.play();
-		//	mp3.controls.stop();
 		}
 	}
 }

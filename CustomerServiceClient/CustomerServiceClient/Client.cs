@@ -35,8 +35,8 @@ namespace CustomerServiceClient
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			try
-			{
+			//try
+			//{
 				TcpClient client = new TcpClient();
 
 				// 1. connect
@@ -61,12 +61,12 @@ namespace CustomerServiceClient
 				// 4. close
 				stream.Close();
 				client.Close();
-			}
+			//}
 
-			catch (Exception ex)
-			{
+			//catch (Exception ex)
+			//{
 
-			}
+			//}
 		}
 	}
 }
