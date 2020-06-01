@@ -1,0 +1,11 @@
+D:\WORK\CustomerService\CustomerService\bin\Debug\CustomerService.exe.config
+D:\WORK\CustomerService\CustomerService\bin\Debug\CustomerService.exe
+D:\WORK\CustomerService\CustomerService\bin\Debug\CustomerService.pdb
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.csprojAssemblyReference.cache
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.Main.resources
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.Properties.Resources.resources
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.GenerateResource.cache
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.CoreCompileInputs.cache
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.exe
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.pdb
+D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.Layso.resources
