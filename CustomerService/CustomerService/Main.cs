@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,10 +20,14 @@ namespace CustomerService
 		public static Button bt2;
 		public static Button bt3;
 		public static Button bt4;
+		public const int MAX_CONNECTION = 2;
+		public const int PORT_NUMBER = 9999;
+		public static TcpListener listener;
 		public Main()
 		{
 			InitializeComponent();
-			this.TopMost = true;
+			SocketRun.SocketCreate();
+			//this.TopMost = true;
 			Function.sttKetoan = 999;
 			Function.sttDichvu = 10;
 			bt1 = new Button();
@@ -83,16 +91,16 @@ namespace CustomerService
 		{
 			Function.fmName = 1;
 			Layso layso = new Layso();
-			
+
 			layso.MdiParent = this;
 			layso.Text = "LẤY SỐ THỨ TỰ GIAO DỊCH TIỀN GỬI";
-			
+
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
 			layso.AutoSize = false;
-			
+
 			layso.Show();
-			
+
 			bt1.Hide();
 			bt2.Hide();
 			bt3.Hide();
@@ -104,7 +112,7 @@ namespace CustomerService
 		{
 			Function.fmName = 2;
 			Layso layso = new Layso();
-			
+
 			layso.MdiParent = this;
 			layso.Text = "LẤY SỐ THỨ TỰ GIAO DỊCH MỞ TÀI KHOẢN";
 
@@ -119,5 +127,13 @@ namespace CustomerService
 			bt3.Hide();
 			bt4.Hide();
 		}
+
+		private void Main_Load(object sender, EventArgs e)
+		{
+
+		}
+
+				
+		
 	}
 }

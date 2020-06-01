@@ -9,3 +9,16 @@ D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.CoreCom
 D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.exe
 D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.pdb
 D:\WORK\CustomerService\CustomerService\obj\Debug\CustomerService.Layso.resources
+D:\WORK\Github\app\CustomerService\CustomerService\bin\Debug\CustomerService.exe.config
+D:\WORK\Github\app\CustomerService\CustomerService\bin\Debug\CustomerService.exe
+D:\WORK\Github\app\CustomerService\CustomerService\bin\Debug\CustomerService.pdb
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\Interop.WMPLib.dll
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.ResolveComReference.cache
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.Layso.resources
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.Main.resources
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.Properties.Resources.resources
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.GenerateResource.cache
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.CoreCompileInputs.cache
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.exe
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.pdb
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.csprojAssemblyReference.cache
