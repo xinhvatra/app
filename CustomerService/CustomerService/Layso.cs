@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -42,13 +43,43 @@ namespace CustomerService
 		private void button1_Click(object sender, EventArgs e)
 		{
 			//MessageBox.Show(label1.Width+"");
+			MySqlConnection conn = Function.GetConnection();
+			conn.Open();
+			string sql = "update services SET current_cus = @current_cus WHERE id = @id";
+			MySqlCommand cmd = new MySqlCommand();
+			cmd.Connection = conn;
+			cmd.CommandText = sql;
 			if (Function.fmName == 1)
 			{
-				Function.sttKetoan++;
+				cmd.Parameters.Add("@current_cus", MySqlDbType.Int32).Value = Function.sttKetoan;
+				cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = 1;
+				
 			}else if(Function.fmName == 2)
 			{
+				cmd.Parameters.Add("@current_cus", MySqlDbType.Int32).Value = Function.sttDichvu;
+				cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = 2;
+				
+			}
+			cmd.ExecuteNonQuery();
+
+			 sql = "insert into cus_wait(cus_id,service_id) values(@cus_id,@service_id)";
+			 cmd = new MySqlCommand();
+			cmd.Connection = conn;
+			cmd.CommandText = sql;
+			if (Function.fmName == 1)
+			{
+				cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = Function.sttKetoan;
+				cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = 1;
+				Function.sttKetoan++;
+			}
+			else if (Function.fmName == 2)
+			{
+				cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = Function.sttDichvu;
+				cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = 2;
 				Function.sttDichvu++;
 			}
+			cmd.ExecuteNonQuery();
+
 			this.Close();
 			Main.bt1.Show();
 			Main.bt2.Show();

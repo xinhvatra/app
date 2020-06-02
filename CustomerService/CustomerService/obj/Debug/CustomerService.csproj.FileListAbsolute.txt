@@ -35,3 +35,9 @@ C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\obj\Debug\Cust
 C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.CoreCompileInputs.cache
 C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\obj\Debug\CustomerService.exe
 C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\obj\Debug\CustomerService.pdb
+C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\bin\Debug\MySql.Data.dll
+C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\bin\Debug\Google.Protobuf.dll
+C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\bin\Debug\Renci.SshNet.dll
+C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\bin\Debug\MySql.Data.xml
+C:\Users\Deo\Documents\GitHub\app\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.CopyComplete

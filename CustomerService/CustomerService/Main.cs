@@ -32,7 +32,7 @@ namespace CustomerService
 			InitializeComponent();
 			SocketRun.SocketCreate();
 			//this.TopMost = true;
-			Function.sttKetoan = 999;
+			
 			Function.sttDichvu = 10;
 			bt1 = new Button();
 			bt2 = new Button();
@@ -136,7 +136,7 @@ namespace CustomerService
 		{
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
-			string sql = "select * from cus_current";
+			string sql = "select * from services";
 			MySqlCommand cm = new MySqlCommand(sql,conn);
 			using (DbDataReader reader = cm.ExecuteReader())
 			{
@@ -144,33 +144,24 @@ namespace CustomerService
 				{
 
 					while (reader.Read())
-					{
-						// Chỉ số (index) của cột Emp_ID trong câu lệnh SQL.
-						int empIdIndex = reader.GetOrdinal("Emp_Id"); // 0
-
-
-						long empId = Convert.ToInt64(reader.GetValue(0));
-
-						// Cột Emp_No có index = 1.
-						string empNo = reader.GetString(1);
-						int empNameIndex = reader.GetOrdinal("Emp_Name");// 2
-						string empName = reader.GetString(empNameIndex);
-
-						// Chỉ số (index) của cột Mng_Id trong câu lệnh SQL.
-						int mngIdIndex = reader.GetOrdinal("Mng_Id");
-
-						long? mngId = null;
-
-						// Kiểm tra giá trị của cột này có thể null hay không.
-						if (!reader.IsDBNull(mngIdIndex))
+					{	
+						int id = Convert.ToInt32(reader.GetValue(0));
+						switch (id)
 						{
-							mngId = Convert.ToInt64(reader.GetValue(mngIdIndex));
+							case 1:
+								Function.sttKetoan = Convert.ToInt32(reader.GetValue(2));
+								continue;
+							case 2:
+								Function.sttDichvu = Convert.ToInt32(reader.GetValue(2));
+								return;
+							default:
+								continue;
 						}
-					
+
 					}
 				}
 			}
-
+			
 
 		}
 

@@ -23,49 +23,27 @@ DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
   `id` int(11) NOT NULL,
   `name` text COLLATE utf8_unicode_ci NOT NULL,
+  `idle` tinyint(1) NOT NULL DEFAULT 1,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `client` */
 
-insert  into `client`(`id`,`name`) values 
-(1,'Nguyễn Quý Kỳ'),
-(2,'Nguyễn Phương Thảo'),
-(3,'Đinh Dương Liễu');
-
-/*Table structure for table `client_free` */
-
-DROP TABLE IF EXISTS `client_free`;
-
-CREATE TABLE `client_free` (
-  `id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-/*Data for the table `client_free` */
-
-/*Table structure for table `cus_current` */
-
-DROP TABLE IF EXISTS `cus_current`;
-
-CREATE TABLE `cus_current` (
-  `id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-/*Data for the table `cus_current` */
-
-insert  into `cus_current`(`id`) values 
-(1023);
+insert  into `client`(`id`,`name`,`idle`,`active`) values 
+(1,'Nguyễn Quý Kỳ',1,1),
+(2,'Nguyễn Phương Thảo',1,1),
+(3,'Đinh Dương Liễu',1,1);
 
 /*Table structure for table `cus_deal` */
 
 DROP TABLE IF EXISTS `cus_deal`;
 
 CREATE TABLE `cus_deal` (
-  `id` int(11) NOT NULL,
+  `cus_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  `service_id` int(11) NOT NULL,
+  PRIMARY KEY (`cus_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_deal` */
@@ -75,11 +53,36 @@ CREATE TABLE `cus_deal` (
 DROP TABLE IF EXISTS `cus_wait`;
 
 CREATE TABLE `cus_wait` (
-  `id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  `cus_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  PRIMARY KEY (`cus_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_wait` */
+
+insert  into `cus_wait`(`cus_id`,`service_id`) values 
+(1002,1),
+(1003,1),
+(2004,2),
+(2005,2);
+
+/*Table structure for table `services` */
+
+DROP TABLE IF EXISTS `services`;
+
+CREATE TABLE `services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` text COLLATE utf8_unicode_ci NOT NULL,
+  `current_cus` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `services` */
+
+insert  into `services`(`id`,`name`,`current_cus`) values 
+(1,'Giao dịch tiền gửi',1003),
+(2,'Giao dịch Thẻ, Emobile-banking',2005),
+(3,'Giao dịch tiền vay',3001);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
