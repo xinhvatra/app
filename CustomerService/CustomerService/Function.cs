@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,12 @@ namespace CustomerService
 	{
 		
 		public static int fmName;
-		static string host = "localhost";
+		static string host = "10.27.0.10";
 		static int port = 3306;
 		static string database = "customer";
 		static string username = "root";
-		static string password = "";
-		public static int sttKetoan,sttDichvu;
+		static string password = "tng@123";
+		public static DataTable service_customer;
         public static  MySqlConnection GetConnection()
         {
             

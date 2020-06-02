@@ -15,11 +15,13 @@ namespace CustomerService
 
 
 	{
-		
+		static List<TcpClient> clients = new List<TcpClient>();
 		static int num = 1000;
 		const int MAX_CONNECTION = 10;
 		const int PORT_NUMBER = 9999;		
 		public static TcpListener listener;
+		public static TcpClient clientSocket;
+		public static  Socket soc;
 		public static void SocketCreate()
 		{
 			
@@ -31,40 +33,33 @@ namespace CustomerService
 
 				for (int i = 0; i < MAX_CONNECTION; i++)
 				{
-					new Thread(DoWork).Start();
+					new Thread(ListenSocket).Start();
 				}
 			
 			
 		}
-		public static void DoWork()
+		public static void ListenSocket()
 		{
-			//while (true)
-		//	{
-				Socket soc = listener.AcceptSocket(); 
-				
-					var stream = new NetworkStream(soc);
-					var reader = new StreamReader(stream);
-					var writer = new StreamWriter(stream);
-					writer.AutoFlush = true;
+			while (true)
+			{
+				//soc = listener.AcceptSocket();
+				clientSocket = listener.AcceptTcpClient();
+				clients.Add(clientSocket);
+			}
+		}
 
-					//writer.WriteLine("Welcome to Student TCP Server");
-				//	writer.WriteLine("Please enter the student id");
-
-					//while (true)
-					//{
-						string id = reader.ReadLine();
-						num++;
-						writer.WriteLine("id "+id +" --- tessttt " + num);				
-						
-						sound();
-				//MessageBox.Show("tessttt: " + id);
-				//}
-				stream.Close();
-				
-				
-				
-				soc.Close();
-			//}
+		public static void sendData(int customer_id, int service_id, int client_id)
+		{
+			//Socket soc = listener.AcceptSocket();
+		//	var stream = new NetworkStream(clientSocket.GetStream());
+			//var reader = new StreamReader(stream);
+			BinaryWriter writer = new BinaryWriter(clientSocket.GetStream());
+			//writer.AutoFlush = true;
+			//string id = reader.ReadLine();
+			//num++;
+			writer.Write("customer_id:" + customer_id + "-service_id:" + service_id+ "-client_id:"+ client_id);
+			//stream.Close();
+			//sound();
 		}
 		public static void sound()
 		{

@@ -33,7 +33,7 @@ namespace CustomerService
 			SocketRun.SocketCreate();
 			//this.TopMost = true;
 			
-			Function.sttDichvu = 10;
+			
 			bt1 = new Button();
 			bt2 = new Button();
 			bt3 = new Button();
@@ -97,7 +97,7 @@ namespace CustomerService
 			Layso layso = new Layso();
 
 			layso.MdiParent = this;
-			layso.Text = "LẤY SỐ THỨ TỰ GIAO DỊCH TIỀN GỬI";
+			layso.Text = Function.service_customer.Rows[0][1] + "";
 
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
@@ -118,7 +118,7 @@ namespace CustomerService
 			Layso layso = new Layso();
 
 			layso.MdiParent = this;
-			layso.Text = "LẤY SỐ THỨ TỰ GIAO DỊCH MỞ TÀI KHOẢN";
+			layso.Text = Function.service_customer.Rows[1][1]+"";
 
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
@@ -142,23 +142,8 @@ namespace CustomerService
 			{
 				if (reader.HasRows)
 				{
-
-					while (reader.Read())
-					{	
-						int id = Convert.ToInt32(reader.GetValue(0));
-						switch (id)
-						{
-							case 1:
-								Function.sttKetoan = Convert.ToInt32(reader.GetValue(2));
-								continue;
-							case 2:
-								Function.sttDichvu = Convert.ToInt32(reader.GetValue(2));
-								return;
-							default:
-								continue;
-						}
-
-					}
+					Function.service_customer = new DataTable();
+					Function.service_customer.Load(reader);					
 				}
 			}
 			
