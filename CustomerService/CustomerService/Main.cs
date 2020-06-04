@@ -166,7 +166,7 @@ namespace CustomerService
 		public static void processData(string st)
 		{
 
-			//try
+			
 			{
 				isProcess = true;
 
@@ -193,36 +193,38 @@ namespace CustomerService
 
 				else if (arrRs[0] == "data")
 				{
-					//sm.WaitOne();
+
 					//MessageBox.Show("xu ly tin nhan tu client: " + st);
-					bool isAdd = false;
-					int cus_id = 0;
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
-					MySqlCommand cm = new MySqlCommand(sql, conn);
-					using (DbDataReader reader = cm.ExecuteReader())
-					{
-						if (reader.HasRows)
+					if (!clients.ContainsValue(Convert.ToInt32(arrRs[1]))){
+						bool isAdd = false;
+						int cus_id = 0;
+						MySqlConnection conn = Function.GetConnection();
+						conn.Open();
+						string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
+						MySqlCommand cm = new MySqlCommand(sql, conn);
+						using (DbDataReader reader = cm.ExecuteReader())
 						{
-							while (reader.Read())
-							{	
-								clients.Add((int)reader.GetValue(0), (int)reader.GetValue(5));
-								cus_id = (int)reader.GetValue(0);
-								isAdd = true;
-								//sound((int)reader.GetValue(0), (int)reader.GetValue(5));
-								SocketRun.sendData("data", (int)reader.GetValue(0), (int)reader.GetValue(1), reader.GetValue(2).ToString(), (int)reader.GetValue(3), 0);
+							if (reader.HasRows)
+							{
+								while (reader.Read())
+								{
+									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(5));
+									cus_id = (int)reader.GetValue(0);
+									isAdd = true;
+									//sound((int)reader.GetValue(0), (int)reader.GetValue(5));
+									SocketRun.sendData("data", (int)reader.GetValue(0), (int)reader.GetValue(1), reader.GetValue(2).ToString(), (int)reader.GetValue(3), 0);
+								}
+								//MySqlConnection conn = Function.GetConnection();
+								//conn.Open();							
 							}
-							//MySqlConnection conn = Function.GetConnection();
-							//conn.Open();							
 						}
-					}
-					if (isAdd)
-					{
-						 sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
-						MySqlCommand cmd = new MySqlCommand(sql, conn);						
-						cmd.ExecuteNonQuery();
-						conn.Close();
+						if (isAdd)
+						{
+							sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
+							MySqlCommand cmd = new MySqlCommand(sql, conn);
+							cmd.ExecuteNonQuery();
+							conn.Close();
+						}
 					}
 				}
 
@@ -232,10 +234,7 @@ namespace CustomerService
 				//	//MessageBox.Show("catch");				
 				//}
 			}
-			//finally
-			//{
-			//	mutex.ReleaseMutex();
-			//}
+		
 		}
 		public static void sound()
 		{	while (true)
