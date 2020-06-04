@@ -35,12 +35,13 @@ namespace CustomerServiceClient
 			lb.Font = new Font("Timesnewroman", 10, FontStyle.Bold);
 			lb.ForeColor = Color.Blue;
 			this.Controls.Add(lb);
-			SocketRun.SocketCreate();
+			
 		}
 		private void Client_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			//You may decide to prompt to user
 			//else just kill
+			SocketRun.SocketClose();
 			System.Environment.Exit(1);
 		}
 		private void btClose_click(object sender, EventArgs e)
@@ -55,19 +56,25 @@ namespace CustomerServiceClient
 		
 		private void button1_Click(object sender, EventArgs e)
 		{
+			SocketRun.connect();
 			SocketRun.sendData("data");
 		}
 		public static void processData(string st)
-		{			
-			String[] arrRs = st.Split('|');
-			if (arrRs[0]== "login")
-			{				
-				lb.Text = arrRs[3]+ " - Cổng số "+arrRs[4];					
-			}
-			else
+		{	
+			
+			try
 			{
+				String[] arrRs = st.Split('|');
+				if (arrRs[0] == "login")
+				{
+					lb.Text = arrRs[3] + " - Cổng số " + arrRs[4];
+				}
+				else
+				{
 
+				}
 			}
+			catch { }
 			
 		}
 	}

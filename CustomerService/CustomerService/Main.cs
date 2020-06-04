@@ -26,7 +26,7 @@ namespace CustomerService
 		public const int MAX_CONNECTION = 2;
 		public const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
-
+		public static Dictionary<int, int> clients;
 		public Main()
 		{
 			InitializeComponent();
@@ -134,7 +134,12 @@ namespace CustomerService
 
 		private void Main_Load(object sender, EventArgs e)
 		{
+
+
 			SocketRun.SocketCreate();
+			clients = new Dictionary<int, int>();
+			Thread t = new Thread(sound);
+			t.Start();
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
 			string sql = "select * from services";
@@ -150,101 +155,179 @@ namespace CustomerService
 
 
 		}
-
+		//public static async void process(String st)
+		//{			
+		//	//await processData(st);
+		//	var myTask = Task.Run(() => processData(st));
+		//	await myTask;			
+		//}
+		public static bool isProcess = false;
+		static Semaphore sm = new Semaphore(1, 1);
 		public static void processData(string st)
 		{
-			MessageBox.Show("nhan duoc tin nhan: "+st);
-			String[] arrRs = st.Split('|');
-			if (arrRs[0] == "login")
+
+			//try
 			{
-				MySqlConnection conn = Function.GetConnection();
-				conn.Open();
-				string sql = "select * from client where id = " + arrRs[1];
-				MySqlCommand cm = new MySqlCommand(sql, conn);
-				using (DbDataReader reader = cm.ExecuteReader())
+				isProcess = true;
+
+				//try
+				//{
+				String[] arrRs = st.Split('|');
+				if (arrRs[0] == "login")
 				{
-					if (reader.HasRows)
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					string sql = "select * from client where id = " + arrRs[1];
+					MySqlCommand cm = new MySqlCommand(sql, conn);
+					using (DbDataReader reader = cm.ExecuteReader())
 					{
-						while (reader.Read())
+						if (reader.HasRows)
 						{
-							SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0);
+							while (reader.Read())
+							{
+								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0);
+							}
 						}
 					}
 				}
-			}else if(arrRs[0] == "data")
-			{
-				MySqlConnection conn = Function.GetConnection();
-				conn.Open();
-				string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id="+ arrRs[1] + " LIMIT 1" ;
-				MySqlCommand cm = new MySqlCommand(sql, conn);
-				using (DbDataReader reader = cm.ExecuteReader())
+
+				else if (arrRs[0] == "data")
 				{
-					if (reader.HasRows)
+					//sm.WaitOne();
+					//MessageBox.Show("xu ly tin nhan tu client: " + st);
+					bool isAdd = false;
+					int cus_id = 0;
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
+					MySqlCommand cm = new MySqlCommand(sql, conn);
+					using (DbDataReader reader = cm.ExecuteReader())
 					{
-						while (reader.Read())
+						if (reader.HasRows)
 						{
-							
-							sound((int)reader.GetValue(0), (int)reader.GetValue(5));
-							//SocketRun.sendData("data", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0);
+							while (reader.Read())
+							{	
+								clients.Add((int)reader.GetValue(0), (int)reader.GetValue(5));
+								cus_id = (int)reader.GetValue(0);
+								isAdd = true;
+								//sound((int)reader.GetValue(0), (int)reader.GetValue(5));
+								SocketRun.sendData("data", (int)reader.GetValue(0), (int)reader.GetValue(1), reader.GetValue(2).ToString(), (int)reader.GetValue(3), 0);
+							}
+							//MySqlConnection conn = Function.GetConnection();
+							//conn.Open();							
 						}
 					}
+					if (isAdd)
+					{
+						 sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
+						MySqlCommand cmd = new MySqlCommand(sql, conn);						
+						cmd.ExecuteNonQuery();
+						conn.Close();
+					}
 				}
+
+				//}
+				//catch
+				//{
+				//	//MessageBox.Show("catch");				
+				//}
 			}
-
+			//finally
+			//{
+			//	mutex.ReleaseMutex();
+			//}
 		}
-		public static void sound(int customer_id,int gate)
-		{
-			int num = customer_id;
-			string donvi = num.ToString().Substring(3, 1);
-			string chuc = num.ToString().Substring(2, 1);
-			string tram = num.ToString().Substring(1, 1);
-			string nghin = num.ToString().Substring(0, 1);
-			//Random r = new Random();
-			//int ra = r.Next(1, 10);
-			int ra = gate;
-			WMPLib.WindowsMediaPlayer mp = new WMPLib.WindowsMediaPlayer();
-			string moi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\moi.mp3";
-			mp.URL = moi;
-			mp.controls.play();
+		public static void sound()
+		{	while (true)
+			{
+				if (clients.Count > 0)
+				{
+					try
+					{
+						foreach (KeyValuePair<int, int> entry in clients)
+						{
+							//MessageBox.Show("chạy sound thông báo mời khách: "+ customer_id);
+							//sm.WaitOne();
+							int num = entry.Key;
+							int ra = entry.Value;
+							string donvi = num.ToString().Substring(3, 1);
+							string chuc = num.ToString().Substring(2, 1);
+							string tram = num.ToString().Substring(1, 1);
+							string nghin = num.ToString().Substring(0, 1);
 
+							//Random r = new Random();
+							//int ra = r.Next(1, 10);
 
-			Thread.Sleep(1600);
+							WMPLib.WindowsMediaPlayer mp = new WMPLib.WindowsMediaPlayer();
+							WMPLib.IWMPPlaylist playlist = mp.playlistCollection.newPlaylist("customerCall");
+							WMPLib.IWMPMedia media, media1, media2, media3, media4, media5, media6;
 
-			WMPLib.WindowsMediaPlayer mp1 = new WMPLib.WindowsMediaPlayer();
-			string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
-			mp1.URL = sokhachnghin;
-			mp1.controls.play();
-			Thread.Sleep(700);
+							string moi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\moi.mp3";
+							//mp.URL = moi;
+							//mp.controls.play();			
+							media = mp.newMedia(moi);
 
-			WMPLib.WindowsMediaPlayer mp11 = new WMPLib.WindowsMediaPlayer();
-			string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
-			mp11.URL = sokhachtram;
-			mp11.controls.play();
-			Thread.Sleep(700);
+							//Thread.Sleep(1600);
 
-			WMPLib.WindowsMediaPlayer mp12 = new WMPLib.WindowsMediaPlayer();
-			string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
-			mp12.URL = sokhachchuc;
-			mp12.controls.play();
-			Thread.Sleep(700);
+							//WMPLib.WindowsMediaPlayer mp1 = new WMPLib.WindowsMediaPlayer();
+							string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
+							//mp1.URL = sokhachnghin;
+							//mp1.controls.play();
+							//Thread.Sleep(700);
+							media1 = mp.newMedia(sokhachnghin);
 
-			WMPLib.WindowsMediaPlayer mp13 = new WMPLib.WindowsMediaPlayer();
-			string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
-			mp13.URL = sokhachdonvi;
-			mp13.controls.play();
-			Thread.Sleep(700);
+							//WMPLib.WindowsMediaPlayer mp11 = new WMPLib.WindowsMediaPlayer();
+							string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
+							//mp11.URL = sokhachtram;
+							//mp11.controls.play();
+							//Thread.Sleep(700);
+							media2 = mp.newMedia(sokhachtram);
 
-			WMPLib.WindowsMediaPlayer mp2 = new WMPLib.WindowsMediaPlayer();
-			string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
-			mp2.URL = vaocua;
-			mp2.controls.play();
-			Thread.Sleep(1100);
+							//WMPLib.WindowsMediaPlayer mp12 = new WMPLib.WindowsMediaPlayer();
+							string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
+							//mp12.URL = sokhachchuc;
+							//mp12.controls.play();
+							//Thread.Sleep(700);
+							media3 = mp.newMedia(sokhachchuc);
 
-			WMPLib.WindowsMediaPlayer mp3 = new WMPLib.WindowsMediaPlayer();
-			string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
+							//WMPLib.WindowsMediaPlayer mp13 = new WMPLib.WindowsMediaPlayer();
+							string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
+							//mp13.URL = sokhachdonvi;
+							//mp13.controls.play();
+							//Thread.Sleep(700);
+							media4 = mp.newMedia(sokhachdonvi);
 
-			mp3.URL = socua;
-			mp3.controls.play();
+							//WMPLib.WindowsMediaPlayer mp2 = new WMPLib.WindowsMediaPlayer();
+							string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
+							//mp2.URL = vaocua;
+							//mp2.controls.play();
+							//Thread.Sleep(1100);
+							media5 = mp.newMedia(vaocua);
+
+							//WMPLib.WindowsMediaPlayer mp3 = new WMPLib.WindowsMediaPlayer();
+							string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
+							media6 = mp.newMedia(socua);
+							//mp3.URL = socua;
+							//mp3.controls.play();
+							//MessageBox.Show("ok done");
+
+							playlist.appendItem(media);
+							playlist.appendItem(media1);
+							playlist.appendItem(media2);
+							playlist.appendItem(media3);
+							playlist.appendItem(media4);
+							playlist.appendItem(media5);
+							playlist.appendItem(media6);
+							mp.currentPlaylist = playlist;
+							mp.controls.play();
+							clients.Remove(num);
+
+						}
+					}
+					catch { }
+				}
+				Thread.Sleep(10000);
+			}
 		}
 	}
 }

@@ -23,13 +23,15 @@ namespace CustomerServiceClient
 		public static void SocketCreate()
 		{
 			loadConfig();
+			connect();
+			sendData("login");		
+			
+		}
+		public static void connect()
+		{
 			client = new TcpClient();
 			client.Connect("127.0.0.1", PORT_NUMBER);
 			stream = client.GetStream();
-
-			Thread thr = new Thread(getData);
-			thr.Start();
-			sendData("login");
 		}
 		public static void SocketClose()
 		{
@@ -38,27 +40,36 @@ namespace CustomerServiceClient
 		}
 		private static void getData()
 		{
-			while (true)
-			{
-				try
-				{
-					BinaryReader reader = new BinaryReader(stream);
-					Delegate a = new Action<String>(Client.processData);
-					fm.Invoke(a, reader.ReadString());
-				}
-				catch (Exception)
-				{
+			//while (true)
+			//{
+				//try
+				//{
+				BinaryReader reader = new BinaryReader(stream);
+				string processStr = reader.ReadString();
+				//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
+				Delegate a = new Action<String>(Client.processData);
+					fm.Invoke(a, processStr);
+					//reader.Dispose();
 					stream.Close();
-					client.Close();
-				}
-			}
+				//client.Close();
+				//}
+				//catch (Exception)
+				//{
+				//	stream.Close();
+				//	client.Close();
+				//}
+			//}
 
 		}
 		public static void sendData(string method)
-		{			
+		{
+
 			BinaryWriter writer = new BinaryWriter(stream);
+			//writer.AutoFlush = true;
 			writer.Write(method+"|"+id);
-			//writer.Close();
+
+			Thread thr = new Thread(getData);
+			thr.Start();			
 		}
 		public static void loadConfig()
 		{

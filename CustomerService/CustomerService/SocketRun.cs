@@ -17,68 +17,84 @@ namespace CustomerService
 
 
 	{
-		static List<TcpClient> clients = new List<TcpClient>();		
-		const int MAX_CONNECTION = 500;
+		public static List<string> clientsList = new List<string>();
+		const int MAX_CONNECTION = 10;
 		const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
-		public static TcpClient clientSocket;
+		public static Socket clientSocket;
 		public static Form fm;
 		public static void SocketCreate()
 		{
-
 			IPAddress address = IPAddress.Parse("127.0.0.1");
-
 			listener = new TcpListener(address, PORT_NUMBER);
-
 			listener.Start();
-
 			for (int i = 0; i < MAX_CONNECTION; i++)
 			{
-				new Thread(ListenSocket).Start();
-			}
-			
 
+				Thread t = new Thread((obj) =>
+				{
+					ListenSocket();
+				});
+				t.Start();
+			}		
 		}
 		public static void ListenSocket()
 		{
 			while (true)
 			{
-				//soc = listener.AcceptSocket();
-				clientSocket = listener.AcceptTcpClient();
-				clients.Add(clientSocket);
-				Thread t = new Thread(getData);
-				t.Start();
+				clientSocket = listener.AcceptSocket();				
+				Thread t = new Thread((obj) =>
+				{
+					getData((Socket)obj);
+				});
+				t.Start(clientSocket);
 			}
 		}
-
-		public static void sendData(string method, int client_id, int service_id,string client_name, int gate, int customer_id)
+		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id)
 		{
 			try
 			{
-				BinaryWriter writer = new BinaryWriter(clientSocket.GetStream());
+				var netStream = new NetworkStream(clientSocket);
+				BinaryWriter writer = new BinaryWriter(netStream);
+				//writer.AutoFlush = true;
 				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id);
-				writer.Close();
+				//writer.Close();
 			}
 			catch (Exception) { }
-			}
-		private static void getData()
+		}
+		private static void getData(Socket soc)
 		{
 			//while (true)
 			//{
-				try
-				{
-					BinaryReader reader = new BinaryReader(clientSocket.GetStream());
+			//	try
+				//{
+					var netStream = new NetworkStream(clientSocket);
+					BinaryReader reader = new BinaryReader(netStream);
+					string processStr = reader.ReadString();
+			//MessageBox.Show("nhan duoc tin nhan tu client: " + clientSocket.RemoteEndPoint);
+			//if (reader.ReadString().Trim() == "") break;
+			
 					Delegate a = new Action<String>(Main.processData);
-					fm.Invoke(a, reader.ReadString());
-				}
-				catch (Exception)
-				{
-					clientSocket.Close();
-				}
+					fm.Invoke(a, processStr);
+					netStream.Close();
+					//clientSocket.Close();				
 
+					
+				//}
+				//catch (Exception)
+				//{
+				//	//MessageBox.Show("loi server: " );
+				//	clientSocket.Close();
+
+				//	Thread t = new Thread((obj) =>
+				//						{
+				//							ListenSocket();
+				//						});
+				//	t.Start();
+
+				//	break;
+				//}
 			//}
-
 		}
-		
 	}
 }
