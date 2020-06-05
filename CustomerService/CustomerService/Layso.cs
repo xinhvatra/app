@@ -60,32 +60,33 @@ namespace CustomerService
 			cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = service_id;
 			cmd.ExecuteNonQuery();
 
-			sql = "select id  from client where idle =1 and active =1 and service_id = "+ service_id;
-			cmd = new MySqlCommand(sql,conn);
+			//sql = "select id  from client where idle =1 and active =1 and service_id = "+ service_id;
+			//cmd = new MySqlCommand(sql,conn);
 			//using (DbDataReader reader = cmd.ExecuteReader())
-			//{
-			//	if (reader.HasRows) //nếu có GDV rảnh thì đẩy cho GDV
-			//	{ DataTable dta = new DataTable();
-			//		dta.Load(reader);
-			//		var random = new Random();
-			//		int index = random.Next(dta.Rows.Count);
-			//		SocketRun.sendData("data",Convert.ToInt32( Function.service_customer.Rows[service_id - 1][2]), service_id,Convert.ToInt32( dta.Rows[index][0]) );
-			//	}
-			//	else //nếu không có GDV rảnh thì cho vào hàng chờ
-			//	{
-			//		sql = "insert into cus_wait(cus_id,service_id) values(@cus_id,@service_id)";
-			//		cmd = new MySqlCommand();
-			//		cmd.Connection = conn;
-			//		cmd.CommandText = sql;
+			{
+				//if (reader.HasRows) //nếu có GDV rảnh thì đẩy cho GDV
+				//{
+				//	DataTable dta = new DataTable();
+				//	dta.Load(reader);
+				//	var random = new Random();
+				//	int index = random.Next(dta.Rows.Count);
+				//	SocketRun.sendData("data", Convert.ToInt32(Function.service_customer.Rows[service_id - 1][2]), service_id, Convert.ToInt32(dta.Rows[index][0]));
+				//}
+				//else //nếu không có GDV rảnh thì cho vào hàng chờ
+				{
+					sql = "insert into cus_wait(cus_id,service_id) values(@cus_id,@service_id)";
+					cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
 
-			//		cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = Function.service_customer.Rows[service_id - 1][2];
-			//		cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;					
-			//		cmd.ExecuteNonQuery();
-			//	}
-			//}			
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = Function.service_customer.Rows[service_id - 1][2];
+					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
+					cmd.ExecuteNonQuery();
+				}
+			}
 
 
-		
+
 			conn.Close();
 		}
 		private void button2_Click(object sender, EventArgs e)
