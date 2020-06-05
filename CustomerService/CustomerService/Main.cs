@@ -33,7 +33,7 @@ namespace CustomerService
 			SocketRun.fm = this;
 			//this.TopMost = true;
 
-
+			this.Size = new Size(625, 650);
 			bt1 = new Button();
 			bt2 = new Button();
 			bt3 = new Button();
@@ -47,7 +47,7 @@ namespace CustomerService
 			bt2.MouseHover += new EventHandler(bt2_hover);
 			bt2.MouseLeave += new EventHandler(bt2_leave);
 
-			bt1.Location = new Point(5, 5);
+			bt1.Location = new Point(5, 30);
 			bt1.Size = new Size(300, 300);
 			bt1.BackgroundImage = CustomerService.Properties.Resources.guitien;
 			bt1.BackgroundImageLayout = ImageLayout.Zoom;
@@ -57,7 +57,7 @@ namespace CustomerService
 			bt1.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt1);
 
-			bt2.Location = new Point(310, 5);
+			bt2.Location = new Point(305, 30);
 			bt2.Size = new Size(300, 300);
 			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu;
 			bt2.BackgroundImageLayout = ImageLayout.Zoom;
@@ -67,11 +67,11 @@ namespace CustomerService
 			bt2.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt2);
 
-			bt3.Location = new Point(5, 310);
+			bt3.Location = new Point(5, 330);
 			bt3.Size = new Size(300, 300);
 			this.Controls.Add(bt3);
 
-			bt4.Location = new Point(310, 310);
+			bt4.Location = new Point(305, 330);
 			bt4.Size = new Size(300, 300);
 			this.Controls.Add(bt4);
 		}
@@ -165,8 +165,6 @@ namespace CustomerService
 		static Semaphore sm = new Semaphore(1, 1);
 		public static void processData(string st)
 		{
-
-			
 			{
 				isProcess = true;
 
@@ -195,37 +193,52 @@ namespace CustomerService
 				{
 
 					//MessageBox.Show("xu ly tin nhan tu client: " + st);
-					if (!clients.ContainsValue(Convert.ToInt32(arrRs[1]))){
-						bool isAdd = false;
-						int cus_id = 0;
-						MySqlConnection conn = Function.GetConnection();
-						conn.Open();
-						string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
-						MySqlCommand cm = new MySqlCommand(sql, conn);
-						using (DbDataReader reader = cm.ExecuteReader())
+					bool isAdd = false;
+					int cus_id = 0;
+					int client_id =0,service_id=0,gate=0;
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
+					MySqlCommand cm = new MySqlCommand(sql, conn);
+					using (DbDataReader reader = cm.ExecuteReader())
+					{
+						if (reader.HasRows)
 						{
-							if (reader.HasRows)
+							while (reader.Read())
 							{
-								while (reader.Read())
+								if (!clients.ContainsValue((int)reader.GetValue(5))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
 								{
 									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(5));
 									cus_id = (int)reader.GetValue(0);
-									isAdd = true;
-									//sound((int)reader.GetValue(0), (int)reader.GetValue(5));
-									SocketRun.sendData("data", (int)reader.GetValue(0), (int)reader.GetValue(1), reader.GetValue(2).ToString(), (int)reader.GetValue(3), 0);
+									client_id= (int)reader.GetValue(2);
+									service_id = (int)reader.GetValue(3);
+									gate = (int)reader.GetValue(5);
+									isAdd = true;									
+									SocketRun.sendData("data", (int)reader.GetValue(2), (int)reader.GetValue(3), reader.GetValue(4).ToString(), (int)reader.GetValue(5), (int)reader.GetValue(0));
 								}
-								//MySqlConnection conn = Function.GetConnection();
-								//conn.Open();							
-							}
-						}
-						if (isAdd)
-						{
-							sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
-							MySqlCommand cmd = new MySqlCommand(sql, conn);
-							cmd.ExecuteNonQuery();
-							conn.Close();
+							}											
 						}
 					}
+					if (isAdd)//xóa khách khỏi bảng chờ
+					{
+						sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
+						MySqlCommand cmd = new MySqlCommand(sql, conn);
+						cmd.ExecuteNonQuery();
+
+						//ghi lịch sử giao dịch
+						sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
+						cmd = new MySqlCommand();
+						cmd.Connection = conn;
+						cmd.CommandText = sql;
+
+						cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
+						cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
+						cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
+						cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
+						cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
+						cmd.ExecuteNonQuery();
+					}
+					conn.Close();
 				}
 
 				//}
@@ -234,82 +247,50 @@ namespace CustomerService
 				//	//MessageBox.Show("catch");				
 				//}
 			}
-		
+
 		}
 		public static void sound()
-		{	while (true)
+		{
+			while (true)
 			{
 				if (clients.Count > 0)
 				{
 					try
 					{
 						foreach (KeyValuePair<int, int> entry in clients)
-						{
-							//MessageBox.Show("chạy sound thông báo mời khách: "+ customer_id);
-							//sm.WaitOne();
+						{												
 							int num = entry.Key;
 							int ra = entry.Value;
 							string donvi = num.ToString().Substring(3, 1);
 							string chuc = num.ToString().Substring(2, 1);
 							string tram = num.ToString().Substring(1, 1);
-							string nghin = num.ToString().Substring(0, 1);
-
-							//Random r = new Random();
-							//int ra = r.Next(1, 10);
+							string nghin = num.ToString().Substring(0, 1);						
 
 							WMPLib.WindowsMediaPlayer mp = new WMPLib.WindowsMediaPlayer();
 							WMPLib.IWMPPlaylist playlist = mp.playlistCollection.newPlaylist("customerCall");
 							WMPLib.IWMPMedia media, media1, media2, media3, media4, media5, media6;
 
 							string moi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\moi.mp3";
-							//mp.URL = moi;
-							//mp.controls.play();			
 							media = mp.newMedia(moi);
-
-							//Thread.Sleep(1600);
-
-							//WMPLib.WindowsMediaPlayer mp1 = new WMPLib.WindowsMediaPlayer();
+							
 							string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
-							//mp1.URL = sokhachnghin;
-							//mp1.controls.play();
-							//Thread.Sleep(700);
 							media1 = mp.newMedia(sokhachnghin);
-
-							//WMPLib.WindowsMediaPlayer mp11 = new WMPLib.WindowsMediaPlayer();
+							
 							string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
-							//mp11.URL = sokhachtram;
-							//mp11.controls.play();
-							//Thread.Sleep(700);
 							media2 = mp.newMedia(sokhachtram);
-
-							//WMPLib.WindowsMediaPlayer mp12 = new WMPLib.WindowsMediaPlayer();
+							
 							string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
-							//mp12.URL = sokhachchuc;
-							//mp12.controls.play();
-							//Thread.Sleep(700);
 							media3 = mp.newMedia(sokhachchuc);
-
-							//WMPLib.WindowsMediaPlayer mp13 = new WMPLib.WindowsMediaPlayer();
+							
 							string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
-							//mp13.URL = sokhachdonvi;
-							//mp13.controls.play();
-							//Thread.Sleep(700);
 							media4 = mp.newMedia(sokhachdonvi);
-
-							//WMPLib.WindowsMediaPlayer mp2 = new WMPLib.WindowsMediaPlayer();
+							
 							string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
-							//mp2.URL = vaocua;
-							//mp2.controls.play();
-							//Thread.Sleep(1100);
 							media5 = mp.newMedia(vaocua);
-
-							//WMPLib.WindowsMediaPlayer mp3 = new WMPLib.WindowsMediaPlayer();
+							
 							string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
 							media6 = mp.newMedia(socua);
-							//mp3.URL = socua;
-							//mp3.controls.play();
-							//MessageBox.Show("ok done");
-
+							
 							playlist.appendItem(media);
 							playlist.appendItem(media1);
 							playlist.appendItem(media2);
@@ -325,7 +306,7 @@ namespace CustomerService
 					}
 					catch { }
 				}
-				Thread.Sleep(10000);
+				Thread.Sleep(10000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
 			}
 		}
 	}

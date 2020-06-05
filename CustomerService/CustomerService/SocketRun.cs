@@ -36,13 +36,13 @@ namespace CustomerService
 					ListenSocket();
 				});
 				t.Start();
-			}		
+			}
 		}
 		public static void ListenSocket()
 		{
 			while (true)
 			{
-				clientSocket = listener.AcceptSocket();				
+				clientSocket = listener.AcceptSocket();
 				Thread t = new Thread((obj) =>
 				{
 					getData((Socket)obj);
@@ -64,37 +64,13 @@ namespace CustomerService
 		}
 		private static void getData(Socket soc)
 		{
-			//while (true)
-			//{
-			//	try
-				//{
-					var netStream = new NetworkStream(clientSocket);
-					BinaryReader reader = new BinaryReader(netStream);
-					string processStr = reader.ReadString();
-			//MessageBox.Show("nhan duoc tin nhan tu client: " + clientSocket.RemoteEndPoint);
-			//if (reader.ReadString().Trim() == "") break;
-			
-					Delegate a = new Action<String>(Main.processData);
-					fm.Invoke(a, processStr);
-					netStream.Close();
-					//clientSocket.Close();				
+			var netStream = new NetworkStream(clientSocket);
+			BinaryReader reader = new BinaryReader(netStream);
+			string processStr = reader.ReadString();
 
-					
-				//}
-				//catch (Exception)
-				//{
-				//	//MessageBox.Show("loi server: " );
-				//	clientSocket.Close();
-
-				//	Thread t = new Thread((obj) =>
-				//						{
-				//							ListenSocket();
-				//						});
-				//	t.Start();
-
-				//	break;
-				//}
-			//}
+			Delegate a = new Action<String>(Main.processData);
+			fm.Invoke(a, processStr);
+			netStream.Close();
 		}
 	}
 }

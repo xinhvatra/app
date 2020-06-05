@@ -19,57 +19,50 @@ namespace CustomerServiceClient
 		private static Stream stream;
 		public static Form fm;
 		public static int id;
-		public static string name;
+		public static string name,gate,ip;
 		public static void SocketCreate()
 		{
 			loadConfig();
 			connect();
-			sendData("login");		
-			
+			sendData("login");
+
 		}
 		public static void connect()
 		{
-			client = new TcpClient();
-			client.Connect("127.0.0.1", PORT_NUMBER);
-			stream = client.GetStream();
+			try
+			{
+				client = new TcpClient();
+				client.Connect(ip, PORT_NUMBER);
+				stream = client.GetStream();
+			}
+			catch (Exception)
+			{
+				MessageBox.Show("Không kết nối được máy chủ. Vui lòng kiểm tra lại!");
+				Application.Exit();
+			}
 		}
 		public static void SocketClose()
 		{
 			//loadConfig();
-			client.Close();		
+			client.Close();
 		}
 		private static void getData()
 		{
-			//while (true)
-			//{
-				//try
-				//{
-				BinaryReader reader = new BinaryReader(stream);
-				string processStr = reader.ReadString();
-				//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
-				Delegate a = new Action<String>(Client.processData);
-					fm.Invoke(a, processStr);
-					//reader.Dispose();
-					stream.Close();
-				//client.Close();
-				//}
-				//catch (Exception)
-				//{
-				//	stream.Close();
-				//	client.Close();
-				//}
-			//}
-
+			BinaryReader reader = new BinaryReader(stream);
+			string processStr = reader.ReadString();
+			//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
+			Delegate a = new Action<String>(Client.processData);
+			fm.Invoke(a, processStr);
+			stream.Close();
 		}
 		public static void sendData(string method)
 		{
-
 			BinaryWriter writer = new BinaryWriter(stream);
 			//writer.AutoFlush = true;
-			writer.Write(method+"|"+id);
+			writer.Write(method + "|" + id);
 
 			Thread thr = new Thread(getData);
-			thr.Start();			
+			thr.Start();
 		}
 		public static void loadConfig()
 		{
@@ -84,17 +77,22 @@ namespace CustomerServiceClient
 				{
 					id = Convert.ToInt32(node.SelectSingleNode("id").InnerText);
 				}
-				catch (Exception ) { }
+				catch (Exception) { }
 				try
 				{
 					name = node.SelectSingleNode("name").InnerText;
 				}
-				catch (Exception ) { }
+				catch (Exception) { }
 				try
-					{
-						name = node.SelectSingleNode("gate").InnerText;
+				{
+					gate = node.SelectSingleNode("gate").InnerText;
 				}
-				catch (Exception ) { }
+				catch (Exception) { }
+				try
+				{
+					ip = node.SelectSingleNode("ip").InnerText;
+				}
+				catch (Exception) { }
 			}
 		}
 	}
