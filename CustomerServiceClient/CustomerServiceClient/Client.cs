@@ -73,16 +73,18 @@ namespace CustomerServiceClient
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			if (inGate)
-			{
-				bt1.Text = "Nhận khách";
-				inGate = false;
-			}
-			else
-			{
-				SocketRun.connect();
-				SocketRun.sendData("data");
-			}
+			SocketRun.send();
+			//if (inGate)
+			//{
+			//	bt1.Text = "Nhận khách";
+			//	inGate = false;
+				
+			//}
+			//else
+			//{
+			//	SocketRun.connect();
+			//	SocketRun.sendData("data");
+			//}
 		}
 		public static void processData(string st)
 		{

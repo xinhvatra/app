@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    tools:context="MainActivity"
+    android:orientation="vertical">
+        <com.example.customerqueue.ScrollTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtViewTop"
+           />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button  android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btRatot"
+            android:text="RẤT TỐT"
+            android:textSize="35dp"
+            android:textColor="@color/colorPrimaryDark"/>
+        <Button  android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btTot"
+            android:text="TỐT TỐT"
+            android:textSize="35dp"
+            android:textColor="@color/colorPrimaryDark"/>
+        <Button  android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btKhongtot"
+            android:text="KHÔNG TỐT"
+            android:textSize="35dp"
+            android:textColor="@color/colorPrimaryDark"/>
+
+    </LinearLayout>
+        <com.example.customerqueue.ScrollTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtViewBot"
+          />
+
+</LinearLayout>
