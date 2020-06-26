@@ -11,24 +11,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/txtViewTop"
+            android:fontFamily="sans-serif-black"
+
            />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/maunen">
     <LinearLayout
+        android:id="@+id/lnButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Button  android:layout_width="match_parent"
+        <Button  android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btRatot"
             android:text="RẤT TỐT"
             android:textSize="35dp"
             android:textColor="@color/colorPrimaryDark"/>
-        <Button  android:layout_width="match_parent"
+        <Button  android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btTot"
             android:text="TỐT TỐT"
             android:textSize="35dp"
             android:textColor="@color/colorPrimaryDark"/>
-        <Button  android:layout_width="match_parent"
+        <Button  android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btKhongtot"
             android:text="KHÔNG TỐT"
@@ -36,10 +44,25 @@
             android:textColor="@color/colorPrimaryDark"/>
 
     </LinearLayout>
-        <com.example.customerqueue.ScrollTextView
+
+        <TextView
+            android:id="@+id/textCua"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txtViewBot"
-          />
+            android:text="01"
+            android:fontFamily="sans-serif-black"
+            android:textSize="250dp"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark" />
 
+    </RelativeLayout>
+
+    <com.example.customerqueue.ScrollTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:id="@+id/txtViewBot"
+
+        />
 </LinearLayout>

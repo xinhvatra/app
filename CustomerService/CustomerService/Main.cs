@@ -53,17 +53,17 @@ namespace CustomerService
 			bt1.BackgroundImageLayout = ImageLayout.Zoom;
 			bt1.Text = "Tiền gửi";
 			bt1.Font = new Font("Timesnewroman", 30, FontStyle.Italic);
-			bt1.ForeColor = Color.Purple;
+			bt1.ForeColor = Color.Blue;
 			bt1.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt1);
 
 			bt2.Location = new Point(305, 30);
 			bt2.Size = new Size(300, 300);
-			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu;
+			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu1;
 			bt2.BackgroundImageLayout = ImageLayout.Zoom;
 			bt2.Text = "Mở tài khoản";
 			bt2.Font = new Font("Timesnewroman", 30, FontStyle.Italic);
-			bt2.ForeColor = Color.Purple;
+			bt2.ForeColor = Color.Blue;
 			bt2.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt2);
 
@@ -77,19 +77,19 @@ namespace CustomerService
 		}
 		private void bt1_hover(object sender, EventArgs e)
 		{
-			bt1.ForeColor = Color.Blue;
+			bt1.ForeColor = Color.Purple;
 		}
 		private void bt1_leave(object sender, EventArgs e)
 		{
-			bt1.ForeColor = Color.Purple;
+			bt1.ForeColor = Color.Blue;
 		}
 		private void bt2_hover(object sender, EventArgs e)
 		{
-			bt2.ForeColor = Color.Blue;
+			bt2.ForeColor = Color.Purple;
 		}
 		private void bt2_leave(object sender, EventArgs e)
 		{
-			bt2.ForeColor = Color.Purple;
+			bt2.ForeColor = Color.Blue;
 		}
 		private void bt1_click(object sender, EventArgs e)
 		{
@@ -299,15 +299,21 @@ namespace CustomerService
 							playlist.appendItem(media5);
 							playlist.appendItem(media6);
 							mp.currentPlaylist = playlist;
-							mp.controls.play();
-							clients.Remove(num);
-
+							mp.controls.play();								
+						clients.Remove(num);
+							Thread.Sleep(7000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
 						}
 					}
 					catch { }
 				}
-				Thread.Sleep(10000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
+
+				
 			}
+		}
+
+		private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+
 		}
 	}
 }

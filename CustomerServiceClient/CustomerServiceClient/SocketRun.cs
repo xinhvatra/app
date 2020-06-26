@@ -20,21 +20,24 @@ namespace CustomerServiceClient
 		private static TcpClient client;
 		private static Stream stream;
 		public static Form fm;
-		public static int id;
-		public static string name, gate, ip;
+		public static int id,android;
+		public static string name, gate, ipServer,ipAndroid;
 		public static void SocketCreate()
 		{
 			loadConfig();
-			//connect();
-			//sendData("login");
-			connectAndroid();
+			connect();
+			sendData("login");
+			if (android == 1)
+			{
+				connectAndroid1();
+			}
 		}
 		public static void connect()
 		{
 			try
 			{
 				client = new TcpClient();
-				client.Connect(ip, PORT_NUMBER);
+				client.Connect(ipServer, PORT_NUMBER);
 				stream = client.GetStream();
 			}
 			catch (Exception)
@@ -44,96 +47,89 @@ namespace CustomerServiceClient
 			}
 		}
 		static TcpListener listener;
-		static TcpClient cl;		
+		static TcpClient cl;
 		public static void connectAndroid1()
 		{
-			cl = new TcpClient();
-			cl.Connect("192.168.232.2", PORT_NUMBER_ANDROID);
-			
+			try
+			{
+				cl = new TcpClient();
+				cl.Connect(ipAndroid, PORT_NUMBER_ANDROID);
+			}
+			catch (Exception)
+			{
+				MessageBox.Show("Không kết nối được máy chủ Android. Vui lòng kiểm tra lại!");
+				Application.Exit();
+			}
 			Thread t = new Thread((obj) =>
 			{
-				ListenAndroid();
+				ListenAndroid1();
 			});
 			t.Start();
 
 		}
 		public static void ListenAndroid1()
 		{
-			//while (true)
-			//{
-			using (Stream st = cl.GetStream())
 			
-			{
-				using (StreamReader reader = new StreamReader(st))
-				{
-					string line;
+			nt = cl.GetStream();
+			//processDataAndroid();
 
-					try
-					{
-						line = reader.ReadLine();
-						MessageBox.Show("nhan duoc tin nhan tu android server: " + line);
-					}
-					catch (IOException)
-					{
 
-					}
-					
-
-				}//using reader
-				
-			}//using ns
-
-			
-			StreamWriter writer = new StreamWriter(cl.GetStream());
-			//writer.AutoFlush = true;
-			writer.Write("gate******************************");
-			writer.Flush();
-			
-			
 		}
 		public static void connectAndroid()
 		{
-			IPAddress address = IPAddress.Parse("127.0.0.1");
+			IPAddress address = IPAddress.Parse("192.168.1.35");
 			listener = new TcpListener(address, PORT_NUMBER_ANDROID);
 			listener.Start();
 
 			Thread t = new Thread((obj) =>
 			{
-				ListenAndroid();
+				while (true)
+				{
+					ListenAndroid();
+				}
 			});
 			t.Start();
 
 		}
-		static Socket clientSocket;
+		static TcpClient clientSocket;
+		static NetworkStream nt;
 		public static void ListenAndroid()
 		{
-			
-				clientSocket = listener.AcceptSocket();
-				clientSocket.NoDelay = true;
-				send();
-				
+
+			clientSocket = listener.AcceptTcpClient();
+			clientSocket.NoDelay = true;
+			nt = clientSocket.GetStream();
+			//processDataAndroid();
+
 		}
-		public static void send()
-		{	
-				NetworkStream nt = new NetworkStream(clientSocket);
+		public static void processDataAndroid()
+		{
+			//getDataAndroid();
+			//sendDataAndroid(gate + "," + "0");
+		}
 
-				StreamReader reader = new StreamReader(nt);
+		public static void getDataAndroid()
+		{
 
-				string line;
-
-				line = reader.ReadLine();
-			
-				reader.Close();
-				nt.Close();
-			//	MessageBox.Show("nhan duoc tin nhan tu android client: " + line);
-			NetworkStream nt1 = new NetworkStream(clientSocket);
-			StreamWriter writer = new StreamWriter(nt1);
-				//writer.AutoFlush = true;
-				writer.Write("gate******************************");
+			StreamReader reader = new StreamReader(nt);
+			string line;
+			line = reader.ReadLine();
+		}
+		public static void sendDataAndroid(String data)
+		{
+			try
+			{
+				StreamWriter writer = new StreamWriter(nt);
+				writer.WriteLine(data);
+				//MessageBox.Show("send data to android: ");
 				writer.Flush();
-				writer.Close();			
-				nt1.Close();
-			
+				//MessageBox.Show("co khach: "+data);
+			} catch (Exception e)
+			{
+				MessageBox.Show("Không kết nối được máy chủ Android. Vui lòng kiểm tra lại!");
+				Application.Exit();
+ 			}
+
 		}
 		public static void SocketClose()
 		{
@@ -154,7 +150,7 @@ namespace CustomerServiceClient
 			BinaryWriter writer = new BinaryWriter(stream);
 			//writer.AutoFlush = true;
 			writer.Write(method + "|" + id);
-
+			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id);
 			Thread thr = new Thread(getData);
 			thr.Start();
 		}
@@ -184,9 +180,21 @@ namespace CustomerServiceClient
 				catch (Exception) { }
 				try
 				{
-					ip = node.SelectSingleNode("ip").InnerText;
+					ipServer = node.SelectSingleNode("ipServer").InnerText;
 				}
 				catch (Exception) { }
+				try
+				{
+					ipAndroid = (node.SelectSingleNode("ipAndroid").InnerText);
+					//MessageBox.Show(ipAndroid);
+				}
+				catch (Exception) { }
+				try
+				{
+					android = Convert.ToInt32(node.SelectSingleNode("androidConnect").InnerText);
+				}
+				catch (Exception) { }				
+			
 			}
 		}
 	}
