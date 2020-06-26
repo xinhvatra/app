@@ -18,7 +18,7 @@ namespace CustomerService
 
 	{
 		public static List<string> clientsList = new List<string>();
-		const int MAX_CONNECTION = 10;
+		const int MAX_CONNECTION = 100;
 		const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
 		public static Socket clientSocket;
@@ -51,7 +51,7 @@ namespace CustomerService
 			}
 		}
 		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id)
-		{
+		{	
 			try
 			{
 				var netStream = new NetworkStream(clientSocket);
@@ -67,7 +67,7 @@ namespace CustomerService
 			var netStream = new NetworkStream(clientSocket);
 			BinaryReader reader = new BinaryReader(netStream);
 			string processStr = reader.ReadString();
-
+			
 			Delegate a = new Action<String>(Main.processData);
 			fm.Invoke(a, processStr);
 			netStream.Close();

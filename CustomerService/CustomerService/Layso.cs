@@ -31,6 +31,9 @@ namespace CustomerService
 			lb.Font = new Font("Arial", 99, FontStyle.Bold);
 			lb.ForeColor = Color.Red;
 			lb.TextAlign = ContentAlignment.MiddleCenter;
+			lb.FlatStyle = FlatStyle.Flat;
+
+			lb.BackColor = Color.Transparent;
 			this.Controls.Add(lb);
 		}
 
@@ -84,9 +87,6 @@ namespace CustomerService
 					cmd.ExecuteNonQuery();
 				}
 			}
-
-
-
 			conn.Close();
 		}
 		private void button2_Click(object sender, EventArgs e)

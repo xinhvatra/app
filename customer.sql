@@ -21,14 +21,14 @@ USE `customer`;
 DROP TABLE IF EXISTS `client`;
 
 CREATE TABLE `client` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `service_id` int(11) NOT NULL,
   `name` text COLLATE utf8_unicode_ci NOT NULL,
   `gate` int(5) NOT NULL,
   `idle` tinyint(1) NOT NULL DEFAULT '1',
   `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `client` */
 
@@ -48,13 +48,39 @@ insert  into `client`(`id`,`service_id`,`name`,`gate`,`idle`,`active`) values
 DROP TABLE IF EXISTS `cus_deal`;
 
 CREATE TABLE `cus_deal` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `cus_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
-  PRIMARY KEY (`cus_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `gate` int(11) NOT NULL,
+  `rate` int(11) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_deal` */
+
+insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`rate`,`time`) values 
+(1,1061,6,1,6,1,'2020-06-05 10:40:00'),
+(2,1062,6,1,6,1,'2020-06-05 10:41:04'),
+(3,2004,8,2,2,1,'2020-06-05 10:40:36');
+
+/*Table structure for table `cus_rating` */
+
+DROP TABLE IF EXISTS `cus_rating`;
+
+CREATE TABLE `cus_rating` (
+  `id` int(2) NOT NULL,
+  `value` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `cus_rating` */
+
+insert  into `cus_rating`(`id`,`value`) values 
+(1,'Tốt'),
+(2,'Bình thường'),
+(3,'Không tốt');
 
 /*Table structure for table `cus_wait` */
 
@@ -69,16 +95,17 @@ CREATE TABLE `cus_wait` (
 /*Data for the table `cus_wait` */
 
 insert  into `cus_wait`(`cus_id`,`service_id`) values 
-(1002,1),
-(1003,1),
-(1004,1),
-(1005,1),
-(2004,2),
+(1063,1),
+(1064,1),
 (2005,2),
 (2006,2),
 (2007,2),
 (2008,2),
-(2009,2);
+(2009,2),
+(2075,2),
+(2076,2),
+(2077,2),
+(2078,2);
 
 /*Table structure for table `services` */
 
@@ -94,8 +121,8 @@ CREATE TABLE `services` (
 /*Data for the table `services` */
 
 insert  into `services`(`id`,`name`,`current_cus`) values 
-(1,'Giao dịch tiền gửi',1042),
-(2,'Giao dịch Thẻ, Emobile-banking',2073),
+(1,'Giao dịch tiền gửi',1064),
+(2,'Giao dịch Thẻ, Emobile-banking',2078),
 (3,'Giao dịch tiền vay',3001);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

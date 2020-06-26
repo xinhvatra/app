@@ -34,16 +34,16 @@
 			// 
 			// button1
 			// 
+			this.button1.BackColor = System.Drawing.SystemColors.Control;
 			this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.button1.Font = new System.Drawing.Font(".VnVogue", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.button1.ForeColor = System.Drawing.Color.Blue;
-			this.button1.Image = global::CustomerService.Properties.Resources.maunen1;
 			this.button1.Location = new System.Drawing.Point(139, 253);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(197, 93);
 			this.button1.TabIndex = 0;
 			this.button1.Text = "Lấy số";
-			this.button1.UseVisualStyleBackColor = true;
+			this.button1.UseVisualStyleBackColor = false;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// button2
@@ -64,6 +64,8 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackgroundImage = global::CustomerService.Properties.Resources.chuyen_tien_qua_so_the_agribank;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(484, 461);
 			this.ControlBox = false;
 			this.Controls.Add(this.button2);
