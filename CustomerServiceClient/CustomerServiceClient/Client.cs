@@ -8,7 +8,7 @@ namespace CustomerServiceClient
 	public partial class Client : Form
 	{
 		public static Label lbTop,lbCenter;
-		public static Button bt1,bt2,bt3;
+		public static Button bt1,bt2,btOnoff;
 		static bool inGate = false,online=true;
 		static int customer;
 		//public static string stringTop;
@@ -31,10 +31,21 @@ namespace CustomerServiceClient
 			bt1.Location = new Point(5, 25);
 			bt1.Click += new EventHandler(button1_Click);
 			bt1.ForeColor = Color.Red;
-			bt1.BackgroundImage = Properties.Resources.maunen1;
-			bt1.MouseHover += new EventHandler(bt1_hover);
-			bt1.MouseLeave += new EventHandler(bt1_leave);
+			bt1.BackgroundImage = Properties.Resources.maunen1;		
 			this.groupBox3.Controls.Add(bt1);
+
+
+			btOnoff = new Button();
+			btOnoff.Font = new Font("Timesnewroman", 30, FontStyle.Bold);
+			btOnoff.Text = "Nhận khách";
+			btOnoff.Size = new Size(this.groupBox1.Height - 5, this.groupBox1.Height - 5);
+			btOnoff.Location = new Point(25, 1);
+			btOnoff.Click += new EventHandler(button1_Click);
+			btOnoff.ForeColor = Color.Red;
+			btOnoff.BackgroundImage = Properties.Resources.off;
+			btOnoff.MouseHover += new EventHandler(btOnoff_hover);
+			btOnoff.MouseLeave += new EventHandler(btOnoff_leave);
+			this.groupBox1.Controls.Add(btOnoff);
 
 			lbTop = new Label();
 			lbTop.Size = new Size(this.Width, 20);
@@ -59,21 +70,12 @@ namespace CustomerServiceClient
 			
 
 		}
-		private void bt1_hover(object sender, EventArgs e)
+		private void btOnoff_hover(object sender, EventArgs e)
 		{
-			if (inGate)
-			{
-				bt1.Text = "Giải phóng khách";
-			}
-			bt1.ForeColor = Color.Blue;
+		
 		}
-		private void bt1_leave(object sender, EventArgs e)
-		{
-			if (inGate)
-			{
-				bt1.Text = customer.ToString();
-			}
-			bt1.ForeColor = Color.Red;
+		private void btOnoff_leave(object sender, EventArgs e)
+		{			
 		}
 		private void Client_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -181,17 +183,17 @@ namespace CustomerServiceClient
 		{
 			if (online)
 			{
-				button1.BackgroundImage = Properties.Resources.on;
+				btOnoff.BackgroundImage = Properties.Resources.on;
 				online = false;
-				button2.Visible = false;
-				button3.Visible = false;
+				btOnoff.Visible = false;
+				btOnoff.Visible = false;
 			}
 			else
 			{
-				button1.BackgroundImage = Properties.Resources.off;
+				btOnoff.BackgroundImage = Properties.Resources.off;
 				online = true;
-				button2.Visible = true;
-				button3.Visible = true;
+				btOnoff.Visible = true;
+				btOnoff.Visible = true;
 			}
 		}
 	}
