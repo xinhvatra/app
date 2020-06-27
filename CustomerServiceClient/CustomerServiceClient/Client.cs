@@ -22,30 +22,40 @@ namespace CustomerServiceClient
 			this.Location = new Point(Convert.ToInt32(px) - 10, Convert.ToInt32(py) - 170);
 			this.Size = new Size(310, 300);
 			g.Dispose();
+			//groupBox3.BackgroundImage = Properties.Resources.maunen1;
 
 			
 			bt1 = new Button();
-			bt1.Font = new Font("Timesnewroman", 30, FontStyle.Bold);
+			bt1.Font = new Font("Arial", 5);
 			bt1.Text = "Nhận khách";
-			bt1.Size = new Size(this.Width - 25, this.Height - 70);
-			bt1.Location = new Point(5, 25);
+			bt1.Size = new Size(this.groupBox3.Height + 10, this.groupBox3.Height - 30);
+			bt1.Location = new Point(20, 17);
 			bt1.Click += new EventHandler(button1_Click);
-			bt1.ForeColor = Color.Red;
-			bt1.BackgroundImage = Properties.Resources.maunen1;		
+			bt1.TabStop = false;
 			this.groupBox3.Controls.Add(bt1);
 
+			bt2 = new Button();
+			bt2.Font = new Font("Arial", 5);
+			bt2.Text = "Chuyển khách";
+			bt2.Size = new Size(this.groupBox3.Height + 10, this.groupBox3.Height - 30);
+			bt2.Location = new Point(bt1.Width+40, 17);
+			bt2.Click += new EventHandler(button2_Click);
+			bt2.TabStop = false;
+			this.groupBox3.Controls.Add(bt2);
 
-			btOnoff = new Button();
-			btOnoff.Font = new Font("Timesnewroman", 30, FontStyle.Bold);
-			btOnoff.Text = "Nhận khách";
-			btOnoff.Size = new Size(this.groupBox1.Height - 5, this.groupBox1.Height - 5);
-			btOnoff.Location = new Point(25, 1);
-			btOnoff.Click += new EventHandler(button1_Click);
-			btOnoff.ForeColor = Color.Red;
+
+			btOnoff = new Button();				
+			btOnoff.Size = new Size(this.groupBox3.Height +10, this.groupBox3.Height - 30);
+			btOnoff.Location = new Point(this.groupBox3.Width-btOnoff.Width-20, 17);
+			btOnoff.Click += new EventHandler(button3_Click);			
 			btOnoff.BackgroundImage = Properties.Resources.off;
-			btOnoff.MouseHover += new EventHandler(btOnoff_hover);
-			btOnoff.MouseLeave += new EventHandler(btOnoff_leave);
-			this.groupBox1.Controls.Add(btOnoff);
+			btOnoff.FlatStyle = FlatStyle.Flat;
+			btOnoff.BackgroundImage = Properties.Resources.off;
+			btOnoff.BackgroundImageLayout = ImageLayout.Zoom;
+			btOnoff.BackColor = Color.Transparent;
+			btOnoff.FlatAppearance.BorderSize = 0;	
+			
+			this.groupBox3.Controls.Add(btOnoff);
 
 			lbTop = new Label();
 			lbTop.Size = new Size(this.Width, 20);
@@ -178,22 +188,22 @@ namespace CustomerServiceClient
 				SocketRun.sendData("data");
 			}
 		}
-
-		private void button1_Click_1(object sender, EventArgs e)
+	
+		private void button3_Click(object sender, EventArgs e)
 		{
 			if (online)
 			{
 				btOnoff.BackgroundImage = Properties.Resources.on;
 				online = false;
-				btOnoff.Visible = false;
-				btOnoff.Visible = false;
+				bt1.Visible = false;
+				bt2.Visible = false;
 			}
 			else
 			{
 				btOnoff.BackgroundImage = Properties.Resources.off;
 				online = true;
-				btOnoff.Visible = true;
-				btOnoff.Visible = true;
+				bt1.Visible = true;
+				bt2.Visible = true;
 			}
 		}
 	}
