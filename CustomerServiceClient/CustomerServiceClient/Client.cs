@@ -10,7 +10,7 @@ namespace CustomerServiceClient
 	{
 		public static Label lbTop,lbCenter;
 		public static Button bt1,bt2,btOnoff;
-		public static DataTable dt_service;
+		public static String[] dt_service;
 		static bool inGate = false,online=false;
 		static int customer;
 		//public static string stringTop;
@@ -133,9 +133,13 @@ namespace CustomerServiceClient
 			{
 				lbTop.Text = arrRs[3] + " - Cổng số " + arrRs[4];
 				bt1.Visible = true;				
-				lbCenter.Text = "";
-				//lbCenter.BackColor = Color.Green;
-			//	dt_service = (DataTable) arrRs[5];
+				lbCenter.Text = "";				
+				dt_service = new string[arrRs.Length-5];
+				for(int i = 5; i < arrRs.Length; i++)
+				{
+					dt_service[i-5] = arrRs[i];
+				}
+				
 				btOnoff.BackgroundImage = Properties.Resources.off;
 				if (SocketRun.android == 1)
 				{
@@ -198,19 +202,8 @@ namespace CustomerServiceClient
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			if (inGate)
-			{
-				bt1.Text = "Nhận khách";				
-				if (SocketRun.android == 1)
-				{
-					SocketRun.sendDataAndroid(SocketRun.gate + ",0");
-				}
-			}
-			else
-			{
-				SocketRun.connect();
-				SocketRun.sendData("data");
-			}
+			Switch sw = new Switch();
+			sw.Show();
 		}
 	
 		private void button3_Click(object sender, EventArgs e)
@@ -218,7 +211,7 @@ namespace CustomerServiceClient
 			if (online)
 			{
 				SocketRun.connect();
-				SocketRun.sendData("notidle");
+				SocketRun.sendData("notidle",0);
 				btOnoff.BackgroundImage = Properties.Resources.on;
 				online = false;
 				bt1.Visible = false;
@@ -227,7 +220,7 @@ namespace CustomerServiceClient
 			else
 			{
 				SocketRun.connect();
-				SocketRun.sendData("idle");
+				SocketRun.sendData("idle",0);
 				//btOnoff.BackgroundImage = Properties.Resources.off;
 				online = true;
 				bt1.Visible = true;				

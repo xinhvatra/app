@@ -20,8 +20,20 @@ namespace CustomerServiceClient
 		}
 
 		private void Switch_Load(object sender, EventArgs e)
+		{	for (int i = 0; i < Client.dt_service.Length; i++)
+			{
+				comboBox1.Items.Add(Client.dt_service[i]);
+			}
+		}
+
+		private void button1_Click(object sender, EventArgs e)
 		{
-			comboBox1.Items.Add(Client.dt_service.Rows[0][1]);
+			this.Close();
+		}
+
+		private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			SocketRun.sendData("switch",0);
 		}
 	}
 }

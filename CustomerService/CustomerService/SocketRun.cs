@@ -62,10 +62,10 @@ namespace CustomerService
 				//MessageBox.Show(dt.ToString());
 				foreach (DataRow dtrow in dt.Rows)
 				{
-					ser += dtrow[1] + ",";
+					ser += "|"+dtrow[1];
 				}
-				MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + ser);
-				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + ser);
+				//MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + ser);
+				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate +  ser);
 				//writer.Close();
 			}
 			catch (Exception) { }

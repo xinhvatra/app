@@ -145,11 +145,11 @@ namespace CustomerServiceClient
 			fm.Invoke(a, processStr);
 			stream.Close();
 		}
-		public static void sendData(string method)
+		public static void sendData(string method,int service)
 		{
 			BinaryWriter writer = new BinaryWriter(stream);
 			//writer.AutoFlush = true;
-			writer.Write(method + "|" + id);
+			writer.Write(method + "|" + id+"|"+service);
 			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id);
 			if (!method.Equals("logout"))
 			{
