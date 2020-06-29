@@ -97,7 +97,7 @@ namespace CustomerService
 			Layso layso = new Layso();
 
 			layso.MdiParent = this;
-			layso.Text = Function.service_customer.Rows[0][1] + "";
+			layso.Text = Function.services.Rows[0][1] + "";
 
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
@@ -118,7 +118,7 @@ namespace CustomerService
 			Layso layso = new Layso();
 
 			layso.MdiParent = this;
-			layso.Text = Function.service_customer.Rows[1][1] + "";
+			layso.Text = Function.services.Rows[1][1] + "";
 
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
@@ -148,8 +148,8 @@ namespace CustomerService
 			{
 				if (reader.HasRows)
 				{
-					Function.service_customer = new DataTable();
-					Function.service_customer.Load(reader);
+					Function.services = new DataTable();
+					Function.services.Load(reader);
 				}
 			}
 
@@ -176,17 +176,52 @@ namespace CustomerService
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
 					string sql = "select * from client where id = " + arrRs[1];
-					MySqlCommand cm = new MySqlCommand(sql, conn);
-					using (DbDataReader reader = cm.ExecuteReader())
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					using (DbDataReader reader = cmd.ExecuteReader())
 					{
 						if (reader.HasRows)
 						{
 							while (reader.Read())
 							{
-								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0);
+								SocketRun.sendDataLogin("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), Function.services);
 							}
 						}
-					}
+					}			
+
+					
+					sql = "UPDATE client SET idle=1, active=1 WHERE id=" + arrRs[1];
+					cmd = new MySqlCommand(sql,conn);					
+					cmd.ExecuteNonQuery();
+					conn.Close();
+				}
+				else if (arrRs[0] == "logout")
+				{
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					String sql = "UPDATE client SET idle=0, active=0 WHERE id=" + arrRs[1];
+					MySqlCommand cmd = new MySqlCommand(sql, conn);					
+					cmd.ExecuteNonQuery();
+					conn.Close();
+				}
+				else if (arrRs[0] == "idle")
+				{
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					String sql = "UPDATE client SET idle=1 WHERE id=" + arrRs[1];
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					cmd.ExecuteNonQuery();
+					conn.Close();
+					SocketRun.sendData("idle",Int32.Parse( arrRs[1]), 0, "", 0, 0);
+				}
+				else if (arrRs[0] == "notidle")
+				{
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					String sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					cmd.ExecuteNonQuery();
+					conn.Close();
+					SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0);
 				}
 
 				else if (arrRs[0] == "data")
@@ -198,7 +233,7 @@ namespace CustomerService
 					int client_id =0,service_id=0,gate=0;
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
+					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND active=1 AND cl.id= "+arrRs[1]+" ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
 					MySqlCommand cm = new MySqlCommand(sql, conn);
 					using (DbDataReader reader = cm.ExecuteReader())
 					{
@@ -206,23 +241,28 @@ namespace CustomerService
 						{
 							while (reader.Read())
 							{
-								if (!clients.ContainsValue((int)reader.GetValue(5))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
+								if (!clients.ContainsValue((int)reader.GetValue(7))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
 								{
-									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(5));
+									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(7));
 									cus_id = (int)reader.GetValue(0);
-									client_id= (int)reader.GetValue(2);
-									service_id = (int)reader.GetValue(3);
-									gate = (int)reader.GetValue(5);
+									client_id= (int)reader.GetValue(4);
+									service_id = (int)reader.GetValue(5);
+									gate = (int)reader.GetValue(7);
 									isAdd = true;									
-									SocketRun.sendData("data", (int)reader.GetValue(2), (int)reader.GetValue(3), reader.GetValue(4).ToString(), (int)reader.GetValue(5), (int)reader.GetValue(0));
+									SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(5), reader.GetValue(6).ToString(), (int)reader.GetValue(7), (int)reader.GetValue(0));
 								}
 							}											
 						}
 					}
+					//cập nhật trạng thái tiếp khách client					
+					 sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					cmd.ExecuteNonQuery();					
+
 					if (isAdd)//xóa khách khỏi bảng chờ
 					{
 						sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
-						MySqlCommand cmd = new MySqlCommand(sql, conn);
+						cmd = new MySqlCommand(sql, conn);
 						cmd.ExecuteNonQuery();
 
 						//ghi lịch sử giao dịch
@@ -300,7 +340,7 @@ namespace CustomerService
 							playlist.appendItem(media6);
 							mp.currentPlaylist = playlist;
 							mp.controls.play();								
-						clients.Remove(num);
+							clients.Remove(num);
 							Thread.Sleep(7000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
 						}
 					}

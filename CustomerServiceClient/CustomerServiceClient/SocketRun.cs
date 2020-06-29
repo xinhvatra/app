@@ -27,10 +27,10 @@ namespace CustomerServiceClient
 			loadConfig();
 			connect();
 			sendData("login");
-			if (android == 1)
-			{
-				connectAndroid1();
-			}
+			//if (android == 1)
+			//{
+			//	connectAndroid1();
+			//}
 		}
 		public static void connect()
 		{
@@ -151,8 +151,17 @@ namespace CustomerServiceClient
 			//writer.AutoFlush = true;
 			writer.Write(method + "|" + id);
 			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id);
-			Thread thr = new Thread(getData);
-			thr.Start();
+			if (!method.Equals("logout"))
+			{
+				//MessageBox.Show("not logout");
+				Thread thr = new Thread(getData);
+				thr.Start();
+			}
+			else
+			{
+				//MessageBox.Show("logout");
+				//stream.Close();
+			}
 		}
 		public static void loadConfig()
 		{

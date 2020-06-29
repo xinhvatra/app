@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -50,6 +51,25 @@ namespace CustomerService
 				t.Start(clientSocket);
 			}
 		}
+		public static void sendDataLogin(string method, int client_id, int service_id, string client_name, int gate, DataTable dt)
+		{
+			try
+			{
+				string ser="";
+				var netStream = new NetworkStream(clientSocket);
+				BinaryWriter writer = new BinaryWriter(netStream);
+				//writer.AutoFlush = true;
+				//MessageBox.Show(dt.ToString());
+				foreach (DataRow dtrow in dt.Rows)
+				{
+					ser += dtrow[1] + ",";
+				}
+				MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + ser);
+				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + ser);
+				//writer.Close();
+			}
+			catch (Exception) { }
+		}
 		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id)
 		{	
 			try
@@ -64,13 +84,20 @@ namespace CustomerService
 		}
 		private static void getData(Socket soc)
 		{
-			var netStream = new NetworkStream(clientSocket);
-			BinaryReader reader = new BinaryReader(netStream);
-			string processStr = reader.ReadString();
-			
-			Delegate a = new Action<String>(Main.processData);
-			fm.Invoke(a, processStr);
-			netStream.Close();
+			try
+			{
+				var netStream = new NetworkStream(clientSocket);
+				BinaryReader reader = new BinaryReader(netStream);
+				string processStr = reader.ReadString();
+
+				Delegate a = new Action<String>(Main.processData);
+				fm.Invoke(a, processStr);
+				netStream.Close();
+			}
+			catch (Exception )
+			{
+				
+			}
 		}
 	}
 }

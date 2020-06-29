@@ -18,14 +18,15 @@ namespace CustomerService
 		public Layso()
 		{
 			InitializeComponent();
+			this.Size = new Size(600, 490);
 			lb = new Label();
-			button1.Location = new Point(this.Width / 2-button1.Width/4, this.Height/6*4);
 			lb.Location = new Point(5, this.Height / 5);
+			button1.Location = new Point(this.Width / 2-button1.Width/4, this.Height/6*4);			
 
 			button2.Location = new Point(this.Width / 2 - button1.Width / 4, this.Height/6*5+30 );			
 			
 			
-			lb.Text = (Convert.ToInt32(Function.service_customer.Rows[Function.fmName-1][2]) + 1)+"";
+			lb.Text = (Convert.ToInt32(Function.services.Rows[Function.fmName-1][2]) + 1)+"";
 						
 			lb.Size = new Size(600,200);
 			lb.Font = new Font("Arial", 99, FontStyle.Bold);
@@ -41,7 +42,7 @@ namespace CustomerService
 		{
 			//MessageBox.Show(label1.Width+"");
 		
-			check_idle_client(Function.fmName,Function.service_customer);
+			check_idle_client(Function.fmName,Function.services);
 			this.Close();
 			Main.bt1.Show();
 			Main.bt2.Show();
@@ -52,14 +53,14 @@ namespace CustomerService
 
 		private void check_idle_client(int service_id,DataTable dt)
 		{
-			Function.service_customer.Rows[service_id - 1][2] = Convert.ToInt32(Function.service_customer.Rows[service_id - 1][2]) + 1;
+			Function.services.Rows[service_id - 1][2] = Convert.ToInt32(Function.services.Rows[service_id - 1][2]) + 1;
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
 			string sql = "update services SET current_cus = @current_cus WHERE id = @id";
 			MySqlCommand cmd = new MySqlCommand();
 			cmd.Connection = conn;
 			cmd.CommandText = sql;
-			cmd.Parameters.Add("@current_cus", MySqlDbType.Int32).Value =Function.service_customer.Rows[service_id-1][2];
+			cmd.Parameters.Add("@current_cus", MySqlDbType.Int32).Value =Function.services.Rows[service_id-1][2];
 			cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = service_id;
 			cmd.ExecuteNonQuery();
 
@@ -82,7 +83,7 @@ namespace CustomerService
 					cmd.Connection = conn;
 					cmd.CommandText = sql;
 
-					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = Function.service_customer.Rows[service_id - 1][2];
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = Function.services.Rows[service_id - 1][2];
 					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
 					cmd.ExecuteNonQuery();
 				}

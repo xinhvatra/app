@@ -40,7 +40,7 @@
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox1.Location = new System.Drawing.Point(0, 0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(293, 29);
+			this.groupBox1.Size = new System.Drawing.Size(335, 29);
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			// 
@@ -49,16 +49,16 @@
 			this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox3.Location = new System.Drawing.Point(0, 29);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(293, 69);
+			this.groupBox3.Size = new System.Drawing.Size(335, 71);
 			this.groupBox3.TabIndex = 3;
 			this.groupBox3.TabStop = false;
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox2.Location = new System.Drawing.Point(0, 98);
+			this.groupBox2.Location = new System.Drawing.Point(0, 100);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(293, 202);
+			this.groupBox2.Size = new System.Drawing.Size(335, 184);
 			this.groupBox2.TabIndex = 4;
 			this.groupBox2.TabStop = false;
 			// 
@@ -68,7 +68,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-			this.ClientSize = new System.Drawing.Size(293, 300);
+			this.ClientSize = new System.Drawing.Size(335, 284);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox1);
