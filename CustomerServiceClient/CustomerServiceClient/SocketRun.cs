@@ -26,7 +26,7 @@ namespace CustomerServiceClient
 		{
 			loadConfig();
 			connect();
-			sendData("login");
+			sendData("login",0);
 			//if (android == 1)
 			//{
 			//	connectAndroid1();
@@ -144,24 +144,33 @@ namespace CustomerServiceClient
 			Delegate a = new Action<String>(Client.processData);
 			fm.Invoke(a, processStr);
 			stream.Close();
+			
 		}
 		public static void sendData(string method,int service)
 		{
-			BinaryWriter writer = new BinaryWriter(stream);
-			//writer.AutoFlush = true;
+			BinaryWriter writer = new BinaryWriter(stream);		
 			writer.Write(method + "|" + id+"|"+service);
-			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id);
+			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id + "|" + service);
 			if (!method.Equals("logout"))
 			{
 				//MessageBox.Show("not logout");
 				Thread thr = new Thread(getData);
 				thr.Start();
 			}
-			else
+			
+		}
+		public static void sendDataSwitch(string method, int receive_id,int customer)
+		{
+			BinaryWriter writer = new BinaryWriter(stream);
+			writer.Write(method + "|" + id + "|" + service);
+			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id + "|" + service);
+			if (!method.Equals("logout"))
 			{
-				//MessageBox.Show("logout");
-				//stream.Close();
+				//MessageBox.Show("not logout");
+				Thread thr = new Thread(getData);
+				thr.Start();
 			}
+
 		}
 		public static void loadConfig()
 		{

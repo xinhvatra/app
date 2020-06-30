@@ -12,7 +12,7 @@ namespace CustomerServiceClient
 		public static Button bt1,bt2,btOnoff;
 		public static String[] dt_service;
 		static bool inGate = false,online=false;
-		static int customer;
+		public static int customer;
 		//public static string stringTop;
 		public Client()
 		{
@@ -93,7 +93,7 @@ namespace CustomerServiceClient
 		private void Client_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SocketRun.connect();
-			SocketRun.sendData("logout");
+			SocketRun.sendData("logout",0);
 			SocketRun.SocketClose();
 			System.Environment.Exit(1);
 		}
@@ -111,7 +111,7 @@ namespace CustomerServiceClient
 			{
 				bt1.Text = "Nhận khách";				
 				SocketRun.connect();
-				SocketRun.sendData("idle");
+				SocketRun.sendData("idle",0);
 				//if (SocketRun.android == 1)
 				//{
 				//	SocketRun.sendDataAndroid(SocketRun.gate + ",0");
@@ -120,7 +120,7 @@ namespace CustomerServiceClient
 			else
 			{
 				SocketRun.connect();
-				SocketRun.sendData("data");
+				SocketRun.sendData("data",0);
 			}
 		}
 		public static void processData(string st)
@@ -134,10 +134,10 @@ namespace CustomerServiceClient
 				lbTop.Text = arrRs[3] + " - Cổng số " + arrRs[4];
 				bt1.Visible = true;				
 				lbCenter.Text = "";				
-				dt_service = new string[arrRs.Length-5];
-				for(int i = 5; i < arrRs.Length; i++)
+				dt_service = new string[arrRs.Length-6];
+				for(int i = 6; i < arrRs.Length; i++)
 				{
-					dt_service[i-5] = arrRs[i];
+					dt_service[i-6] = arrRs[i];
 				}
 				
 				btOnoff.BackgroundImage = Properties.Resources.off;
@@ -194,16 +194,72 @@ namespace CustomerServiceClient
 					SocketRun.sendDataAndroid(SocketRun.gate + ",0");
 				}
 			}
+			else if (arrRs[0] == "switch")
+			{
+				Switch.dtgrid.DataSource = null;
+				try
+				{
+					Switch.dtgrid.Columns.RemoveAt(0);
+				}
+				catch (Exception)
+				{
+
+				}
+				Switch.data = new DataTable();
+				//Switch.data.Columns.Remove(1);
+				Switch.data.Columns.Add("Mã GDV");
+				Switch.data.Columns.Add("Giao dịch viên");
+				Switch.data.Columns.Add("Cửa số");
+				Switch.data.Columns.Add("Tình trạng");
+				
+
+				for (int i = 6; i < arrRs.Length; i++)
+				{					
+					String[] arr = arrRs[i].Split('_');
+					//MessageBox.Show(arr[1].ToString().Trim());
+					if (arr[2].ToString().Trim().Equals("True"))
+					{
+						arr[2] = "Rảnh";
+					}
+					else
+					{
+						arr[2] = "Bận";
+					}
+					
+					Switch.data.Rows.Add(arr);
+				}	
+				Switch.dtgrid.DataSource = Switch.data;
+				
+				//MessageBox.Show(Switch.dtgrid.Rows.Count+"");
+				foreach (DataGridViewRow dgvr in Switch.dtgrid.Rows)
+				{
+					//MessageBox.Show(dgvr.Cells[1].Value+"");
+					string vl = dgvr.Cells[2].Value+"";
+					if (vl.Equals("Bận"))
+					{
+						dgvr.DefaultCellStyle.ForeColor = Color.Red;
+					}
+					else
+					{
+						dgvr.DefaultCellStyle.ForeColor = Color.Blue;
+					}
+				}				
+				DataGridViewCheckBoxColumn check = new DataGridViewCheckBoxColumn();
+				check.HeaderText = "Chọn";
+				Switch.dtgrid.Columns.Add(check);
+			}
 
 			//}
 			//catch { }
 
 		}
-
+		public static Form sw;
 		private void button2_Click(object sender, EventArgs e)
 		{
-			Switch sw = new Switch();
-			sw.Show();
+			Switch swi = new Switch();
+			//swi.Parent = this;
+			swi.Show();
+			
 		}
 	
 		private void button3_Click(object sender, EventArgs e)

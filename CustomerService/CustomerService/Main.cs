@@ -152,7 +152,11 @@ namespace CustomerService
 					Function.services.Load(reader);
 				}
 			}
-
+			Function.data_services = "";
+			foreach (DataRow dtrow in Function.services.Rows)
+			{
+				Function.data_services += "|" + dtrow[1];
+			}
 
 		}
 		//public static async void process(String st)
@@ -183,14 +187,14 @@ namespace CustomerService
 						{
 							while (reader.Read())
 							{
-								SocketRun.sendDataLogin("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), Function.services);
+								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0, Function.data_services);
 							}
 						}
-					}			
+					}
 
-					
+
 					sql = "UPDATE client SET idle=1, active=1 WHERE id=" + arrRs[1];
-					cmd = new MySqlCommand(sql,conn);					
+					cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
 					conn.Close();
 				}
@@ -199,7 +203,7 @@ namespace CustomerService
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
 					String sql = "UPDATE client SET idle=0, active=0 WHERE id=" + arrRs[1];
-					MySqlCommand cmd = new MySqlCommand(sql, conn);					
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
 					conn.Close();
 				}
@@ -211,7 +215,7 @@ namespace CustomerService
 					MySqlCommand cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
 					conn.Close();
-					SocketRun.sendData("idle",Int32.Parse( arrRs[1]), 0, "", 0, 0);
+					SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
 				}
 				else if (arrRs[0] == "notidle")
 				{
@@ -221,7 +225,7 @@ namespace CustomerService
 					MySqlCommand cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
 					conn.Close();
-					SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0);
+					SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
 				}
 
 				else if (arrRs[0] == "data")
@@ -230,10 +234,10 @@ namespace CustomerService
 					//MessageBox.Show("xu ly tin nhan tu client: " + st);
 					bool isAdd = false;
 					int cus_id = 0;
-					int client_id =0,service_id=0,gate=0;
+					int client_id = 0, service_id = 0, gate = 0;
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND active=1 AND cl.id= "+arrRs[1]+" ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
 					MySqlCommand cm = new MySqlCommand(sql, conn);
 					using (DbDataReader reader = cm.ExecuteReader())
 					{
@@ -245,19 +249,19 @@ namespace CustomerService
 								{
 									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(7));
 									cus_id = (int)reader.GetValue(0);
-									client_id= (int)reader.GetValue(4);
+									client_id = (int)reader.GetValue(4);
 									service_id = (int)reader.GetValue(5);
 									gate = (int)reader.GetValue(7);
-									isAdd = true;									
-									SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(5), reader.GetValue(6).ToString(), (int)reader.GetValue(7), (int)reader.GetValue(0));
+									isAdd = true;
+									SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(5), reader.GetValue(6).ToString(), (int)reader.GetValue(7), (int)reader.GetValue(0), "");
 								}
-							}											
+							}
 						}
 					}
 					//cập nhật trạng thái tiếp khách client					
-					 sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+					sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
 					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					cmd.ExecuteNonQuery();					
+					cmd.ExecuteNonQuery();
 
 					if (isAdd)//xóa khách khỏi bảng chờ
 					{
@@ -280,6 +284,28 @@ namespace CustomerService
 					}
 					conn.Close();
 				}
+				else if (arrRs[0] == "switch")
+				{
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					string sql = "select * from client where service_id = " + arrRs[2] + " AND active = 1 AND id NOT IN (SELECT id FROM CLIENT WHERE id = " + arrRs[1] + ")";
+					MySqlCommand cmd = new MySqlCommand(sql, conn);
+					string data = "";
+					using (DbDataReader reader = cmd.ExecuteReader())
+					{
+						if (reader.HasRows)
+						{
+							
+							while (reader.Read())
+							{
+								data +="|"+ reader.GetValue(0).ToString()+"_"+ reader.GetValue(2).ToString() + "_" + reader.GetValue(3) + "_" + reader.GetValue(4);
+							}
+							
+					}
+						SocketRun.sendData("switch",Int32.Parse(arrRs[1]), 0, "", 0, 0, data);
+					}
+					conn.Close();
+				}
 
 				//}
 				//catch
@@ -298,13 +324,13 @@ namespace CustomerService
 					try
 					{
 						foreach (KeyValuePair<int, int> entry in clients)
-						{												
+						{
 							int num = entry.Key;
 							int ra = entry.Value;
 							string donvi = num.ToString().Substring(3, 1);
 							string chuc = num.ToString().Substring(2, 1);
 							string tram = num.ToString().Substring(1, 1);
-							string nghin = num.ToString().Substring(0, 1);						
+							string nghin = num.ToString().Substring(0, 1);
 
 							WMPLib.WindowsMediaPlayer mp = new WMPLib.WindowsMediaPlayer();
 							WMPLib.IWMPPlaylist playlist = mp.playlistCollection.newPlaylist("customerCall");
@@ -312,25 +338,25 @@ namespace CustomerService
 
 							string moi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\moi.mp3";
 							media = mp.newMedia(moi);
-							
+
 							string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
 							media1 = mp.newMedia(sokhachnghin);
-							
+
 							string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
 							media2 = mp.newMedia(sokhachtram);
-							
+
 							string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
 							media3 = mp.newMedia(sokhachchuc);
-							
+
 							string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
 							media4 = mp.newMedia(sokhachdonvi);
-							
+
 							string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
 							media5 = mp.newMedia(vaocua);
-							
+
 							string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
 							media6 = mp.newMedia(socua);
-							
+
 							playlist.appendItem(media);
 							playlist.appendItem(media1);
 							playlist.appendItem(media2);
@@ -339,7 +365,7 @@ namespace CustomerService
 							playlist.appendItem(media5);
 							playlist.appendItem(media6);
 							mp.currentPlaylist = playlist;
-							mp.controls.play();								
+							mp.controls.play();
 							clients.Remove(num);
 							Thread.Sleep(7000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
 						}
@@ -347,7 +373,7 @@ namespace CustomerService
 					catch { }
 				}
 
-				
+
 			}
 		}
 

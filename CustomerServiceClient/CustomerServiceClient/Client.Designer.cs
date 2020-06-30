@@ -72,6 +72,7 @@
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox1);
+			this.IsMdiContainer = true;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "Client";

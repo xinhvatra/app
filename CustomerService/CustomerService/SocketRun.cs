@@ -50,34 +50,16 @@ namespace CustomerService
 				});
 				t.Start(clientSocket);
 			}
-		}
-		public static void sendDataLogin(string method, int client_id, int service_id, string client_name, int gate, DataTable dt)
-		{
-			try
-			{
-				string ser="";
-				var netStream = new NetworkStream(clientSocket);
-				BinaryWriter writer = new BinaryWriter(netStream);
-				//writer.AutoFlush = true;
-				//MessageBox.Show(dt.ToString());
-				foreach (DataRow dtrow in dt.Rows)
-				{
-					ser += "|"+dtrow[1];
-				}
-				//MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + ser);
-				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate +  ser);
-				//writer.Close();
-			}
-			catch (Exception) { }
-		}
-		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id)
+		}		
+		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id, string data)
 		{	
 			try
 			{
 				var netStream = new NetworkStream(clientSocket);
 				BinaryWriter writer = new BinaryWriter(netStream);
 				//writer.AutoFlush = true;
-				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id);
+			//	MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
+				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id+data);
 				//writer.Close();
 			}
 			catch (Exception) { }

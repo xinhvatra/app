@@ -31,67 +31,49 @@
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// comboBox1
 			// 
 			this.comboBox1.FormattingEnabled = true;
-			this.comboBox1.Location = new System.Drawing.Point(240, 30);
-			this.comboBox1.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+			this.comboBox1.Location = new System.Drawing.Point(90, 13);
 			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.Size = new System.Drawing.Size(613, 39);
+			this.comboBox1.Size = new System.Drawing.Size(232, 21);
 			this.comboBox1.TabIndex = 0;
 			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(77, 33);
-			this.label1.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+			this.label1.Location = new System.Drawing.Point(29, 14);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(143, 32);
+			this.label1.Size = new System.Drawing.Size(56, 13);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Nghiệp vụ";
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(816, 637);
-			this.button1.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+			this.button1.Location = new System.Drawing.Point(324, 260);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(200, 55);
+			this.button1.Size = new System.Drawing.Size(75, 23);
 			this.button1.TabIndex = 2;
 			this.button1.Text = "Ok";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// dataGridView1
-			// 
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Location = new System.Drawing.Point(64, 93);
-			this.dataGridView1.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.RowHeadersWidth = 102;
-			this.dataGridView1.Size = new System.Drawing.Size(952, 529);
-			this.dataGridView1.TabIndex = 3;
-			// 
 			// Switch
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1048, 720);
-			this.Controls.Add(this.dataGridView1);
+			this.ClientSize = new System.Drawing.Size(411, 295);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.comboBox1);
-			this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "Switch";
 			this.TopMost = true;
 			this.Load += new System.EventHandler(this.Switch_Load);
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -102,6 +84,5 @@
 		private System.Windows.Forms.ComboBox comboBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.DataGridView dataGridView1;
 	}
 }
