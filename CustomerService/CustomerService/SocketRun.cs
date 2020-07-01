@@ -43,7 +43,7 @@ namespace CustomerService
 		{
 			while (true)
 			{
-				clientSocket = listener.AcceptSocket();
+				clientSocket = listener.AcceptSocket();				
 				Thread t = new Thread((obj) =>
 				{
 					getData((Socket)obj);
