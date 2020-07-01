@@ -20,17 +20,17 @@ namespace CustomerServiceClient
 		private static TcpClient client;
 		private static Stream stream;
 		public static Form fm;
-		public static int id,android;
-		public static string name, gate, ipServer,ipAndroid;
+		public static int id, android;
+		public static string ipcas, name, gate, ipServer,ipAndroid;
 		public static void SocketCreate()
 		{
 			loadConfig();
 			connect();
 			sendData("login",0);
-			//if (android == 1)
-			//{
-			//	connectAndroid1();
-			//}
+			if (android == 1)
+			{
+				connectAndroid1();
+			}
 		}
 		public static void connect()
 		{
@@ -57,7 +57,7 @@ namespace CustomerServiceClient
 			}
 			catch (Exception)
 			{
-				MessageBox.Show("Không kết nối được máy chủ Android. Vui lòng kiểm tra lại!");
+				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!");
 				Application.Exit();
 			}
 			Thread t = new Thread((obj) =>
@@ -126,7 +126,7 @@ namespace CustomerServiceClient
 				//MessageBox.Show("co khach: "+data);
 			} catch (Exception e)
 			{
-				MessageBox.Show("Không kết nối được máy chủ Android. Vui lòng kiểm tra lại!");
+				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!");
 				Application.Exit();
  			}
 
@@ -148,29 +148,29 @@ namespace CustomerServiceClient
 		}
 		public static void sendData(string method,int service)
 		{
-			BinaryWriter writer = new BinaryWriter(stream);		
-			writer.Write(method + "|" + id+"|"+service);
-			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id + "|" + service);
-			if (!method.Equals("logout"))
+			BinaryWriter writer = new BinaryWriter(stream);			
+			if (method.Equals("login"))
 			{
-				//MessageBox.Show("not logout");
+				writer.Write(method + "|" + ipcas + "|" + service);
+			}
+			else
+			{
+				writer.Write(method + "|" + id + "|" + service);
+			}
+			
+			if (!method.Equals("logout"))
+			{				
 				Thread thr = new Thread(getData);
 				thr.Start();
 			}
 			
 		}
-		public static void sendDataSwitch(string method, int receive_id,int customer)
+		public static void sendDataSwitch(string method,int service_id, int receive_id,int customer)
 		{
 			BinaryWriter writer = new BinaryWriter(stream);
-			writer.Write(method + "|" + id + "|" + service);
-			//MessageBox.Show("client " + id + " gui tin nhan den server: " + method + "|" + id + "|" + service);
-			if (!method.Equals("logout"))
-			{
-				//MessageBox.Show("not logout");
-				Thread thr = new Thread(getData);
-				thr.Start();
-			}
-
+			writer.Write(method + "|"+id+"|" + service_id + "|" + receive_id+"|"+ customer+"|"+gate);
+			Thread thr = new Thread(getData);
+			thr.Start();
 		}
 		public static void loadConfig()
 		{
@@ -183,7 +183,7 @@ namespace CustomerServiceClient
 			{
 				try
 				{
-					id = Convert.ToInt32(node.SelectSingleNode("id").InnerText);
+					ipcas = (node.SelectSingleNode("id").InnerText);
 				}
 				catch (Exception) { }
 				try

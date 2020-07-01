@@ -179,7 +179,7 @@ namespace CustomerService
 				{
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
-					string sql = "select * from client where id = " + arrRs[1];
+					string sql = "select * from client where ipcas like '" + arrRs[1]+"'";
 					MySqlCommand cmd = new MySqlCommand(sql, conn);
 					using (DbDataReader reader = cmd.ExecuteReader())
 					{
@@ -187,13 +187,13 @@ namespace CustomerService
 						{
 							while (reader.Read())
 							{
-								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0, Function.data_services);
+								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(2), (string)reader.GetValue(3), (int)reader.GetValue(4), 0, Function.data_services);
 							}
 						}
 					}
 
 
-					sql = "UPDATE client SET idle=1, active=1 WHERE id=" + arrRs[1];
+					sql = "UPDATE client SET idle=1, active=1 WHERE ipcas like '" + arrRs[1] + "'";
 					cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
 					conn.Close();
@@ -237,7 +237,7 @@ namespace CustomerService
 					int client_id = 0, service_id = 0, gate = 0;
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND and cus.`receive_client_id`=0 cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
 					MySqlCommand cm = new MySqlCommand(sql, conn);
 					using (DbDataReader reader = cm.ExecuteReader())
 					{
@@ -245,15 +245,15 @@ namespace CustomerService
 						{
 							while (reader.Read())
 							{
-								if (!clients.ContainsValue((int)reader.GetValue(7))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
+								if (!clients.ContainsValue((int)reader.GetValue(8))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
 								{
-									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(7));
+									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(8));
 									cus_id = (int)reader.GetValue(0);
 									client_id = (int)reader.GetValue(4);
-									service_id = (int)reader.GetValue(5);
-									gate = (int)reader.GetValue(7);
+									service_id = (int)reader.GetValue(6);
+									gate = (int)reader.GetValue(8);
 									isAdd = true;
-									SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(5), reader.GetValue(6).ToString(), (int)reader.GetValue(7), (int)reader.GetValue(0), "");
+									SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(6), reader.GetValue(7).ToString(), (int)reader.GetValue(8), (int)reader.GetValue(0), "");
 								}
 							}
 						}
@@ -298,12 +298,31 @@ namespace CustomerService
 							
 							while (reader.Read())
 							{
-								data +="|"+ reader.GetValue(0).ToString()+"_"+ reader.GetValue(2).ToString() + "_" + reader.GetValue(3) + "_" + reader.GetValue(4);
+								data +="|"+ reader.GetValue(0).ToString()+"_"+ reader.GetValue(3).ToString() + "_" + reader.GetValue(4) + "_" + reader.GetValue(5);
 							}
 							
 					}
 						SocketRun.sendData("switch",Int32.Parse(arrRs[1]), 0, "", 0, 0, data);
 					}
+					conn.Close();
+				}
+				else if (arrRs[0] == "pass")
+				{					
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+
+					string sql = "insert into cus_wait(cus_id,service_id,receive_client_id,priority) values(@cus_id,@service_id,@receive_client_id,@priority)";
+					MySqlCommand cmd = new MySqlCommand();
+					cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
+
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = arrRs[4];
+					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = arrRs[2];
+					cmd.Parameters.Add("@receive_client_id", MySqlDbType.Int32).Value = arrRs[3];
+					cmd.Parameters.Add("@priority", MySqlDbType.Int32).Value = 1;
+					cmd.ExecuteNonQuery();
+					SocketRun.sendData("pass", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
 					conn.Close();
 				}
 

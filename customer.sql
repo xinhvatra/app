@@ -34,7 +34,7 @@ CREATE TABLE `client` (
 /*Data for the table `client` */
 
 insert  into `client`(`id`,`ipcas`,`service_id`,`name`,`gate`,`idle`,`active`) values 
-(1,'TNGNQKY',1,'Nguyễn Quý Kỳ',1,1,1),
+(1,'TNGNQKY',1,'Nguyễn Quý Kỳ',1,0,1),
 (2,'TNGNTHAO',1,'Nguyễn Phương Thảo',2,1,1),
 (3,'TNGDLIEU',1,'Đinh Dương Liễu',3,1,1),
 (4,'TNGNTHP',1,'Nguyễn Thị Hà Phương',4,0,1),
@@ -57,7 +57,7 @@ CREATE TABLE `cus_deal` (
   `rate` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=232 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=240 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_deal` */
 
@@ -292,7 +292,15 @@ insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`rate`,`ti
 (228,1221,3,1,3,1,'2020-06-30 16:54:49'),
 (229,1222,3,1,3,1,'2020-06-30 16:55:51'),
 (230,1223,3,1,3,1,'2020-06-30 16:58:53'),
-(231,1224,3,1,3,1,'2020-06-30 17:03:36');
+(231,1224,3,1,3,1,'2020-06-30 17:03:36'),
+(232,1225,1,1,1,1,'2020-07-01 09:16:41'),
+(233,1226,1,1,1,1,'2020-07-01 09:21:12'),
+(234,1227,1,1,1,1,'2020-07-01 09:24:14'),
+(235,1228,1,1,1,1,'2020-07-01 09:25:20'),
+(236,1229,1,1,1,1,'2020-07-01 09:26:14'),
+(237,1230,1,1,1,1,'2020-07-01 10:44:07'),
+(238,1231,1,1,1,1,'2020-07-01 13:33:40'),
+(239,1230,1,1,1,1,'2020-07-01 14:19:16');
 
 /*Table structure for table `cus_rating` */
 
@@ -318,20 +326,25 @@ DROP TABLE IF EXISTS `cus_wait`;
 CREATE TABLE `cus_wait` (
   `cus_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
-  `force_service_id` smallint(3) NOT NULL DEFAULT '0',
+  `receive_client_id` smallint(3) NOT NULL DEFAULT '0',
   `priority` smallint(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`cus_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_wait` */
 
-insert  into `cus_wait`(`cus_id`,`service_id`,`force_service_id`,`priority`) values 
+insert  into `cus_wait`(`cus_id`,`service_id`,`receive_client_id`,`priority`) values 
+(1231,1,9,1),
+(1232,1,0,0),
+(1233,1,0,0),
+(1234,1,0,0),
 (2157,2,0,0),
 (2158,2,0,1),
 (2159,2,0,0),
 (2160,2,0,0),
 (2161,2,0,0),
-(2162,2,0,0);
+(2162,2,0,0),
+(2163,2,0,0);
 
 /*Table structure for table `services` */
 
@@ -347,8 +360,8 @@ CREATE TABLE `services` (
 /*Data for the table `services` */
 
 insert  into `services`(`id`,`name`,`current_cus`) values 
-(1,'Giao dịch tiền gửi',1224),
-(2,'Giao dịch Thẻ, Emobile-banking',2162),
+(1,'Giao dịch tiền gửi',1234),
+(2,'Giao dịch Thẻ, Emobile-banking',2163),
 (3,'Giao dịch tiền vay',3001);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -131,6 +131,7 @@ namespace CustomerServiceClient
 			String[] arrRs = st.Split('|');
 			if (arrRs[0] == "login")
 			{
+				SocketRun.id =Int32.Parse(arrRs[1]);
 				lbTop.Text = arrRs[3] + " - Cổng số " + arrRs[4];
 				bt1.Visible = true;				
 				lbCenter.Text = "";				
@@ -217,13 +218,13 @@ namespace CustomerServiceClient
 				{					
 					String[] arr = arrRs[i].Split('_');
 					//MessageBox.Show(arr[1].ToString().Trim());
-					if (arr[2].ToString().Trim().Equals("True"))
+					if (arr[3].ToString().Trim().Equals("True"))
 					{
-						arr[2] = "Rảnh";
+						arr[3] = "Rảnh";
 					}
 					else
 					{
-						arr[2] = "Bận";
+						arr[3] = "Bận";
 					}
 					
 					Switch.data.Rows.Add(arr);
@@ -234,7 +235,7 @@ namespace CustomerServiceClient
 				foreach (DataGridViewRow dgvr in Switch.dtgrid.Rows)
 				{
 					//MessageBox.Show(dgvr.Cells[1].Value+"");
-					string vl = dgvr.Cells[2].Value+"";
+					string vl = dgvr.Cells[3].Value+"";
 					if (vl.Equals("Bận"))
 					{
 						dgvr.DefaultCellStyle.ForeColor = Color.Red;
@@ -247,16 +248,22 @@ namespace CustomerServiceClient
 				DataGridViewCheckBoxColumn check = new DataGridViewCheckBoxColumn();
 				check.HeaderText = "Chọn";
 				Switch.dtgrid.Columns.Add(check);
+				Switch.dtgrid.Columns[0].Visible = false;
+			}
+			else if (arrRs[0] == "pass")
+			{
+				MessageBox.Show("Bạn đã chuyển tiếp khách hàng số " + customer + " cho GVD " +Switch.gdv + " tại cửa số " + Switch.gate);
+				swi.Close();
 			}
 
 			//}
 			//catch { }
 
 		}
-		public static Form sw;
+		public static Switch swi;
 		private void button2_Click(object sender, EventArgs e)
 		{
-			Switch swi = new Switch();
+			swi = new Switch();
 			//swi.Parent = this;
 			swi.Show();
 			

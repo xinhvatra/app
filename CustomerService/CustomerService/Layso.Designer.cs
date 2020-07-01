@@ -75,6 +75,7 @@
 			this.MinimizeBox = false;
 			this.Name = "Layso";
 			this.ShowIcon = false;
+			this.Load += new System.EventHandler(this.Layso_Load);
 			this.ResumeLayout(false);
 
 		}
