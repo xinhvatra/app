@@ -50,24 +50,26 @@ namespace CustomerService
 				});
 				t.Start(clientSocket);
 			}
-		}		
+		}
 		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id, string data)
-		{	
+		{
 			try
 			{
 				var netStream = new NetworkStream(clientSocket);
 				BinaryWriter writer = new BinaryWriter(netStream);
 				//writer.AutoFlush = true;
-			//	MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
-				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id+data);
+				//	MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
+				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
 				//writer.Close();
 			}
 			catch (Exception) { }
 		}
+		public static IPEndPoint ip;
 		private static void getData(Socket soc)
 		{
 			try
 			{
+				ip = clientSocket.RemoteEndPoint as IPEndPoint;				
 				var netStream = new NetworkStream(clientSocket);
 				BinaryReader reader = new BinaryReader(netStream);
 				string processStr = reader.ReadString();
@@ -76,9 +78,29 @@ namespace CustomerService
 				fm.Invoke(a, processStr);
 				netStream.Close();
 			}
-			catch (Exception )
+			catch (Exception)
 			{
-				
+
+			}
+		}
+
+		const int PORT_NUMBER_CLIENT = 9997;
+		static string ipClient = "127.0.0.1";
+		public static TcpClient client;
+		public static void connectClient(string send_name,int customer_id)
+		{
+			try
+			{
+				client = new TcpClient();
+				client.Connect(ipClient, PORT_NUMBER_CLIENT);
+				NetworkStream stream = client.GetStream();
+				BinaryWriter writer = new BinaryWriter(stream);
+				writer.Write("forcecustomer" + "|" + send_name + "|" + customer_id);
+				MessageBox.Show("send client " + "forcecustomer" + "|" + send_name + "|" + customer_id);
+				//stream.Close();
+			}
+			catch (Exception)
+			{
 			}
 		}
 	}

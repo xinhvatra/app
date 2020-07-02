@@ -17,19 +17,21 @@ namespace CustomerServiceClient
 
 		private const int PORT_NUMBER = 9999;
 		private const int PORT_NUMBER_ANDROID = 9998;
+		private const int PORT_NUMBER_CLIENT = 9997;
 		private static TcpClient client;
 		private static Stream stream;
 		public static Form fm;
 		public static int id, android;
-		public static string ipcas, name, gate, ipServer,ipAndroid;
+		public static string ipcas, name, gate, ipServer, ipAndroid;
 		public static void SocketCreate()
 		{
 			loadConfig();
 			connect();
-			sendData("login",0);
+			sendData("login", 0);
+			listenServer();
 			if (android == 1)
 			{
-				connectAndroid1();
+				connectAndroid();
 			}
 		}
 		public static void connect()
@@ -46,14 +48,14 @@ namespace CustomerServiceClient
 				Application.Exit();
 			}
 		}
-		static TcpListener listener;
-		static TcpClient cl;
-		public static void connectAndroid1()
+
+		static TcpClient clientAndroid;
+		public static void connectAndroid()
 		{
 			try
 			{
-				cl = new TcpClient();
-				cl.Connect(ipAndroid, PORT_NUMBER_ANDROID);
+				clientAndroid = new TcpClient();
+				clientAndroid.Connect(ipAndroid, PORT_NUMBER_ANDROID);
 			}
 			catch (Exception)
 			{
@@ -62,46 +64,67 @@ namespace CustomerServiceClient
 			}
 			Thread t = new Thread((obj) =>
 			{
-				ListenAndroid1();
+				ListenAndroid();
 			});
 			t.Start();
 
 		}
-		public static void ListenAndroid1()
+		public static void ListenAndroid()
 		{
-			
-			nt = cl.GetStream();
+
+			streamAndroid = clientAndroid.GetStream();
 			//processDataAndroid();
 
 
 		}
-		public static void connectAndroid()
+		//=================================Listen server pass customer=========================================================/
+		static TcpListener listenerServer;
+		static Socket serverClient;
+		static NetworkStream streamServer;
+		static NetworkStream streamAndroid;
+		public static void listenServer()
 		{
-			IPAddress address = IPAddress.Parse("192.168.1.35");
-			listener = new TcpListener(address, PORT_NUMBER_ANDROID);
-			listener.Start();
+			string ipadress = Dns.GetHostEntry(Dns.GetHostName())
+.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)
+.ToString();
+			IPAddress address = IPAddress.Parse("127.0.0.1");
+			listenerServer = new TcpListener(address, PORT_NUMBER_CLIENT);
+			listenerServer.Start();
 
 			Thread t = new Thread((obj) =>
 			{
 				while (true)
 				{
-					ListenAndroid();
+					ListenServer();
 				}
 			});
 			t.Start();
 
 		}
-		static TcpClient clientSocket;
-		static NetworkStream nt;
-		public static void ListenAndroid()
+
+		public static void ListenServer()
 		{
 
-			clientSocket = listener.AcceptTcpClient();
-			clientSocket.NoDelay = true;
-			nt = clientSocket.GetStream();
+			serverClient = listenerServer.AcceptSocket();
+			serverClient.NoDelay = true;
+			streamServer = new NetworkStream(serverClient);
+			Thread thr = new Thread(getDataServer);
+			thr.Start();
 			//processDataAndroid();
 
 		}
+		private static void getDataServer()
+		{
+			BinaryReader reader = new BinaryReader(stream);
+			string processStr = reader.ReadString();
+			//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
+			Delegate a = new Action<String>(Client.processData);
+			fm.Invoke(a, processStr);
+			stream.Close();
+
+		}
+		//=================================End=========================================================/
+
 		public static void processDataAndroid()
 		{
 			//getDataAndroid();
@@ -111,7 +134,7 @@ namespace CustomerServiceClient
 		public static void getDataAndroid()
 		{
 
-			StreamReader reader = new StreamReader(nt);
+			StreamReader reader = new StreamReader(streamAndroid);
 			string line;
 			line = reader.ReadLine();
 		}
@@ -119,16 +142,17 @@ namespace CustomerServiceClient
 		{
 			try
 			{
-				StreamWriter writer = new StreamWriter(nt);
+				StreamWriter writer = new StreamWriter(streamAndroid);
 				writer.WriteLine(data);
 				//MessageBox.Show("send data to android: ");
 				writer.Flush();
 				//MessageBox.Show("co khach: "+data);
-			} catch (Exception e)
+			}
+			catch (Exception)
 			{
 				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!");
 				Application.Exit();
- 			}
+			}
 
 		}
 		public static void SocketClose()
@@ -144,11 +168,12 @@ namespace CustomerServiceClient
 			Delegate a = new Action<String>(Client.processData);
 			fm.Invoke(a, processStr);
 			stream.Close();
-			
+
 		}
-		public static void sendData(string method,int service)
+	
+		public static void sendData(string method, int service)
 		{
-			BinaryWriter writer = new BinaryWriter(stream);			
+			BinaryWriter writer = new BinaryWriter(stream);
 			if (method.Equals("login"))
 			{
 				writer.Write(method + "|" + ipcas + "|" + service);
@@ -157,18 +182,18 @@ namespace CustomerServiceClient
 			{
 				writer.Write(method + "|" + id + "|" + service);
 			}
-			
+
 			if (!method.Equals("logout"))
-			{				
+			{
 				Thread thr = new Thread(getData);
 				thr.Start();
 			}
-			
+
 		}
-		public static void sendDataSwitch(string method,int service_id, int receive_id,int customer)
+		public static void sendDataSwitch(string method, int service_id, int receive_id, int customer)
 		{
 			BinaryWriter writer = new BinaryWriter(stream);
-			writer.Write(method + "|"+id+"|" + service_id + "|" + receive_id+"|"+ customer+"|"+gate);
+			writer.Write(method + "|" + id + "|" + service_id + "|" + receive_id + "|" + customer + "|" + gate);
 			Thread thr = new Thread(getData);
 			thr.Start();
 		}
@@ -211,8 +236,8 @@ namespace CustomerServiceClient
 				{
 					android = Convert.ToInt32(node.SelectSingleNode("androidConnect").InnerText);
 				}
-				catch (Exception) { }				
-			
+				catch (Exception) { }
+
 			}
 		}
 	}

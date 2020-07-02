@@ -255,6 +255,11 @@ namespace CustomerServiceClient
 				MessageBox.Show("Bạn đã chuyển tiếp khách hàng số " + customer + " cho GVD " +Switch.gdv + " tại cửa số " + Switch.gate);
 				swi.Close();
 			}
+			else if (arrRs[0] == "forcecustomer")
+			{
+				MessageBox.Show("Bạn đã nhận được chuyển tiếp khách hàng số " + arrRs[2] + " từ GVD " + arrRs[1]);
+				swi.Close();
+			}
 
 			//}
 			//catch { }

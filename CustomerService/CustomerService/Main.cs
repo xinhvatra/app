@@ -166,7 +166,6 @@ namespace CustomerService
 		//	await myTask;			
 		//}
 		public static bool isProcess = false;
-		static Semaphore sm = new Semaphore(1, 1);
 		public static void processData(string st)
 		{
 			{
@@ -193,7 +192,7 @@ namespace CustomerService
 					}
 
 
-					sql = "UPDATE client SET idle=1, active=1 WHERE ipcas like '" + arrRs[1] + "'";
+					sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip.Address + "' WHERE  ipcas like '" + arrRs[1] + "'";
 					cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
 					conn.Close();
@@ -237,7 +236,7 @@ namespace CustomerService
 					int client_id = 0, service_id = 0, gate = 0;
 					MySqlConnection conn = Function.GetConnection();
 					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND and cus.`receive_client_id`=0 cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`=0 AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
 					MySqlCommand cm = new MySqlCommand(sql, conn);
 					using (DbDataReader reader = cm.ExecuteReader())
 					{
@@ -323,7 +322,24 @@ namespace CustomerService
 					cmd.Parameters.Add("@priority", MySqlDbType.Int32).Value = 1;
 					cmd.ExecuteNonQuery();
 					SocketRun.sendData("pass", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+
+					//sql = "select name from client where id = " + arrRs[1] ;
+					// cmd = new MySqlCommand(sql, conn);
+					//using (DbDataReader reader = cmd.ExecuteReader())
+					//{
+					//	if (reader.HasRows)
+					//	{
+					//		while (reader.Read())
+					//		{	
+					//			SocketRun.connectClient(reader.GetValue(0).ToString(), Int32.Parse(arrRs[4]));
+					//			//SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(2), (string)reader.GetValue(3), (int)reader.GetValue(4), 0, Function.data_services);
+					//		}
+					//	}
+					//}
+					
+					
 					conn.Close();
+					SocketRun.connectClient("tétts", Int32.Parse(arrRs[4]));
 				}
 
 				//}
