@@ -20,7 +20,7 @@ namespace CustomerServiceClient
 		{
 			InitializeComponent();
 			dtgrid = new DataGridView();
-			dtgrid.Size = new Size(340, 190);
+			dtgrid.Size = new Size(350, 190);
 			dtgrid.Location = new Point(25, 50);
 			this.Controls.Add(dtgrid);
 			data = new DataTable();

@@ -28,21 +28,22 @@ CREATE TABLE `client` (
   `gate` int(5) NOT NULL,
   `idle` tinyint(1) NOT NULL DEFAULT '0',
   `active` tinyint(1) NOT NULL DEFAULT '0',
+  `ip_address` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `client` */
 
-insert  into `client`(`id`,`ipcas`,`service_id`,`name`,`gate`,`idle`,`active`) values 
-(1,'TNGNQKY',1,'Nguyễn Quý Kỳ',1,0,1),
-(2,'TNGNTHAO',1,'Nguyễn Phương Thảo',2,1,1),
-(3,'TNGDLIEU',1,'Đinh Dương Liễu',3,1,1),
-(4,'TNGNTHP',1,'Nguyễn Thị Hà Phương',4,0,1),
-(5,'TNGNLH',1,'Nguyễn Lan Hương',5,0,1),
-(6,'TNGMDUNG',1,'Ma Thị Dung',6,1,1),
-(7,'TNGVTHOA',2,'Vi Thị Thoa',7,0,1),
-(8,'TNGVQHAI',2,'Vũ Quang Hải',8,1,1),
-(9,'',2,'Ngô Huyền Trang',9,0,1);
+insert  into `client`(`id`,`ipcas`,`service_id`,`name`,`gate`,`idle`,`active`,`ip_address`) values 
+(1,'TNGNQKY',1,'Nguyễn Quý Kỳ',1,1,1,'127.0.0.1'),
+(2,'TNGNTHAO',1,'Nguyễn Phương Thảo',2,1,1,''),
+(3,'TNGDLIEU',1,'Đinh Dương Liễu',3,0,0,'10.27.0.46'),
+(4,'TNGNTHP',1,'Nguyễn Thị Hà Phương',4,0,1,''),
+(5,'TNGNLH',1,'Nguyễn Lan Hương',5,0,1,''),
+(6,'TNGMDUNG',1,'Ma Thị Dung',6,1,1,''),
+(7,'TNGVTHOA',2,'Vi Thị Thoa',7,0,1,''),
+(8,'TNGVQHAI',2,'Vũ Quang Hải',8,0,0,'10.27.0.46'),
+(9,'TNGTRANG',2,'Ngô Huyền Trang',9,0,1,'');
 
 /*Table structure for table `cus_deal` */
 
@@ -57,7 +58,7 @@ CREATE TABLE `cus_deal` (
   `rate` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=240 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=277 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_deal` */
 
@@ -300,7 +301,44 @@ insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`rate`,`ti
 (236,1229,1,1,1,1,'2020-07-01 09:26:14'),
 (237,1230,1,1,1,1,'2020-07-01 10:44:07'),
 (238,1231,1,1,1,1,'2020-07-01 13:33:40'),
-(239,1230,1,1,1,1,'2020-07-01 14:19:16');
+(239,1230,1,1,1,1,'2020-07-01 14:19:16'),
+(240,1232,1,1,1,1,'2020-07-02 10:31:03'),
+(241,2158,8,2,8,1,'2020-07-02 10:39:31'),
+(242,2157,8,2,8,1,'2020-07-02 10:42:50'),
+(243,2159,8,2,8,1,'2020-07-02 10:43:29'),
+(244,2160,8,2,8,1,'2020-07-02 10:50:56'),
+(245,2161,8,2,8,1,'2020-07-02 10:54:48'),
+(246,2162,8,2,8,1,'2020-07-03 07:24:50'),
+(247,2163,8,2,8,1,'2020-07-03 07:41:18'),
+(248,2164,8,2,8,1,'2020-07-03 07:43:56'),
+(249,2165,8,2,8,1,'2020-07-03 07:50:33'),
+(250,2166,8,2,8,1,'2020-07-03 07:52:40'),
+(251,2167,8,2,8,1,'2020-07-03 08:00:10'),
+(252,2168,8,2,8,1,'2020-07-03 08:01:21'),
+(253,2169,8,2,8,1,'2020-07-03 08:06:54'),
+(254,2170,8,2,8,1,'2020-07-03 08:09:11'),
+(255,2171,8,2,8,1,'2020-07-03 08:12:13'),
+(256,2172,8,2,8,1,'2020-07-03 09:29:26'),
+(257,2173,8,2,8,1,'2020-07-03 09:53:53'),
+(258,2174,8,2,8,1,'2020-07-03 09:54:14'),
+(259,2175,8,2,8,1,'2020-07-03 10:08:11'),
+(260,2176,8,2,8,1,'2020-07-03 10:15:15'),
+(261,2177,8,2,8,1,'2020-07-03 10:16:42'),
+(262,2178,8,2,8,1,'2020-07-03 10:37:50'),
+(263,2179,8,2,8,1,'2020-07-03 10:38:17'),
+(264,1233,3,1,3,1,'2020-07-03 10:38:47'),
+(265,1234,3,1,3,1,'2020-07-03 10:39:33'),
+(266,1235,3,1,3,1,'2020-07-03 10:40:15'),
+(267,2180,8,2,8,1,'2020-07-03 14:10:54'),
+(268,2181,8,2,8,1,'2020-07-03 14:16:07'),
+(269,2182,8,2,8,1,'2020-07-03 14:18:57'),
+(270,2183,8,2,8,1,'2020-07-03 14:20:38'),
+(271,2184,8,2,8,1,'2020-07-03 14:22:42'),
+(272,2185,8,2,8,1,'2020-07-03 14:25:24'),
+(273,2186,8,2,8,1,'2020-07-03 14:27:45'),
+(274,2187,8,2,8,1,'2020-07-03 14:28:40'),
+(275,2188,8,2,8,1,'2020-07-03 14:43:31'),
+(276,2189,8,2,8,1,'2020-07-03 14:43:35');
 
 /*Table structure for table `cus_rating` */
 
@@ -334,17 +372,19 @@ CREATE TABLE `cus_wait` (
 /*Data for the table `cus_wait` */
 
 insert  into `cus_wait`(`cus_id`,`service_id`,`receive_client_id`,`priority`) values 
-(1231,1,9,1),
-(1232,1,0,0),
-(1233,1,0,0),
-(1234,1,0,0),
-(2157,2,0,0),
-(2158,2,0,1),
-(2159,2,0,0),
-(2160,2,0,0),
-(2161,2,0,0),
-(2162,2,0,0),
-(2163,2,0,0);
+(1236,1,0,0),
+(1237,1,0,0),
+(1238,1,0,0),
+(1239,1,0,0),
+(1240,1,0,0),
+(1241,1,0,0),
+(1242,1,0,0),
+(1243,1,0,0),
+(1244,1,0,0),
+(1245,1,0,0),
+(1246,1,0,0),
+(2190,2,0,0),
+(2191,2,0,0);
 
 /*Table structure for table `services` */
 
@@ -360,8 +400,8 @@ CREATE TABLE `services` (
 /*Data for the table `services` */
 
 insert  into `services`(`id`,`name`,`current_cus`) values 
-(1,'Giao dịch tiền gửi',1234),
-(2,'Giao dịch Thẻ, Emobile-banking',2163),
+(1,'Giao dịch tiền gửi',1246),
+(2,'Giao dịch Thẻ, Emobile-banking',2191),
 (3,'Giao dịch tiền vay',3001);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

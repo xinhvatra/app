@@ -26,7 +26,7 @@ namespace CustomerService
 		public static Form fm;
 		public static void SocketCreate()
 		{
-			IPAddress address = IPAddress.Parse("127.0.0.1");
+			IPAddress address = IPAddress.Parse("10.27.0.46");
 			listener = new TcpListener(address, PORT_NUMBER);
 			listener.Start();
 			for (int i = 0; i < MAX_CONNECTION; i++)
@@ -73,7 +73,6 @@ namespace CustomerService
 				var netStream = new NetworkStream(clientSocket);
 				BinaryReader reader = new BinaryReader(netStream);
 				string processStr = reader.ReadString();
-
 				Delegate a = new Action<String>(Main.processData);
 				fm.Invoke(a, processStr);
 				netStream.Close();
@@ -84,10 +83,9 @@ namespace CustomerService
 			}
 		}
 
-		const int PORT_NUMBER_CLIENT = 9997;
-		static string ipClient = "127.0.0.1";
+		const int PORT_NUMBER_CLIENT = 9997;		
 		public static TcpClient client;
-		public static void connectClient(string send_name,int customer_id)
+		public static void connectClient(string ipClient, string send_name,int customer_id)
 		{
 			try
 			{
@@ -96,7 +94,7 @@ namespace CustomerService
 				NetworkStream stream = client.GetStream();
 				BinaryWriter writer = new BinaryWriter(stream);
 				writer.Write("forcecustomer" + "|" + send_name + "|" + customer_id);
-				MessageBox.Show("send client " + "forcecustomer" + "|" + send_name + "|" + customer_id);
+				//MessageBox.Show("send client "+ipClient + "forcecustomer" + "|" + send_name + "|" + customer_id);
 				//stream.Close();
 			}
 			catch (Exception)

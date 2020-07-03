@@ -21,7 +21,7 @@ namespace CustomerServiceClient
 		private static TcpClient client;
 		private static Stream stream;
 		public static Form fm;
-		public static int id, android;
+		public static int client_id, android;
 		public static string ipcas, name, gate, ipServer, ipAndroid;
 		public static void SocketCreate()
 		{
@@ -87,16 +87,15 @@ namespace CustomerServiceClient
 			string ipadress = Dns.GetHostEntry(Dns.GetHostName())
 .AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)
 .ToString();
-			IPAddress address = IPAddress.Parse("127.0.0.1");
+			IPAddress address = IPAddress.Parse(ipadress);
 			listenerServer = new TcpListener(address, PORT_NUMBER_CLIENT);
 			listenerServer.Start();
 
 			Thread t = new Thread((obj) =>
 			{
-				while (true)
-				{
-					ListenServer();
-				}
+
+				ListenServer();
+
 			});
 			t.Start();
 
@@ -104,21 +103,21 @@ namespace CustomerServiceClient
 
 		public static void ListenServer()
 		{
+			while (true)
+			{
+				serverClient = listenerServer.AcceptSocket();
 
-			serverClient = listenerServer.AcceptSocket();
-			serverClient.NoDelay = true;
-			streamServer = new NetworkStream(serverClient);
-			Thread thr = new Thread(getDataServer);
-			thr.Start();
-			//processDataAndroid();
-
+				Thread thr = new Thread(getDataServer);
+				thr.Start();
+				//getDataServer();
+			}
 		}
 		private static void getDataServer()
 		{
-			BinaryReader reader = new BinaryReader(stream);
-			string processStr = reader.ReadString();
-			//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
-			Delegate a = new Action<String>(Client.processData);
+			streamServer = new NetworkStream(serverClient);
+			BinaryReader reader = new BinaryReader(streamServer);
+			string processStr = reader.ReadString();			
+			Delegate a = new Action<String>(Client.processDataAsync);
 			fm.Invoke(a, processStr);
 			stream.Close();
 
@@ -165,12 +164,12 @@ namespace CustomerServiceClient
 			BinaryReader reader = new BinaryReader(stream);
 			string processStr = reader.ReadString();
 			//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
-			Delegate a = new Action<String>(Client.processData);
+			Delegate a = new Action<String>(Client.processDataAsync);
 			fm.Invoke(a, processStr);
 			stream.Close();
 
 		}
-	
+
 		public static void sendData(string method, int service)
 		{
 			BinaryWriter writer = new BinaryWriter(stream);
@@ -180,7 +179,7 @@ namespace CustomerServiceClient
 			}
 			else
 			{
-				writer.Write(method + "|" + id + "|" + service);
+				writer.Write(method + "|" + client_id + "|" + service);
 			}
 
 			if (!method.Equals("logout"))
@@ -193,7 +192,7 @@ namespace CustomerServiceClient
 		public static void sendDataSwitch(string method, int service_id, int receive_id, int customer)
 		{
 			BinaryWriter writer = new BinaryWriter(stream);
-			writer.Write(method + "|" + id + "|" + service_id + "|" + receive_id + "|" + customer + "|" + gate);
+			writer.Write(method + "|" + client_id + "|" + service_id + "|" + receive_id + "|" + customer + "|" + gate);
 			Thread thr = new Thread(getData);
 			thr.Start();
 		}
@@ -210,17 +209,7 @@ namespace CustomerServiceClient
 				{
 					ipcas = (node.SelectSingleNode("id").InnerText);
 				}
-				catch (Exception) { }
-				try
-				{
-					name = node.SelectSingleNode("name").InnerText;
-				}
-				catch (Exception) { }
-				try
-				{
-					gate = node.SelectSingleNode("gate").InnerText;
-				}
-				catch (Exception) { }
+				catch (Exception) { }			
 				try
 				{
 					ipServer = node.SelectSingleNode("ipServer").InnerText;

@@ -168,185 +168,238 @@ namespace CustomerService
 		public static bool isProcess = false;
 		public static void processData(string st)
 		{
-			{
-				isProcess = true;
 
-				//try
-				//{
-				String[] arrRs = st.Split('|');
-				if (arrRs[0] == "login")
+			isProcess = true;
+
+			//try
+			//{
+			String[] arrRs = st.Split('|');
+			if (arrRs[0] == "login")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "select * from client where ipcas like '" + arrRs[1] + "'";
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				using (DbDataReader reader = cmd.ExecuteReader())
 				{
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					string sql = "select * from client where ipcas like '" + arrRs[1]+"'";
-					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					using (DbDataReader reader = cmd.ExecuteReader())
+					if (reader.HasRows)
 					{
-						if (reader.HasRows)
+						while (reader.Read())
 						{
-							while (reader.Read())
+							SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(2), (string)reader.GetValue(3), (int)reader.GetValue(4), 0, Function.data_services);
+						}
+					}
+				}
+
+
+				sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip.Address + "' WHERE  ipcas like '" + arrRs[1] + "'";
+				cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+			}
+			else if (arrRs[0] == "logout")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				String sql = "UPDATE client SET idle=0, active=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+			}
+			else if (arrRs[0] == "idle")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				String sql = "UPDATE client SET idle=1 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+				SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+			}
+			else if (arrRs[0] == "notidle")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				String sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+				SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+			}
+
+			else if (arrRs[0] == "data")
+			{
+
+				//MessageBox.Show("xu ly tin nhan tu client: " + st);
+				bool isAdd = false;
+				int cus_id = 0;
+				int client_id = 0, service_id = 0, gate = 0;
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`=0 AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+				MySqlCommand cm = new MySqlCommand(sql, conn);
+				using (DbDataReader reader = cm.ExecuteReader())
+				{
+					if (reader.HasRows)
+					{
+						while (reader.Read())
+						{
+							if (!clients.ContainsValue((int)reader.GetValue(8))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
 							{
-								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(2), (string)reader.GetValue(3), (int)reader.GetValue(4), 0, Function.data_services);
+								clients.Add((int)reader.GetValue(0), (int)reader.GetValue(8));
+								cus_id = (int)reader.GetValue(0);
+								client_id = (int)reader.GetValue(4);
+								service_id = (int)reader.GetValue(6);
+								gate = (int)reader.GetValue(8);
+								isAdd = true;
+								SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(6), reader.GetValue(7).ToString(), (int)reader.GetValue(8), (int)reader.GetValue(0), "");
 							}
 						}
 					}
+				}
+				//cập nhật trạng thái tiếp khách client					
+				sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
 
-
-					sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip.Address + "' WHERE  ipcas like '" + arrRs[1] + "'";
+				if (isAdd)//xóa khách khỏi bảng chờ
+				{
+					sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
 					cmd = new MySqlCommand(sql, conn);
 					cmd.ExecuteNonQuery();
-					conn.Close();
-				}
-				else if (arrRs[0] == "logout")
-				{
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					String sql = "UPDATE client SET idle=0, active=0 WHERE id=" + arrRs[1];
-					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					cmd.ExecuteNonQuery();
-					conn.Close();
-				}
-				else if (arrRs[0] == "idle")
-				{
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					String sql = "UPDATE client SET idle=1 WHERE id=" + arrRs[1];
-					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					cmd.ExecuteNonQuery();
-					conn.Close();
-					SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
-				}
-				else if (arrRs[0] == "notidle")
-				{
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					String sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
-					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					cmd.ExecuteNonQuery();
-					conn.Close();
-					SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
-				}
 
-				else if (arrRs[0] == "data")
-				{
-
-					//MessageBox.Show("xu ly tin nhan tu client: " + st);
-					bool isAdd = false;
-					int cus_id = 0;
-					int client_id = 0, service_id = 0, gate = 0;
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`=0 AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
-					MySqlCommand cm = new MySqlCommand(sql, conn);
-					using (DbDataReader reader = cm.ExecuteReader())
-					{
-						if (reader.HasRows)
-						{
-							while (reader.Read())
-							{
-								if (!clients.ContainsValue((int)reader.GetValue(8))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
-								{
-									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(8));
-									cus_id = (int)reader.GetValue(0);
-									client_id = (int)reader.GetValue(4);
-									service_id = (int)reader.GetValue(6);
-									gate = (int)reader.GetValue(8);
-									isAdd = true;
-									SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(6), reader.GetValue(7).ToString(), (int)reader.GetValue(8), (int)reader.GetValue(0), "");
-								}
-							}
-						}
-					}
-					//cập nhật trạng thái tiếp khách client					
-					sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
-					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					cmd.ExecuteNonQuery();
-
-					if (isAdd)//xóa khách khỏi bảng chờ
-					{
-						sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
-						cmd = new MySqlCommand(sql, conn);
-						cmd.ExecuteNonQuery();
-
-						//ghi lịch sử giao dịch
-						sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
-						cmd = new MySqlCommand();
-						cmd.Connection = conn;
-						cmd.CommandText = sql;
-
-						cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
-						cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
-						cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
-						cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
-						cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
-						cmd.ExecuteNonQuery();
-					}
-					conn.Close();
-				}
-				else if (arrRs[0] == "switch")
-				{
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					string sql = "select * from client where service_id = " + arrRs[2] + " AND active = 1 AND id NOT IN (SELECT id FROM CLIENT WHERE id = " + arrRs[1] + ")";
-					MySqlCommand cmd = new MySqlCommand(sql, conn);
-					string data = "";
-					using (DbDataReader reader = cmd.ExecuteReader())
-					{
-						if (reader.HasRows)
-						{
-							
-							while (reader.Read())
-							{
-								data +="|"+ reader.GetValue(0).ToString()+"_"+ reader.GetValue(3).ToString() + "_" + reader.GetValue(4) + "_" + reader.GetValue(5);
-							}
-							
-					}
-						SocketRun.sendData("switch",Int32.Parse(arrRs[1]), 0, "", 0, 0, data);
-					}
-					conn.Close();
-				}
-				else if (arrRs[0] == "pass")
-				{					
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-
-					string sql = "insert into cus_wait(cus_id,service_id,receive_client_id,priority) values(@cus_id,@service_id,@receive_client_id,@priority)";
-					MySqlCommand cmd = new MySqlCommand();
+					//ghi lịch sử giao dịch
+					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
 					cmd = new MySqlCommand();
 					cmd.Connection = conn;
 					cmd.CommandText = sql;
 
-					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = arrRs[4];
-					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = arrRs[2];
-					cmd.Parameters.Add("@receive_client_id", MySqlDbType.Int32).Value = arrRs[3];
-					cmd.Parameters.Add("@priority", MySqlDbType.Int32).Value = 1;
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
+					cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
+					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
+					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
+					cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
 					cmd.ExecuteNonQuery();
-					SocketRun.sendData("pass", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+				}
+				conn.Close();
+			}
+			else if (arrRs[0] == "switch")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "select * from client where service_id = " + arrRs[2] + " AND active = 1 AND id NOT IN (SELECT id FROM CLIENT WHERE id = " + arrRs[1] + ")";
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				string data = "";
+				using (DbDataReader reader = cmd.ExecuteReader())
+				{
+					if (reader.HasRows)
+					{
 
-					//sql = "select name from client where id = " + arrRs[1] ;
-					// cmd = new MySqlCommand(sql, conn);
-					//using (DbDataReader reader = cmd.ExecuteReader())
-					//{
-					//	if (reader.HasRows)
-					//	{
-					//		while (reader.Read())
-					//		{	
-					//			SocketRun.connectClient(reader.GetValue(0).ToString(), Int32.Parse(arrRs[4]));
-					//			//SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(2), (string)reader.GetValue(3), (int)reader.GetValue(4), 0, Function.data_services);
-					//		}
-					//	}
-					//}
-					
-					
-					conn.Close();
-					SocketRun.connectClient("tétts", Int32.Parse(arrRs[4]));
+						while (reader.Read())
+						{
+							data += "|" + reader.GetValue(0).ToString() + "_" + reader.GetValue(3).ToString() + "_" + reader.GetValue(4) + "_" + reader.GetValue(5);
+						}
+
+					}
+					SocketRun.sendData("switch", Int32.Parse(arrRs[1]), 0, "", 0, 0, data);
+				}
+				conn.Close();
+			}
+			else if (arrRs[0] == "pass")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+
+				string sql = "insert into cus_wait(cus_id,service_id,receive_client_id,priority) values(@cus_id,@service_id,@receive_client_id,@priority)";
+				MySqlCommand cmd = new MySqlCommand();
+				cmd = new MySqlCommand();
+				cmd.Connection = conn;
+				cmd.CommandText = sql;
+
+				cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = arrRs[4];
+				cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = arrRs[2];
+				cmd.Parameters.Add("@receive_client_id", MySqlDbType.Int32).Value = arrRs[3];
+				cmd.Parameters.Add("@priority", MySqlDbType.Int32).Value = 1;
+				cmd.ExecuteNonQuery();
+				SocketRun.sendData("pass", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+				//cập nhật trạng thái tiếp khách client					
+				sql = "UPDATE client SET idle=1 WHERE id=" + arrRs[1];
+				cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+
+				sql = "select name,ip_address from client where id = " + arrRs[1] + " or id = " + arrRs[3];
+				MySqlDataAdapter adap = new MySqlDataAdapter(sql, conn);
+				DataTable dt = new DataTable();
+				adap.Fill(dt);
+				if (dt.Rows.Count > 1)
+				{
+					using (adap)
+					{
+						string send_name, receive_ip;
+						receive_ip = dt.Rows[0][1].ToString();
+						send_name = dt.Rows[1][0].ToString();
+						SocketRun.connectClient(receive_ip, send_name, Int32.Parse(arrRs[4]));
+					}
 				}
 
-				//}
-				//catch
-				//{
-				//	//MessageBox.Show("catch");				
-				//}
+				conn.Close();
+				//SocketRun.connectClient("tétts", Int32.Parse(arrRs[4]));
+			}
+			else if (arrRs[0] == "forcecustomer")
+			{
+				
+				bool isAdd = false;
+				int cus_id = 0;
+				int client_id = 0, service_id = 0, gate = 0;
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`= " + arrRs[1] + " AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+				MySqlCommand cm = new MySqlCommand(sql, conn);
+				using (DbDataReader reader = cm.ExecuteReader())
+				{
+					if (reader.HasRows)
+					{
+						while (reader.Read())
+						{
+							if (!clients.ContainsValue((int)reader.GetValue(8))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
+							{
+								clients.Add((int)reader.GetValue(0), (int)reader.GetValue(8));
+								cus_id = (int)reader.GetValue(0);
+								client_id = (int)reader.GetValue(4);
+								service_id = (int)reader.GetValue(6);
+								gate = (int)reader.GetValue(8);
+								isAdd = true;
+								SocketRun.sendData("data", client_id, service_id, reader.GetValue(7).ToString(), gate, cus_id, "");
+							}
+						}
+					}
+				}
+
+				//cập nhật trạng thái tiếp khách client					
+				sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+
+				if (isAdd)//xóa khách khỏi bảng chờ
+				{
+					sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
+					cmd = new MySqlCommand(sql, conn);
+					cmd.ExecuteNonQuery();
+
+					//ghi lịch sử giao dịch
+					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
+					cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
+
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
+					cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
+					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
+					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
+					cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
+					cmd.ExecuteNonQuery();
+				}
+				conn.Close();
 			}
 
 		}
