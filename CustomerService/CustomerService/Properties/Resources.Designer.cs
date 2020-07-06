@@ -63,9 +63,29 @@ namespace CustomerService.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap chuyen_tien_qua_so_the_agribank {
+            get {
+                object obj = ResourceManager.GetObject("chuyen-tien-qua-so-the-agribank", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap dichvu {
             get {
                 object obj = ResourceManager.GetObject("dichvu", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dichvu1 {
+            get {
+                object obj = ResourceManager.GetObject("dichvu1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

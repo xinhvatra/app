@@ -34,22 +34,22 @@
 			// 
 			// button1
 			// 
+			this.button1.BackColor = System.Drawing.SystemColors.Control;
 			this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.button1.Font = new System.Drawing.Font(".VnVogue", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.button1.ForeColor = System.Drawing.Color.Blue;
-			this.button1.Image = global::CustomerService.Properties.Resources.maunen1;
 			this.button1.Location = new System.Drawing.Point(139, 253);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(197, 93);
 			this.button1.TabIndex = 0;
 			this.button1.Text = "Lấy số";
-			this.button1.UseVisualStyleBackColor = true;
+			this.button1.UseVisualStyleBackColor = false;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// button2
 			// 
 			this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.button2.Font = new System.Drawing.Font(".VnVogue", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.button2.ForeColor = System.Drawing.Color.Red;
 			this.button2.Image = global::CustomerService.Properties.Resources.maunen1;
 			this.button2.Location = new System.Drawing.Point(139, 365);
@@ -64,14 +64,18 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(484, 461);
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+			this.ClientSize = new System.Drawing.Size(500, 505);
 			this.ControlBox = false;
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.button1);
+			this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "Layso";
 			this.ShowIcon = false;
+			this.Load += new System.EventHandler(this.Layso_Load);
 			this.ResumeLayout(false);
 
 		}

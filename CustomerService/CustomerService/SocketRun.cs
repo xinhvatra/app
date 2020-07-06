@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -18,14 +19,14 @@ namespace CustomerService
 
 	{
 		public static List<string> clientsList = new List<string>();
-		const int MAX_CONNECTION = 10;
+		const int MAX_CONNECTION = 100;
 		const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
 		public static Socket clientSocket;
 		public static Form fm;
 		public static void SocketCreate()
 		{
-			IPAddress address = IPAddress.Parse("127.0.0.1");
+			IPAddress address = IPAddress.Parse("10.27.0.46");
 			listener = new TcpListener(address, PORT_NUMBER);
 			listener.Start();
 			for (int i = 0; i < MAX_CONNECTION; i++)
@@ -42,7 +43,7 @@ namespace CustomerService
 		{
 			while (true)
 			{
-				clientSocket = listener.AcceptSocket();
+				clientSocket = listener.AcceptSocket();				
 				Thread t = new Thread((obj) =>
 				{
 					getData((Socket)obj);
@@ -50,27 +51,55 @@ namespace CustomerService
 				t.Start(clientSocket);
 			}
 		}
-		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id)
+		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id, string data)
 		{
 			try
 			{
 				var netStream = new NetworkStream(clientSocket);
 				BinaryWriter writer = new BinaryWriter(netStream);
 				//writer.AutoFlush = true;
-				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id);
+				//	MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
+				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
 				//writer.Close();
 			}
 			catch (Exception) { }
 		}
+		public static IPEndPoint ip;
 		private static void getData(Socket soc)
 		{
-			var netStream = new NetworkStream(clientSocket);
-			BinaryReader reader = new BinaryReader(netStream);
-			string processStr = reader.ReadString();
+			try
+			{
+				ip = clientSocket.RemoteEndPoint as IPEndPoint;				
+				var netStream = new NetworkStream(clientSocket);
+				BinaryReader reader = new BinaryReader(netStream);
+				string processStr = reader.ReadString();
+				Delegate a = new Action<String>(Main.processData);
+				fm.Invoke(a, processStr);
+				netStream.Close();
+			}
+			catch (Exception)
+			{
 
-			Delegate a = new Action<String>(Main.processData);
-			fm.Invoke(a, processStr);
-			netStream.Close();
+			}
+		}
+
+		const int PORT_NUMBER_CLIENT = 9997;		
+		public static TcpClient client;
+		public static void connectClient(string ipClient, string send_name,int customer_id)
+		{
+			try
+			{
+				client = new TcpClient();
+				client.Connect(ipClient, PORT_NUMBER_CLIENT);
+				NetworkStream stream = client.GetStream();
+				BinaryWriter writer = new BinaryWriter(stream);
+				writer.Write("forcecustomer" + "|" + send_name + "|" + customer_id);
+				//MessageBox.Show("send client "+ipClient + "forcecustomer" + "|" + send_name + "|" + customer_id);
+				//stream.Close();
+			}
+			catch (Exception)
+			{
+			}
 		}
 	}
 }

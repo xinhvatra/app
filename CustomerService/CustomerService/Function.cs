@@ -18,10 +18,10 @@ namespace CustomerService
 		static string database = "customer";
 		static string username = "root";
 		static string password = "tng@123";
-		public static DataTable service_customer;
+		public static DataTable services;
+		public static string data_services;
         public static  MySqlConnection GetConnection()
         {
-            
             String connString = "Server=" + host + ";Database=" + database+ ";port=" + port + ";User Id=" + username + ";password=" + password;
 
             MySqlConnection conn = new MySqlConnection(connString);

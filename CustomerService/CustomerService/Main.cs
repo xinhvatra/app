@@ -53,17 +53,17 @@ namespace CustomerService
 			bt1.BackgroundImageLayout = ImageLayout.Zoom;
 			bt1.Text = "Tiền gửi";
 			bt1.Font = new Font("Timesnewroman", 30, FontStyle.Italic);
-			bt1.ForeColor = Color.Purple;
+			bt1.ForeColor = Color.Blue;
 			bt1.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt1);
 
 			bt2.Location = new Point(305, 30);
 			bt2.Size = new Size(300, 300);
-			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu;
+			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu1;
 			bt2.BackgroundImageLayout = ImageLayout.Zoom;
 			bt2.Text = "Mở tài khoản";
 			bt2.Font = new Font("Timesnewroman", 30, FontStyle.Italic);
-			bt2.ForeColor = Color.Purple;
+			bt2.ForeColor = Color.Blue;
 			bt2.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt2);
 
@@ -77,19 +77,19 @@ namespace CustomerService
 		}
 		private void bt1_hover(object sender, EventArgs e)
 		{
-			bt1.ForeColor = Color.Blue;
+			bt1.ForeColor = Color.Purple;
 		}
 		private void bt1_leave(object sender, EventArgs e)
 		{
-			bt1.ForeColor = Color.Purple;
+			bt1.ForeColor = Color.Blue;
 		}
 		private void bt2_hover(object sender, EventArgs e)
 		{
-			bt2.ForeColor = Color.Blue;
+			bt2.ForeColor = Color.Purple;
 		}
 		private void bt2_leave(object sender, EventArgs e)
 		{
-			bt2.ForeColor = Color.Purple;
+			bt2.ForeColor = Color.Blue;
 		}
 		private void bt1_click(object sender, EventArgs e)
 		{
@@ -97,7 +97,7 @@ namespace CustomerService
 			Layso layso = new Layso();
 
 			layso.MdiParent = this;
-			layso.Text = Function.service_customer.Rows[0][1] + "";
+			layso.Text = Function.services.Rows[0][1] + "";
 
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
@@ -118,7 +118,7 @@ namespace CustomerService
 			Layso layso = new Layso();
 
 			layso.MdiParent = this;
-			layso.Text = Function.service_customer.Rows[1][1] + "";
+			layso.Text = Function.services.Rows[1][1] + "";
 
 			layso.Dock = DockStyle.Fill;
 			layso.ControlBox = false;
@@ -148,11 +148,15 @@ namespace CustomerService
 			{
 				if (reader.HasRows)
 				{
-					Function.service_customer = new DataTable();
-					Function.service_customer.Load(reader);
+					Function.services = new DataTable();
+					Function.services.Load(reader);
 				}
 			}
-
+			Function.data_services = "";
+			foreach (DataRow dtrow in Function.services.Rows)
+			{
+				Function.data_services += "|" + dtrow[1];
+			}
 
 		}
 		//public static async void process(String st)
@@ -162,90 +166,240 @@ namespace CustomerService
 		//	await myTask;			
 		//}
 		public static bool isProcess = false;
-		static Semaphore sm = new Semaphore(1, 1);
 		public static void processData(string st)
 		{
-			{
-				isProcess = true;
 
-				//try
-				//{
-				String[] arrRs = st.Split('|');
-				if (arrRs[0] == "login")
+			isProcess = true;
+
+			//try
+			//{
+			String[] arrRs = st.Split('|');
+			if (arrRs[0] == "login")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "select * from client where ipcas like '" + arrRs[1] + "'";
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				using (DbDataReader reader = cmd.ExecuteReader())
 				{
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					string sql = "select * from client where id = " + arrRs[1];
-					MySqlCommand cm = new MySqlCommand(sql, conn);
-					using (DbDataReader reader = cm.ExecuteReader())
+					if (reader.HasRows)
 					{
-						if (reader.HasRows)
+						while (reader.Read())
 						{
-							while (reader.Read())
+							SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(2), (string)reader.GetValue(3), (int)reader.GetValue(4), 0, Function.data_services);
+						}
+					}
+				}
+
+
+				sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip.Address + "' WHERE  ipcas like '" + arrRs[1] + "'";
+				cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+			}
+			else if (arrRs[0] == "logout")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				String sql = "UPDATE client SET idle=0, active=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+			}
+			else if (arrRs[0] == "idle")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				String sql = "UPDATE client SET idle=1 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+				SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+			}
+			else if (arrRs[0] == "notidle")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				String sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+				conn.Close();
+				SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+			}
+
+			else if (arrRs[0] == "data")
+			{
+
+				//MessageBox.Show("xu ly tin nhan tu client: " + st);
+				bool isAdd = false;
+				int cus_id = 0;
+				int client_id = 0, service_id = 0, gate = 0;
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`=0 AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+				MySqlCommand cm = new MySqlCommand(sql, conn);
+				using (DbDataReader reader = cm.ExecuteReader())
+				{
+					if (reader.HasRows)
+					{
+						while (reader.Read())
+						{
+							if (!clients.ContainsValue((int)reader.GetValue(8))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
 							{
-								SocketRun.sendData("login", (int)reader.GetValue(0), (int)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3), 0);
+								clients.Add((int)reader.GetValue(0), (int)reader.GetValue(8));
+								cus_id = (int)reader.GetValue(0);
+								client_id = (int)reader.GetValue(4);
+								service_id = (int)reader.GetValue(6);
+								gate = (int)reader.GetValue(8);
+								isAdd = true;
+								SocketRun.sendData("data", (int)reader.GetValue(4), (int)reader.GetValue(6), reader.GetValue(7).ToString(), (int)reader.GetValue(8), (int)reader.GetValue(0), "");
+							}
+						}
+					}
+				}
+				//cập nhật trạng thái tiếp khách client					
+				sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+
+				if (isAdd)//xóa khách khỏi bảng chờ
+				{
+					sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
+					cmd = new MySqlCommand(sql, conn);
+					cmd.ExecuteNonQuery();
+
+					//ghi lịch sử giao dịch
+					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
+					cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
+
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
+					cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
+					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
+					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
+					cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
+					cmd.ExecuteNonQuery();
+				}
+				conn.Close();
+			}
+			else if (arrRs[0] == "switch")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "select * from client where service_id = " + arrRs[2] + " AND active = 1 AND id NOT IN (SELECT id FROM CLIENT WHERE id = " + arrRs[1] + ")";
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				string data = "";
+				using (DbDataReader reader = cmd.ExecuteReader())
+				{
+					if (reader.HasRows)
+					{
+
+						while (reader.Read())
+						{
+							data += "|" + reader.GetValue(0).ToString() + "_" + reader.GetValue(3).ToString() + "_" + reader.GetValue(4) + "_" + reader.GetValue(5);
+						}
+
+					}
+					SocketRun.sendData("switch", Int32.Parse(arrRs[1]), 0, "", 0, 0, data);
+				}
+				conn.Close();
+			}
+			else if (arrRs[0] == "pass")
+			{
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+
+				string sql = "insert into cus_wait(cus_id,service_id,receive_client_id,priority) values(@cus_id,@service_id,@receive_client_id,@priority)";
+				MySqlCommand cmd = new MySqlCommand();
+				cmd = new MySqlCommand();
+				cmd.Connection = conn;
+				cmd.CommandText = sql;
+
+				cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = arrRs[4];
+				cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = arrRs[2];
+				cmd.Parameters.Add("@receive_client_id", MySqlDbType.Int32).Value = arrRs[3];
+				cmd.Parameters.Add("@priority", MySqlDbType.Int32).Value = 1;
+				cmd.ExecuteNonQuery();
+				SocketRun.sendData("pass", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+				//cập nhật trạng thái tiếp khách client					
+				sql = "UPDATE client SET idle=1 WHERE id=" + arrRs[1];
+				cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+
+				sql = "select name,ip_address from client where id = " + arrRs[1] + " or id = " + arrRs[3];
+				MySqlDataAdapter adap = new MySqlDataAdapter(sql, conn);
+				DataTable dt = new DataTable();
+				adap.Fill(dt);
+				if (dt.Rows.Count > 1)
+				{
+					using (adap)
+					{
+						string send_name, receive_ip;
+						receive_ip = dt.Rows[0][1].ToString();
+						send_name = dt.Rows[1][0].ToString();
+						SocketRun.connectClient(receive_ip, send_name, Int32.Parse(arrRs[4]));
+					}
+				}
+
+				conn.Close();
+				//SocketRun.connectClient("tétts", Int32.Parse(arrRs[4]));
+			}
+			else if (arrRs[0] == "forcecustomer")
+			{
+				
+				bool isAdd = false;
+				int cus_id = 0;
+				int client_id = 0, service_id = 0, gate = 0;
+				MySqlConnection conn = Function.GetConnection();
+				conn.Open();
+				string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`= " + arrRs[1] + " AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+				MySqlCommand cm = new MySqlCommand(sql, conn);
+				using (DbDataReader reader = cm.ExecuteReader())
+				{
+					if (reader.HasRows)
+					{
+						while (reader.Read())
+						{
+							if (!clients.ContainsValue((int)reader.GetValue(8))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
+							{
+								clients.Add((int)reader.GetValue(0), (int)reader.GetValue(8));
+								cus_id = (int)reader.GetValue(0);
+								client_id = (int)reader.GetValue(4);
+								service_id = (int)reader.GetValue(6);
+								gate = (int)reader.GetValue(8);
+								isAdd = true;
+								SocketRun.sendData("data", client_id, service_id, reader.GetValue(7).ToString(), gate, cus_id, "");
 							}
 						}
 					}
 				}
 
-				else if (arrRs[0] == "data")
+				//cập nhật trạng thái tiếp khách client					
+				sql = "UPDATE client SET idle=0 WHERE id=" + arrRs[1];
+				MySqlCommand cmd = new MySqlCommand(sql, conn);
+				cmd.ExecuteNonQuery();
+
+				if (isAdd)//xóa khách khỏi bảng chờ
 				{
+					sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
+					cmd = new MySqlCommand(sql, conn);
+					cmd.ExecuteNonQuery();
 
-					//MessageBox.Show("xu ly tin nhan tu client: " + st);
-					bool isAdd = false;
-					int cus_id = 0;
-					int client_id =0,service_id=0,gate=0;
-					MySqlConnection conn = Function.GetConnection();
-					conn.Open();
-					string sql = "SELECT * FROM cus_wait AS c INNER JOIN `client` AS cc ON c.service_id=cc.service_id AND active=1 AND cc.id=" + arrRs[1] + " LIMIT 1";
-					MySqlCommand cm = new MySqlCommand(sql, conn);
-					using (DbDataReader reader = cm.ExecuteReader())
-					{
-						if (reader.HasRows)
-						{
-							while (reader.Read())
-							{
-								if (!clients.ContainsValue((int)reader.GetValue(5))) //nếu khách đang chờ thì để gọi vào cổng thì không nhận nữa
-								{
-									clients.Add((int)reader.GetValue(0), (int)reader.GetValue(5));
-									cus_id = (int)reader.GetValue(0);
-									client_id= (int)reader.GetValue(2);
-									service_id = (int)reader.GetValue(3);
-									gate = (int)reader.GetValue(5);
-									isAdd = true;									
-									SocketRun.sendData("data", (int)reader.GetValue(2), (int)reader.GetValue(3), reader.GetValue(4).ToString(), (int)reader.GetValue(5), (int)reader.GetValue(0));
-								}
-							}											
-						}
-					}
-					if (isAdd)//xóa khách khỏi bảng chờ
-					{
-						sql = "Delete FROM cus_wait WHERE cus_id = " + cus_id;
-						MySqlCommand cmd = new MySqlCommand(sql, conn);
-						cmd.ExecuteNonQuery();
+					//ghi lịch sử giao dịch
+					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
+					cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
 
-						//ghi lịch sử giao dịch
-						sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
-						cmd = new MySqlCommand();
-						cmd.Connection = conn;
-						cmd.CommandText = sql;
-
-						cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
-						cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
-						cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
-						cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
-						cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
-						cmd.ExecuteNonQuery();
-					}
-					conn.Close();
+					cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
+					cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
+					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
+					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
+					cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
+					cmd.ExecuteNonQuery();
 				}
-
-				//}
-				//catch
-				//{
-				//	//MessageBox.Show("catch");				
-				//}
+				conn.Close();
 			}
 
 		}
@@ -258,13 +412,13 @@ namespace CustomerService
 					try
 					{
 						foreach (KeyValuePair<int, int> entry in clients)
-						{												
+						{
 							int num = entry.Key;
 							int ra = entry.Value;
 							string donvi = num.ToString().Substring(3, 1);
 							string chuc = num.ToString().Substring(2, 1);
 							string tram = num.ToString().Substring(1, 1);
-							string nghin = num.ToString().Substring(0, 1);						
+							string nghin = num.ToString().Substring(0, 1);
 
 							WMPLib.WindowsMediaPlayer mp = new WMPLib.WindowsMediaPlayer();
 							WMPLib.IWMPPlaylist playlist = mp.playlistCollection.newPlaylist("customerCall");
@@ -272,25 +426,25 @@ namespace CustomerService
 
 							string moi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\moi.mp3";
 							media = mp.newMedia(moi);
-							
+
 							string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
 							media1 = mp.newMedia(sokhachnghin);
-							
+
 							string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
 							media2 = mp.newMedia(sokhachtram);
-							
+
 							string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
 							media3 = mp.newMedia(sokhachchuc);
-							
+
 							string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
 							media4 = mp.newMedia(sokhachdonvi);
-							
+
 							string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
 							media5 = mp.newMedia(vaocua);
-							
+
 							string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
 							media6 = mp.newMedia(socua);
-							
+
 							playlist.appendItem(media);
 							playlist.appendItem(media1);
 							playlist.appendItem(media2);
@@ -301,13 +455,19 @@ namespace CustomerService
 							mp.currentPlaylist = playlist;
 							mp.controls.play();
 							clients.Remove(num);
-
+							Thread.Sleep(7000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
 						}
 					}
 					catch { }
 				}
-				Thread.Sleep(10000); //sleep 10s đợi phát âm thanh gọi khách trước xong.
+
+
 			}
+		}
+
+		private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+
 		}
 	}
 }
