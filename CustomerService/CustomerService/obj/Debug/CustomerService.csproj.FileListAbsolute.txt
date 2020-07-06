@@ -47,3 +47,5 @@ D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.csp
 D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.csproj.CopyComplete
 D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.exe
 D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.pdb
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.Edit.resources
+D:\WORK\Github\app\CustomerService\CustomerService\obj\Debug\CustomerService.Control.resources

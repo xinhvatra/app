@@ -1,5 +1,5 @@
 /*
-SQLyog Professional v13.1.1 (64 bit)
+SQLyog Ultimate v13.1.1 (64 bit)
 MySQL - 10.1.37-MariaDB : Database - customer
 *********************************************************************
 */
@@ -30,20 +30,22 @@ CREATE TABLE `client` (
   `active` tinyint(1) NOT NULL DEFAULT '0',
   `ip_address` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `client` */
 
 insert  into `client`(`id`,`ipcas`,`service_id`,`name`,`gate`,`idle`,`active`,`ip_address`) values 
 (1,'TNGNQKY',1,'Nguyễn Quý Kỳ',1,1,1,'127.0.0.1'),
-(2,'TNGNTHAO',1,'Nguyễn Phương Thảo',2,1,1,''),
-(3,'TNGDLIEU',1,'Đinh Dương Liễu',3,0,0,'10.27.0.46'),
+(2,'TNGNTHAO',2,'Nguyễn Phương Thảo',2,1,1,''),
+(3,'TNGDLIEU',1,'Đinh Dương Liễu',3,0,1,'10.27.0.46'),
 (4,'TNGNTHP',1,'Nguyễn Thị Hà Phương',4,0,1,''),
 (5,'TNGNLH',1,'Nguyễn Lan Hương',5,0,1,''),
-(6,'TNGMDUNG',1,'Ma Thị Dung',6,1,1,''),
+(6,'TNGMDUNG',0,'Ma Thị Dung',7,1,1,''),
 (7,'TNGVTHOA',2,'Vi Thị Thoa',7,0,1,''),
 (8,'TNGVQHAI',2,'Vũ Quang Hải',8,0,0,'10.27.0.46'),
-(9,'TNGTRANG',2,'Ngô Huyền Trang',9,0,1,'');
+(9,'TNGTRANG',2,'Ngô Huyền Trang',9,0,1,''),
+(10,'TNGADMIN1',1,'admin',12,0,0,'0.0.0.0'),
+(11,'TNGADMIN3',2,'admin3',11,0,0,'0.0.0.0');
 
 /*Table structure for table `cus_deal` */
 
@@ -58,7 +60,7 @@ CREATE TABLE `cus_deal` (
   `rate` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=277 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=278 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_deal` */
 
@@ -338,7 +340,8 @@ insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`rate`,`ti
 (273,2186,8,2,8,1,'2020-07-03 14:27:45'),
 (274,2187,8,2,8,1,'2020-07-03 14:28:40'),
 (275,2188,8,2,8,1,'2020-07-03 14:43:31'),
-(276,2189,8,2,8,1,'2020-07-03 14:43:35');
+(276,2189,8,2,8,1,'2020-07-03 14:43:35'),
+(277,1236,3,1,3,1,'2020-07-06 13:52:31');
 
 /*Table structure for table `cus_rating` */
 
@@ -372,7 +375,6 @@ CREATE TABLE `cus_wait` (
 /*Data for the table `cus_wait` */
 
 insert  into `cus_wait`(`cus_id`,`service_id`,`receive_client_id`,`priority`) values 
-(1236,1,0,0),
 (1237,1,0,0),
 (1238,1,0,0),
 (1239,1,0,0),
@@ -383,6 +385,7 @@ insert  into `cus_wait`(`cus_id`,`service_id`,`receive_client_id`,`priority`) va
 (1244,1,0,0),
 (1245,1,0,0),
 (1246,1,0,0),
+(1247,1,0,0),
 (2190,2,0,0),
 (2191,2,0,0);
 
@@ -400,7 +403,7 @@ CREATE TABLE `services` (
 /*Data for the table `services` */
 
 insert  into `services`(`id`,`name`,`current_cus`) values 
-(1,'Giao dịch tiền gửi',1246),
+(1,'Giao dịch tiền gửi',1247),
 (2,'Giao dịch Thẻ, Emobile-banking',2191),
 (3,'Giao dịch tiền vay',3001);
 

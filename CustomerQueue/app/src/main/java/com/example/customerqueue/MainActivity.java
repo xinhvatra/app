@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
                 while (true) {
                     try {
-                        InetAddress ip = InetAddress.getByName("192.168.1.27");
+                        InetAddress ip = InetAddress.getByName("192.168.1.53");
                         ServerSocket s = new ServerSocket(9998, 0, ip);
                         // Log.d("==================","doi client ket noi"+s.getInetAddress());
                         sk = s.accept();
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                         // DataInputStream dt = new DataInputStream((s.getInputStream()));
                         final String st = input.readLine();
                         // input.close();
-                        Log.d("==================", st);
+                       // Log.d("==================", st);
                         Handler refresh = new Handler(Looper.getMainLooper());
                         refresh.post(new Runnable() {
                             @Override

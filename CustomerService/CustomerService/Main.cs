@@ -34,6 +34,7 @@ namespace CustomerService
 			//this.TopMost = true;
 
 			this.Size = new Size(625, 650);
+			
 			bt1 = new Button();
 			bt2 = new Button();
 			bt3 = new Button();
@@ -74,7 +75,19 @@ namespace CustomerService
 			bt4.Location = new Point(305, 330);
 			bt4.Size = new Size(300, 300);
 			this.Controls.Add(bt4);
+
+			this.KeyPreview = true;
+			this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
 		}
+		private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.E)
+			{
+				Control ed = new Control();
+				ed.Show();
+			}
+		}
+		
 		private void bt1_hover(object sender, EventArgs e)
 		{
 			bt1.ForeColor = Color.Purple;
