@@ -12,8 +12,8 @@ namespace CustomerServiceClient
 		public static Label lbTop, lbCenter;
 		public static Button bt1, bt2, btOnoff;
 		public static String[] dt_service;
-		static bool inGate = false, online = false, inforce = false;
-		public static int customer, force_customer;
+		static bool inGate = false, online = false, inforce = false;		
+		public static int customer,force_customer;
 		//public static string stringTop;
 		public Client()
 		{
@@ -84,13 +84,12 @@ namespace CustomerServiceClient
 			this.groupBox2.Controls.Add(lbCenter);
 
 
-		}
+		}		
 		private void Client_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SocketRun.connect();
 			SocketRun.sendData("logout", 0);
 			SocketRun.SocketClose();
-			SocketRun.connectAndroid(SocketRun.gate + ",0");
 			System.Environment.Exit(1);
 		}
 		private void Client_Load(object sender, EventArgs e)
@@ -103,14 +102,15 @@ namespace CustomerServiceClient
 		private void button1_Click(object sender, EventArgs e)
 		{
 			if (inforce)
-			{
+			{				
 				SocketRun.connect();
 				SocketRun.sendData("forcecustomer", force_customer);
 			}
 			else if (inGate)
 			{
+				bt1.Text = "Nhận khách";
 				SocketRun.connect();
-				SocketRun.sendData("idle", 0);
+				SocketRun.sendData("idle", 0);			
 			}
 			else
 			{
@@ -129,6 +129,7 @@ namespace CustomerServiceClient
 				SocketRun.client_id = Int32.Parse(arrRs[1]);
 				lbTop.Text = arrRs[3] + " - Cổng số " + arrRs[4];
 				bt1.Visible = true;
+				//await ChangeColor(bt1);
 				lbCenter.Text = "";
 				dt_service = new string[arrRs.Length - 6];
 				for (int i = 6; i < arrRs.Length; i++)
@@ -140,7 +141,7 @@ namespace CustomerServiceClient
 				if (SocketRun.android == 1)
 				{
 					SocketRun.gate = arrRs[4];
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.sendDataAndroid(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "data")
@@ -154,11 +155,14 @@ namespace CustomerServiceClient
 				bt1.BackColor = Color.Red;
 				bt1.ForeColor = Color.White;
 				bt2.Visible = true;
-
+				
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + "," + arrRs[5]);
-
+					Thread t = new Thread((obj) =>
+					{
+						SocketRun.sendDataAndroid(SocketRun.gate + "," + arrRs[5]);
+					});
+					t.Start();
 				}
 			}
 			else if (arrRs[0] == "idle")
@@ -172,7 +176,7 @@ namespace CustomerServiceClient
 				bt2.Visible = false;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.sendDataAndroid(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "notidle")
@@ -185,7 +189,7 @@ namespace CustomerServiceClient
 				bt2.Visible = false;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.sendDataAndroid(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "switch")
@@ -200,6 +204,7 @@ namespace CustomerServiceClient
 
 				}
 				Switch.data = new DataTable();
+				//Switch.data.Columns.Remove(1);
 				Switch.data.Columns.Add("Mã GDV");
 				Switch.data.Columns.Add("Giao dịch viên");
 				Switch.data.Columns.Add("Cửa số");
@@ -255,7 +260,7 @@ namespace CustomerServiceClient
 				bt2.Visible = false;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.sendDataAndroid(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "forcecustomer")
@@ -268,8 +273,11 @@ namespace CustomerServiceClient
 				await ChangeColor(bt1);
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + "," + arrRs[2]);
-
+					Thread t = new Thread((obj) =>
+					{
+						SocketRun.sendDataAndroid(SocketRun.gate + "," + arrRs[2]);
+					});
+					t.Start();
 				}
 			}
 

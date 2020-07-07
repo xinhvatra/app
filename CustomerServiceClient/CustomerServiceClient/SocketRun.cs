@@ -22,13 +22,17 @@ namespace CustomerServiceClient
 		private static Stream stream;
 		public static Form fm;
 		public static int client_id, android;
-		public static string ipcas, gate, ipServer, ipAndroid;
+		public static string ipcas, name, gate, ipServer, ipAndroid;
 		public static void SocketCreate()
 		{
 			loadConfig();
 			connect();
 			sendData("login", 0);
-			listenServer();		
+			listenServer();
+			if (android == 1)
+			{
+				connectAndroid();
+			}
 		}
 		public static void connect()
 		{
@@ -44,29 +48,35 @@ namespace CustomerServiceClient
 				Application.Exit();
 			}
 		}
-		//====================================android port============================================/
+
 		static TcpClient clientAndroid;
-		public static void connectAndroid(string data)
+		public static void connectAndroid()
 		{
 			try
 			{
 				clientAndroid = new TcpClient();
 				clientAndroid.Connect(ipAndroid, PORT_NUMBER_ANDROID);
-				//MessageBox.Show(data + "");
-				streamAndroid = clientAndroid.GetStream();
-				StreamWriter writer = new StreamWriter(streamAndroid);
-				writer.WriteLine(data);
-				writer.Flush();
 			}
 			catch (Exception)
 			{
-				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!!!!!!");
+				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!");
+				Application.Exit();
 			}
+			Thread t = new Thread((obj) =>
+			{
+				ListenAndroid();
+			});
+			t.Start();
 
 		}
-		//============================================End=======================================================/
+		public static void ListenAndroid()
+		{
+
+			streamAndroid = clientAndroid.GetStream();
+			//processDataAndroid();
 
 
+		}
 		//=================================Listen server pass customer=========================================================/
 		static TcpListener listenerServer;
 		static Socket serverClient;
@@ -78,7 +88,6 @@ namespace CustomerServiceClient
 .AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)
 .ToString();
 			IPAddress address = IPAddress.Parse(ipadress);
-			//ssageBox.Show(address + "");
 			listenerServer = new TcpListener(address, PORT_NUMBER_CLIENT);
 			listenerServer.Start();
 
@@ -107,7 +116,7 @@ namespace CustomerServiceClient
 		{
 			streamServer = new NetworkStream(serverClient);
 			BinaryReader reader = new BinaryReader(streamServer);
-			string processStr = reader.ReadString();
+			string processStr = reader.ReadString();			
 			Delegate a = new Action<String>(Client.processDataAsync);
 			fm.Invoke(a, processStr);
 			stream.Close();
@@ -115,9 +124,36 @@ namespace CustomerServiceClient
 		}
 		//=================================End=========================================================/
 
-		
-	
-	
+		public static void processDataAndroid()
+		{
+			//getDataAndroid();
+			//sendDataAndroid(gate + "," + "0");
+		}
+
+		public static void getDataAndroid()
+		{
+
+			StreamReader reader = new StreamReader(streamAndroid);
+			string line;
+			line = reader.ReadLine();
+		}
+		public static void sendDataAndroid(String data)
+		{
+			try
+			{
+				StreamWriter writer = new StreamWriter(streamAndroid);
+				writer.WriteLine(data);
+				//MessageBox.Show("send data to android: ");
+				writer.Flush();
+				//MessageBox.Show("co khach: "+data);
+			}
+			catch (Exception)
+			{
+				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!");
+				Application.Exit();
+			}
+
+		}
 		public static void SocketClose()
 		{
 			//loadConfig();
@@ -173,7 +209,7 @@ namespace CustomerServiceClient
 				{
 					ipcas = (node.SelectSingleNode("id").InnerText);
 				}
-				catch (Exception) { }
+				catch (Exception) { }			
 				try
 				{
 					ipServer = node.SelectSingleNode("ipServer").InnerText;

@@ -80,7 +80,7 @@ namespace CustomerService
 				try
 				{
 					MySqlConnection conn = Function.GetConnection();
-					conn.Open(); 
+					conn.Open();
 					string sql = "UPDATE client SET  ipcas=@ipcas,service_id=@service_id,name=@name,gate=@gate WHERE  id=@id";
 					MySqlCommand cmd = new MySqlCommand();
 					cmd.Connection = conn;
