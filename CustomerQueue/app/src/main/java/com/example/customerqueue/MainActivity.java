@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     ScrollTextView txtViewTop, txtViewBot;
     LinearLayout lnButton, lnText;
     TextView txtCua, txtKhach;
+    String IP;
+    int PORT = 9998;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
         txtViewBot.setTextSize(30);
         txtViewBot.startScroll();
 
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        IP = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        Toast.makeText(getApplicationContext(),"Ip address: "+IP,Toast.LENGTH_LONG).show();
+       // Log.i("==================", IP+"iiiippppppp");
         startServerSocket1();
 
         //=============CHECK ACTIVE=============================
@@ -119,20 +127,19 @@ public class MainActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             private String stringData = null;
             Socket sk;
-
             @Override
             public void run() {
 
-
                 while (true) {
                     try {
-                        InetAddress ip = InetAddress.getByName("192.168.1.53");
-                        ServerSocket s = new ServerSocket(9998, 0, ip);
-                        // Log.d("==================","doi client ket noi"+s.getInetAddress());
+                        InetAddress add = InetAddress.getByName(IP);
+                        ServerSocket s = new ServerSocket(PORT, 0, add);
+                      //  Toast.makeText(getApplicationContext(),"doi client ket noi"+s.getInetAddress(),Toast.LENGTH_LONG).show();
+                      //  Log.i("==================","doi client ket noi"+add);
                         sk = s.accept();
                         BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
                         final String st = input.readLine();
-                        // Log.d("==================", st);
+
                         Handler refresh = new Handler(Looper.getMainLooper());
                         refresh.post(new Runnable() {
                             @Override
@@ -140,22 +147,27 @@ public class MainActivity extends AppCompatActivity {
                                 processData(st);
                             }
                         });
+                        input.close();
+                        sk.close();
+                        s.close();
                     } catch (IOException e) {
-                        try {
-                            BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
-                            final String st = input.readLine();
-                            // Log.d("==================", st);
-                            Handler refresh = new Handler(Looper.getMainLooper());
-                            refresh.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    processData(st);
-                                }
-                            });
-                        } catch (IOException i) {
-
-                            //  Log.d("==================", "ket noi den server khong ok ty nao");
-                        }
+//                        try {
+                            e.printStackTrace();
+                       // Log.i("==================","loi"+e);
+//                            BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
+//                            final String st = input.readLine();
+//                            // Log.d("==================", st);
+//                            Handler refresh = new Handler(Looper.getMainLooper());
+//                            refresh.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    processData(st);
+//                                }
+//                            });
+//                        } catch (IOException i) {
+//
+//                            //  Log.d("==================", "ket noi den server khong ok ty nao");
+//                        }
                     }
 
 
@@ -176,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     while (true) {
-                        Socket s = new Socket("192.168.1.35", 9998);
+                        Socket s = new Socket(IP, 9998);
                         //  Log.d("==================","ket noi den server ok"+s.getRemoteSocketAddress());
                         //   OutputStream out = s.getOutputStream();
                         //   PrintWriter output = new PrintWriter(out);
@@ -230,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processData(final String stringData) {
-
+        Log.i("==================","truyen du lieu: "+stringData);
         String[] st = stringData.split(",");
         txtCua.setText(st[0] + "");
         if (st[0].length() <= 1) txtCua.setText("0" + st[0]);
