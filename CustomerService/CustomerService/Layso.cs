@@ -21,9 +21,9 @@ namespace CustomerService
 			this.Size = new Size(600, 490);
 			lb = new Label();
 			lb.Location = new Point(5, this.Height / 5);
-			button1.Location = new Point(this.Width / 2 - button1.Width / 4, this.Height / 6 * 4);
+			button1.Location = new Point(this.Width / 2 - button1.Width / 2, this.Height / 6 * 4);
 
-			button2.Location = new Point(this.Width / 2 - button1.Width / 4, this.Height / 6 * 5 + 30);
+			button2.Location = new Point(this.Width / 2 - button1.Width / 2, this.Height / 6 * 5 + 30);
 
 
 			lb.Text = (Convert.ToInt32(Function.services.Rows[Function.fmName - 1][2]) + 1) + "";
@@ -37,23 +37,26 @@ namespace CustomerService
 			lb.BackColor = Color.Transparent;
 			this.Controls.Add(lb);
 		}
-
+		static int cur_cus;
 		private void button1_Click(object sender, EventArgs e)
 		{
 			//MessageBox.Show(label1.Width+"");
 
 			check_idle_client(Function.fmName, Function.services);
+			
 			this.Close();
 			Main.bt1.Show();
 			Main.bt2.Show();
 			Main.bt3.Show();
-			Main.bt4.Show();
+			Main.bt4.Show();			
+			Main.print(Function.services.Rows[Function.fmName - 1][1].ToString(),cur_cus.ToString());
 			Function.fmName = 0;
 		}
 
 		private void check_idle_client(int service_id, DataTable dt)
 		{
 			Function.services.Rows[service_id - 1][2] = Convert.ToInt32(Function.services.Rows[service_id - 1][2]) + 1;
+			cur_cus = Convert.ToInt32(Function.services.Rows[service_id - 1][2]);
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
 			string sql = "update services SET current_cus = @current_cus WHERE id = @id";
@@ -76,6 +79,8 @@ namespace CustomerService
 		}
 		private void button2_Click(object sender, EventArgs e)
 		{
+			check_idle_client(Function.fmName, Function.services);
+			
 			this.Close();
 			Main.bt1.Show();
 			Main.bt2.Show();

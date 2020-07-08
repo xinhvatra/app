@@ -60,7 +60,7 @@ namespace CustomerServiceClient
 			}
 			catch (Exception)
 			{
-				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!!!!!!");
+				MessageBox.Show("Không kết nối được cổng Android. Vui lòng kiểm tra lại!");
 			}
 
 		}

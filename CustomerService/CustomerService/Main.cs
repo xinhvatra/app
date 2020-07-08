@@ -1,19 +1,27 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.Office.Interop.Word;
+using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using DataTable = System.Data.DataTable;
+using Font = System.Drawing.Font;
+using Point = System.Drawing.Point;
 
 namespace CustomerService
 {
@@ -34,7 +42,7 @@ namespace CustomerService
 			//this.TopMost = true;
 
 			this.Size = new Size(625, 650);
-			
+
 			bt1 = new Button();
 			bt2 = new Button();
 			bt3 = new Button();
@@ -48,7 +56,7 @@ namespace CustomerService
 			bt2.MouseHover += new EventHandler(bt2_hover);
 			bt2.MouseLeave += new EventHandler(bt2_leave);
 
-			bt1.Location = new Point(5, 30);
+			bt1.Location = new System.Drawing.Point(5, 30);
 			bt1.Size = new Size(300, 300);
 			bt1.BackgroundImage = CustomerService.Properties.Resources.guitien;
 			bt1.BackgroundImageLayout = ImageLayout.Zoom;
@@ -63,7 +71,7 @@ namespace CustomerService
 			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu1;
 			bt2.BackgroundImageLayout = ImageLayout.Zoom;
 			bt2.Text = "Mở tài khoản";
-			bt2.Font = new Font("Timesnewroman", 30, FontStyle.Italic);
+			bt2.Font = new System.Drawing.Font("Timesnewroman", 30, FontStyle.Italic);
 			bt2.ForeColor = Color.Blue;
 			bt2.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt2);
@@ -87,7 +95,7 @@ namespace CustomerService
 				ed.Show();
 			}
 		}
-		
+
 		private void bt1_hover(object sender, EventArgs e)
 		{
 			bt1.ForeColor = Color.Purple;
@@ -104,6 +112,51 @@ namespace CustomerService
 		{
 			bt2.ForeColor = Color.Blue;
 		}
+		public static void print(string service,string num)
+		{
+
+			string pa = Directory.GetCurrentDirectory();
+					
+			Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
+			Document doc = new Document();
+			//string filename = "";
+			object missing = System.Type.Missing;
+			doc = word.Documents.Open(Path.GetFullPath(@"" + pa + "\\ticket.docx"),
+					ref missing, ref missing, ref missing, ref missing,
+					ref missing, ref missing, ref missing, ref missing,
+					ref missing, ref missing, ref missing, ref missing,
+					ref missing, ref missing, ref missing);
+			for (int i = 1; i <= doc.Paragraphs.Count; i++)
+			{
+				
+				if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "{giaodich}"))
+				{
+					//MessageBox.Show(doc.Paragraphs[i].Range.Text);
+					doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "{giaodich}", service, RegexOptions.IgnoreCase);
+
+				}
+				else
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "{sothutu}"))
+				{
+					//MessageBox.Show(doc.Paragraphs[i].Range.Text);
+					doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "{sothutu}", num, RegexOptions.IgnoreCase);
+
+				}
+
+			}
+			((_Document)doc).SaveAs2(@"" + pa + "\\tk.docx");
+			((_Document)doc).Close();
+			((_Application)word).Quit();
+
+			Process p = new Process();
+			p.StartInfo.FileName = @"" + pa + "\\tk.docx";
+			p.StartInfo.UseShellExecute = true;
+			p.StartInfo.Verb = "printto";
+			p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			p.Start();
+			
+		}
+	
 		private void bt1_click(object sender, EventArgs e)
 		{
 			Function.fmName = 1;
@@ -144,12 +197,44 @@ namespace CustomerService
 			bt3.Hide();
 			bt4.Hide();
 		}
+		public static void loadConfig()
+		{
+			XmlDocument xd = new XmlDocument();
+			xd.Load("config.xml");
 
+			XmlNodeList nodelist = xd.SelectNodes("/config");
+
+			foreach (XmlNode node in nodelist)
+			{
+				try
+				{
+					Function.host = (node.SelectSingleNode("host").InnerText);
+				}
+				catch (Exception) { }
+				try
+				{
+					Function.username = node.SelectSingleNode("user").InnerText;
+				}
+				catch (Exception) { }
+				try
+				{
+					Function.password = (node.SelectSingleNode("pass").InnerText);
+					//MessageBox.Show(ipAndroid);
+				}
+				catch (Exception) { }
+				try
+				{
+					Function.database = (node.SelectSingleNode("db").InnerText);
+					//MessageBox.Show(ipAndroid);
+				}
+				catch (Exception) { }
+
+			}
+		}
 		private void Main_Load(object sender, EventArgs e)
 		{
-
-
-			SocketRun.SocketCreate();
+			loadConfig();
+			
 			clients = new Dictionary<int, int>();
 			Thread t = new Thread(sound);
 			t.Start();
@@ -170,14 +255,10 @@ namespace CustomerService
 			{
 				Function.data_services += "|" + dtrow[1];
 			}
+			SocketRun.SocketCreate();
 
 		}
-		//public static async void process(String st)
-		//{			
-		//	//await processData(st);
-		//	var myTask = Task.Run(() => processData(st));
-		//	await myTask;			
-		//}
+
 		public static bool isProcess = false;
 		public static void processData(string st)
 		{
@@ -203,8 +284,6 @@ namespace CustomerService
 						}
 					}
 				}
-
-
 				sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip.Address + "' WHERE  ipcas like '" + arrRs[1] + "'";
 				cmd = new MySqlCommand(sql, conn);
 				cmd.ExecuteNonQuery();
@@ -360,7 +439,7 @@ namespace CustomerService
 			}
 			else if (arrRs[0] == "forcecustomer")
 			{
-				
+
 				bool isAdd = false;
 				int cus_id = 0;
 				int client_id = 0, service_id = 0, gate = 0;

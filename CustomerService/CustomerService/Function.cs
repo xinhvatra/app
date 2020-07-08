@@ -13,11 +13,11 @@ namespace CustomerService
 	{
 		
 		public static int fmName;
-		static string host = "10.27.0.10";
+		public static string host = "";
 		static int port = 3306;
-		static string database = "customer";
-		static string username = "root";
-		static string password = "tng@123";
+		public static string database = "";
+		public static string username = "";
+		public static string password = "";
 		public static DataTable services;
 		public static string data_services;
         public static  MySqlConnection GetConnection()
