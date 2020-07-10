@@ -82,7 +82,7 @@ namespace CustomerServiceClient
 			//lbCenter.Left = groupBox2.Left + (groupBox2.Width - lbCenter.Width) / 2;
 			//lbCenter.Top = groupBox2.Top - 20;
 			this.groupBox2.Controls.Add(lbCenter);
-
+			online = true;
 
 		}
 		private void Client_FormClosing(object sender, FormClosingEventArgs e)
@@ -162,27 +162,30 @@ namespace CustomerServiceClient
 				}
 			}
 			else if (arrRs[0] == "idle")
-			{
+			{				
 				customer = Convert.ToInt32(arrRs[5]);
 				lbCenter.Text = "";
 				bt1.ForeColor = Color.Black;
 				inGate = false;
+				online = true;
 				bt1.Text = "Nhận khách";
 				bt1.BackColor = Color.Empty;
-				bt2.Visible = false;
+				bt1.Visible = true;				
+				btOnoff.BackgroundImage = Properties.Resources.off;
 				if (SocketRun.android == 1)
 				{
 					SocketRun.connectAndroid(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "notidle")
-			{
+			{				
 				customer = Convert.ToInt32(arrRs[5]);
 				lbCenter.Text = arrRs[5];
 				bt1.ForeColor = Color.Black;
-				inGate = true;
+				online = false;
 				bt1.Visible = false;
 				bt2.Visible = false;
+				btOnoff.BackgroundImage = Properties.Resources.on;
 				if (SocketRun.android == 1)
 				{
 					SocketRun.connectAndroid(SocketRun.gate + ",0");
@@ -306,18 +309,18 @@ namespace CustomerServiceClient
 			{
 				SocketRun.connect();
 				SocketRun.sendData("notidle", 0);
-				btOnoff.BackgroundImage = Properties.Resources.on;
-				online = false;
-				bt1.Visible = false;
-				bt2.Visible = false;
+				//btOnoff.BackgroundImage = Properties.Resources.on;
+				//online = false;
+				//bt1.Visible = false;
+				//bt2.Visible = false;
 			}
 			else
 			{
 				SocketRun.connect();
 				SocketRun.sendData("idle", 0);
 				//btOnoff.BackgroundImage = Properties.Resources.off;
-				online = true;
-				bt1.Visible = true;
+				//online = true;
+				//bt1.Visible = true;
 			}
 		}
 	}

@@ -24,10 +24,11 @@ namespace CustomerService
 		public static TcpListener listener;
 		public static Socket clientSocket;
 		public static Form fm;
+
+		[Obsolete]
 		public static void SocketCreate()
-		{
-			IPAddress address = IPAddress.Parse("10.27.0.46");
-			listener = new TcpListener(address, PORT_NUMBER);
+		{			
+			listener = new TcpListener(PORT_NUMBER);
 			listener.Start();
 			for (int i = 0; i < MAX_CONNECTION; i++)
 			{

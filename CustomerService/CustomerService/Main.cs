@@ -98,7 +98,7 @@ namespace CustomerService
 
 		private void bt1_hover(object sender, EventArgs e)
 		{
-			bt1.ForeColor = Color.Purple;
+			bt1.ForeColor = Color.Orange;
 		}
 		private void bt1_leave(object sender, EventArgs e)
 		{
@@ -106,7 +106,7 @@ namespace CustomerService
 		}
 		private void bt2_hover(object sender, EventArgs e)
 		{
-			bt2.ForeColor = Color.Purple;
+			bt2.ForeColor = Color.Orange;
 		}
 		private void bt2_leave(object sender, EventArgs e)
 		{
@@ -231,6 +231,8 @@ namespace CustomerService
 
 			}
 		}
+
+		[Obsolete]
 		private void Main_Load(object sender, EventArgs e)
 		{
 			loadConfig();
@@ -255,6 +257,30 @@ namespace CustomerService
 			{
 				Function.data_services += "|" + dtrow[1];
 			}
+
+			sql = "SELECT TIME FROM cus_deal ORDER BY TIME DESC LIMIT 1";
+			cm = new MySqlCommand(sql, conn);
+			DateTime time=DateTime.Now;
+			using (DbDataReader reader = cm.ExecuteReader())
+			{
+				if (reader.HasRows)
+				{
+					while (reader.Read())
+					{
+						time = (DateTime)reader.GetValue(0);						
+					}
+				}
+			}
+			if (!time.ToString("dd/MM/yyyy").Equals(DateTime.Now.ToString("dd/MM/yyyy"))){
+				sql = "update services set current_cus =id*1000";
+				cm = new MySqlCommand(sql, conn);
+				cm.ExecuteNonQuery();
+
+				sql = "truncate table cus_wait";
+				cm = new MySqlCommand(sql, conn);
+				cm.ExecuteNonQuery();
+			}
+			conn.Close();
 			SocketRun.SocketCreate();
 
 		}
@@ -316,7 +342,7 @@ namespace CustomerService
 				MySqlCommand cmd = new MySqlCommand(sql, conn);
 				cmd.ExecuteNonQuery();
 				conn.Close();
-				SocketRun.sendData("idle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
+				SocketRun.sendData("notidle", Int32.Parse(arrRs[1]), 0, "", 0, 0, "");
 			}
 
 			else if (arrRs[0] == "data")

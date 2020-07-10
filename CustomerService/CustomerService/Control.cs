@@ -28,17 +28,35 @@ namespace CustomerService
 		{
 			if (e.RowIndex != -1)
 			{
-				textBox1.Text = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
-				comboBox1.SelectedItem = (String)dataGridView1.Rows[e.RowIndex].Cells[2].Value;
-				textBox3.Text = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
-				textBox4.Text = dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString();
-				client_id = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
+				if (radioButton1.Checked)
+				{
+					radioButton4.Checked = true;
+					textBox1.Text = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+					comboBox1.SelectedItem = (String)dataGridView1.Rows[e.RowIndex].Cells[2].Value;
+					textBox3.Text = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
+					textBox4.Text = dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString();
+					client_id = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
+					textBox1.SelectAll();
+					textBox1.Focus();
+					
+				}else if (radioButton2.Checked)
+				{
+					radioButton4.Checked = true;
+					textBox1.Text = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+					client_id = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
+					textBox1.SelectAll();
+					textBox1.Focus();
+				}
 			}
 		}
 		private void Edit_Load(object sender, EventArgs e)
 		{
 			dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 			dataGridView1.AutoSize = true;
+			radioButton1.Checked = true;
+			radioButton2.Checked = false;
+			radioButton3.Checked = true;
+			radioButton4.Checked = false;
 			getData();
 
 		}
@@ -56,32 +74,13 @@ namespace CustomerService
 		}
 		private void button1_Click(object sender, EventArgs e)
 		{
-			if (checkBox1.Checked)
+			if (radioButton1.Checked)
 			{
-				MySqlConnection conn = Function.GetConnection();
-				conn.Open();
-				string sql = "INSERT into client (ipcas,service_id,name,gate,idle,active,ip_address) values(@ipcas,@service_id,@name,@gate,@idle,@active,@ip_address)";
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.Connection = conn;
-				cmd.CommandText = sql;
-
-				cmd.Parameters.Add("@ipcas", MySqlDbType.String).Value = textBox1.Text;
-				cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = comboBox1.SelectedIndex + 1;
-				cmd.Parameters.Add("@name", MySqlDbType.String).Value = textBox3.Text;
-				cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = textBox4.Text;
-				cmd.Parameters.Add("@idle", MySqlDbType.Int32).Value = 0;
-				cmd.Parameters.Add("@active", MySqlDbType.Int32).Value = 0;
-				cmd.Parameters.Add("@ip_address", MySqlDbType.String).Value = "0.0.0.0";
-				cmd.ExecuteNonQuery();
-				conn.Close();
-			}
-			else
-			{
-				try
+				if (radioButton3.Checked)
 				{
 					MySqlConnection conn = Function.GetConnection();
-					conn.Open(); 
-					string sql = "UPDATE client SET  ipcas=@ipcas,service_id=@service_id,name=@name,gate=@gate WHERE  id=@id";
+					conn.Open();
+					string sql = "INSERT into client (ipcas,service_id,name,gate,idle,active,ip_address) values(@ipcas,@service_id,@name,@gate,@idle,@active,@ip_address)";
 					MySqlCommand cmd = new MySqlCommand();
 					cmd.Connection = conn;
 					cmd.CommandText = sql;
@@ -90,22 +89,150 @@ namespace CustomerService
 					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = comboBox1.SelectedIndex + 1;
 					cmd.Parameters.Add("@name", MySqlDbType.String).Value = textBox3.Text;
 					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = textBox4.Text;
-					cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = client_id;
+					cmd.Parameters.Add("@idle", MySqlDbType.Int32).Value = 0;
+					cmd.Parameters.Add("@active", MySqlDbType.Int32).Value = 0;
+					cmd.Parameters.Add("@ip_address", MySqlDbType.String).Value = "0.0.0.0";
 					cmd.ExecuteNonQuery();
 					conn.Close();
 				}
-				catch (Exception)
+				else if (radioButton4.Checked)
 				{
-					MessageBox.Show("Không tìm thấy thông tin người sử dụng");
+					try
+					{
+						MySqlConnection conn = Function.GetConnection();
+						conn.Open();
+						string sql = "UPDATE client SET  ipcas=@ipcas,service_id=@service_id,name=@name,gate=@gate WHERE  id=@id";
+						MySqlCommand cmd = new MySqlCommand();
+						cmd.Connection = conn;
+						cmd.CommandText = sql;
+
+						cmd.Parameters.Add("@ipcas", MySqlDbType.String).Value = textBox1.Text;
+						cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = comboBox1.SelectedIndex + 1;
+						cmd.Parameters.Add("@name", MySqlDbType.String).Value = textBox3.Text;
+						cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = textBox4.Text;
+						cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = client_id;
+						cmd.ExecuteNonQuery();
+						conn.Close();
+					}
+					catch (Exception)
+					{
+						MessageBox.Show("Không tìm thấy thông tin người sử dụng");
+					}
+
 				}
 
+				getData();
+			}else if (radioButton2.Checked)
+			{
+				if (radioButton3.Checked)
+				{
+					MySqlConnection conn = Function.GetConnection();
+					conn.Open();
+					string sql = "INSERT into services (name) values(@name)";
+					MySqlCommand cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
+					cmd.Parameters.Add("@name", MySqlDbType.String).Value = textBox1.Text;								
+					cmd.ExecuteNonQuery();
+
+					long id = cmd.LastInsertedId;
+					 sql = "update services  set current_cus = @current_cus where id =@id";
+					 cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
+					cmd.Parameters.Add("@current_cus", MySqlDbType.Int32).Value = id*1000;
+					cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = id;
+					cmd.ExecuteNonQuery();
+					conn.Close();
+				}
+				else if (radioButton4.Checked)
+				{
+					try
+					{
+						MySqlConnection conn = Function.GetConnection();
+						conn.Open();
+						string sql = sql = "update services  set name = @name where id =@id";
+						MySqlCommand cmd = new MySqlCommand();
+						cmd.Connection = conn;
+						cmd.CommandText = sql;
+						cmd.Parameters.Add("@name", MySqlDbType.String).Value = textBox1.Text;
+						cmd.Parameters.Add("@id", MySqlDbType.Int32).Value = client_id;
+						cmd.ExecuteNonQuery();						
+						conn.Close();
+					}
+					catch (Exception)
+					{
+						MessageBox.Show("Không tìm thấy thông tin người sử dụng");
+					}
+
+				}
+
+				getService();
 			}
-			getData();
 		}
 
 		private void checkBox1_CheckedChanged(object sender, EventArgs e)
 		{
 
+		}
+
+		private void radioButton1_CheckedChanged(object sender, EventArgs e)
+		{
+			//radioButton2.Checked = false;
+			label1.Text = "Mã ipcas";
+			textBox1.Clear();
+			textBox3.Clear();
+			textBox4.Clear();
+			comboBox1.SelectedIndex = -1;
+			label2.Visible = true;
+			label3.Visible = true;
+			label4.Visible = true;
+			textBox3.Visible = true;
+			textBox4.Visible = true;
+			comboBox1.Visible = true;
+			getData();
+		}
+
+		private void radioButton2_CheckedChanged(object sender, EventArgs e)
+		{
+			label1.Text = "Nghiệp vụ";
+			textBox1.Clear();
+			textBox3.Clear();
+			textBox4.Clear();
+			comboBox1.SelectedIndex = -1;
+			label2.Visible = false;
+			label3.Visible = false;
+			label4.Visible = false;
+			textBox3.Visible = false;
+			textBox4.Visible = false;
+			comboBox1.Visible = false;
+			getService();
+		}
+		private void getService()
+		{
+			dataGridView1.DataSource = null;
+			MySqlConnection conn = Function.GetConnection();
+			conn.Open();
+			string sql = "SELECT services.id,services.`name` AS `Nghiệp vụ` from services";
+			MySqlDataAdapter cmd = new MySqlDataAdapter(sql, conn);
+			DataTable dt = new DataTable();
+			cmd.Fill(dt);
+			dataGridView1.DataSource = dt;
+			conn.Close();
+		}
+
+		private void radioButton3_CheckedChanged(object sender, EventArgs e)
+		{
+			textBox1.Clear();
+			textBox3.Clear();
+			textBox4.Clear();
+			comboBox1.SelectedIndex = -1;
+			textBox1.Focus();
+		}
+
+		private void radioButton4_CheckedChanged(object sender, EventArgs e)
+		{
+			
 		}
 	}
 }

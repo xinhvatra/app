@@ -24,6 +24,7 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //
@@ -87,9 +89,9 @@ public class MainActivity extends AppCompatActivity {
         txtViewBot.setTextSize(30);
         txtViewBot.startScroll();
 
-        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        IP = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-        Toast.makeText(getApplicationContext(),"Ip address: "+IP,Toast.LENGTH_LONG).show();
+//        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+//        IP = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+//        Toast.makeText(getApplicationContext(),"Ip address: "+IP,Toast.LENGTH_LONG).show();
        // Log.i("==================", IP+"iiiippppppp");
         startServerSocket1();
 
@@ -114,9 +116,6 @@ public class MainActivity extends AppCompatActivity {
         btKhonghailong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //   Intent intent = new Intent(getApplicationContext(), LodeProcessing.class);
-                // startActivity(intent);
-                //   overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 Toast.makeText(getApplicationContext(), "Quý khách không hài lòng với dịch vụ của Agribank", Toast.LENGTH_SHORT).show();
 
             }
@@ -132,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
 
                 while (true) {
                     try {
-                        InetAddress add = InetAddress.getByName(IP);
-                        ServerSocket s = new ServerSocket(PORT, 0, add);
+                        InetAddress add = InetAddress.getByName("192.168.42.129");
+                        ServerSocket s = new ServerSocket(PORT, 0);
                       //  Toast.makeText(getApplicationContext(),"doi client ket noi"+s.getInetAddress(),Toast.LENGTH_LONG).show();
                       //  Log.i("==================","doi client ket noi"+add);
                         sk = s.accept();
@@ -151,23 +150,8 @@ public class MainActivity extends AppCompatActivity {
                         sk.close();
                         s.close();
                     } catch (IOException e) {
-//                        try {
                             e.printStackTrace();
-                       // Log.i("==================","loi"+e);
-//                            BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
-//                            final String st = input.readLine();
-//                            // Log.d("==================", st);
-//                            Handler refresh = new Handler(Looper.getMainLooper());
-//                            refresh.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    processData(st);
-//                                }
-//                            });
-//                        } catch (IOException i) {
-//
-//                            //  Log.d("==================", "ket noi den server khong ok ty nao");
-//                        }
+
                     }
 
 
@@ -242,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processData(final String stringData) {
-        Log.i("==================","truyen du lieu: "+stringData);
+      //  Log.i("==================","truyen du lieu: "+stringData);
         String[] st = stringData.split(",");
         txtCua.setText(st[0] + "");
         if (st[0].length() <= 1) txtCua.setText("0" + st[0]);

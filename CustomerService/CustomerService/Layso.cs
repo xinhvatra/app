@@ -78,8 +78,7 @@ namespace CustomerService
 
 		}
 		private void button2_Click(object sender, EventArgs e)
-		{
-			check_idle_client(Function.fmName, Function.services);
+		{	
 			
 			this.Close();
 			Main.bt1.Show();
