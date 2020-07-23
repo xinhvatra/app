@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -28,7 +25,7 @@ namespace CustomerServiceClient
 			loadConfig();
 			connect();
 			sendData("login", 0);
-			listenServer();		
+			listenServer();
 		}
 		public static void connect()
 		{
@@ -115,9 +112,9 @@ namespace CustomerServiceClient
 		}
 		//=================================End=========================================================/
 
-		
-	
-	
+
+
+
 		public static void SocketClose()
 		{
 			//loadConfig();

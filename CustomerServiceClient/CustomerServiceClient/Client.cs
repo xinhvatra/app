@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
-using System.Threading;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -90,7 +90,11 @@ namespace CustomerServiceClient
 			SocketRun.connect();
 			SocketRun.sendData("logout", 0);
 			SocketRun.SocketClose();
-			SocketRun.connectAndroid(SocketRun.gate + ",0");
+			if (SocketRun.android == 1)
+
+			{
+				SocketRun.connectAndroid(SocketRun.gate + ",0");
+			}
 			System.Environment.Exit(1);
 		}
 		private void Client_Load(object sender, EventArgs e)
@@ -154,7 +158,7 @@ namespace CustomerServiceClient
 				bt1.BackColor = Color.Red;
 				bt1.ForeColor = Color.White;
 				bt2.Visible = true;
-
+				btOnoff.Visible = false;
 				if (SocketRun.android == 1)
 				{
 					SocketRun.connectAndroid(SocketRun.gate + "," + arrRs[5]);
@@ -162,7 +166,7 @@ namespace CustomerServiceClient
 				}
 			}
 			else if (arrRs[0] == "idle")
-			{				
+			{
 				customer = Convert.ToInt32(arrRs[5]);
 				lbCenter.Text = "";
 				bt1.ForeColor = Color.Black;
@@ -170,7 +174,8 @@ namespace CustomerServiceClient
 				online = true;
 				bt1.Text = "Nhận khách";
 				bt1.BackColor = Color.Empty;
-				bt1.Visible = true;				
+				bt1.Visible = true;
+				btOnoff.Visible = true;
 				btOnoff.BackgroundImage = Properties.Resources.off;
 				if (SocketRun.android == 1)
 				{
@@ -178,7 +183,7 @@ namespace CustomerServiceClient
 				}
 			}
 			else if (arrRs[0] == "notidle")
-			{				
+			{
 				customer = Convert.ToInt32(arrRs[5]);
 				lbCenter.Text = arrRs[5];
 				bt1.ForeColor = Color.Black;
