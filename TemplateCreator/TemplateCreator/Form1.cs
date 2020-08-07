@@ -26,7 +26,7 @@ namespace QuesttionRender
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			for (int j = 0; j < dtName.Rows.Count; j++)
+			for (int j = 0; j < dtName.Rows.Count; j++) // chạy bảng khách hàng đã phân công theo cán bộ
 			{
 				Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
 				Document doc = new Document();
@@ -34,7 +34,7 @@ namespace QuesttionRender
 				string pa = System.Environment.CurrentDirectory;
 
 				filename = (pa + "\\TBB DN.docx");
-				if (j >= 13) filename = (pa + "\\TBB CN.docx");
+				if (j > 14) filename = (pa + "\\TBB CN.docx");
 				//MessageBox.Show(filename);
 				object missing = System.Type.Missing;
 				doc = word.Documents.Open(Path.GetFullPath(filename),
@@ -48,7 +48,7 @@ namespace QuesttionRender
 					{
 						for (int k = 0; k < dtData.Rows.Count; k++)
 						{
-							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
+							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString())) //so sánh mã KH ở bảng phân công cán bộ với dữ liệu lấy từ ipcas
 							{
 								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "canbotindung", dtData.Rows[k][32].ToString(), RegexOptions.IgnoreCase);
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
@@ -79,7 +79,7 @@ namespace QuesttionRender
 							{
 
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
-								sum += long.Parse(dtData.Rows[k][7].ToString());
+								sum = long.Parse(dtData.Rows[k][7].ToString());
 							}
 						}
 						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "soducaptindung",Convert.ToInt64(sum).ToString("N0"), RegexOptions.IgnoreCase);
@@ -172,14 +172,14 @@ namespace QuesttionRender
 					if (dbSchema != null && dbSchema.Rows.Count >= 1)
 					{
 						//string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
-						string sql = "SELECT * from [Sheet3$]";
+						string sql = "SELECT * from [Sheet2$]";
 						using (OleDbDataAdapter cmd = new OleDbDataAdapter(sql, conn))
 						{
 							cmd.Fill(myDataSet);
 						}
 						dtData = myDataSet.Tables[0];
 						myDataSet = new DataSet();
-						sql = "SELECT * from [Sheet4$]";
+						sql = "SELECT * from [Sheet1$]";
 						using (OleDbDataAdapter cmd = new OleDbDataAdapter(sql, conn))
 						{
 							cmd.Fill(myDataSet);

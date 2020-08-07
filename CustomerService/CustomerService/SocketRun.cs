@@ -24,7 +24,7 @@ namespace CustomerService
 		public static TcpListener listener;
 		public static Socket clientSocket;
 		public static Form fm;
-
+		
 		[Obsolete]
 		public static void SocketCreate()
 		{			

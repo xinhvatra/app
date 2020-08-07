@@ -35,6 +35,7 @@ namespace CustomerService
 		public const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
 		public static Dictionary<int, int> clients;
+		public static Dictionary<string, List<string>> questionList;
 		public Main()
 		{
 			InitializeComponent();
@@ -237,9 +238,7 @@ namespace CustomerService
 		{
 			loadConfig();
 			
-			clients = new Dictionary<int, int>();
-			Thread t = new Thread(sound);
-			t.Start();
+			
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
 			string sql = "select * from services";
@@ -281,10 +280,53 @@ namespace CustomerService
 				cm.ExecuteNonQuery();
 			}
 			conn.Close();
+			loadQuestion();
+			clients = new Dictionary<int, int>();
+			Thread t = new Thread(sound);
+			t.Start();
 			SocketRun.SocketCreate();
 
 		}
-
+		private void loadQuestion()
+		{
+			MySqlConnection conn = Function.GetConnection();
+			conn.Open();
+			string sql = "SELECT question.id, question, question_attr.id,question_attr.`votes`" +
+				" FROM question INNER JOIN question_attr ON question.id = question_attr.`question_id` " +
+				"AND active=1";
+			MySqlCommand cm = new MySqlCommand(sql, conn);
+			List<string> question_attr = new List<string>();
+			questionList = new Dictionary<string, List<string>>();
+			int id = 0;
+			using (DbDataReader reader = cm.ExecuteReader())
+			{
+				if (reader.HasRows)
+				{
+					//Function.services = new DataTable();
+					//Function.services.Load(reader);
+					while (reader.Read())
+					{
+						if (id != (Int32)reader.GetValue(0))
+						{	
+							id = (Int32)reader.GetValue(0);	
+							if(question_attr.Count>0)
+							questionList.Add((Int32)reader.GetValue(0) + "|" + (string)reader.GetValue(1), question_attr);
+							question_attr = new List<string>();
+						}
+						else
+						{
+							question_attr.Add((Int32)reader.GetValue(2) + "|" + (string)reader.GetValue(3));
+						}
+						
+					}
+				}
+			}
+			Function.data_services = "";
+			foreach (DataRow dtrow in Function.services.Rows)
+			{
+				Function.data_services += "|" + dtrow[1];
+			}
+		}
 		public static bool isProcess = false;
 		public static void processData(string st)
 		{
@@ -505,7 +547,7 @@ namespace CustomerService
 					cmd.ExecuteNonQuery();
 
 					//ghi lịch sử giao dịch
-					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
+					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,question) values(@cus_id,@client_id,@service_id,@gate,@question)";
 					cmd = new MySqlCommand();
 					cmd.Connection = conn;
 					cmd.CommandText = sql;
@@ -514,7 +556,19 @@ namespace CustomerService
 					cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
 					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
 					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
-					cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
+					cmd.Parameters.Add("@question", MySqlDbType.Int32).Value = 1;
+					cmd.ExecuteNonQuery();
+
+					//ghi đánh giá của khách hàng
+					sql = "insert into cus_vote_data(cus_id,question_id,question_attr_id,data) values(@cus_id,@question_id,@question_attr_id,@data)";
+					cmd = new MySqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = sql;
+
+					//cmd.Parameters.Add("@cus_id", MySqlDbType.Int32).Value = cus_id;
+					//cmd.Parameters.Add("@question_id", MySqlDbType.Int32).Value = question_id;
+					//cmd.Parameters.Add("@question_attr_id", MySqlDbType.Int32).Value = question_attr_id;
+					//cmd.Parameters.Add("@data", MySqlDbType.Int32).Value = data;
 					cmd.ExecuteNonQuery();
 				}
 				conn.Close();

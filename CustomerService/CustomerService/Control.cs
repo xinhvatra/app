@@ -57,6 +57,7 @@ namespace CustomerService
 			radioButton2.Checked = false;
 			radioButton3.Checked = true;
 			radioButton4.Checked = false;
+			radioButton5.Checked = true;
 			getData();
 
 		}
@@ -179,6 +180,8 @@ namespace CustomerService
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
 			//radioButton2.Checked = false;
+			radioButton1.ForeColor = Color.Blue;
+			radioButton2.ForeColor = Color.Black;
 			label1.Text = "Mã ipcas";
 			textBox1.Clear();
 			textBox3.Clear();
@@ -195,6 +198,8 @@ namespace CustomerService
 
 		private void radioButton2_CheckedChanged(object sender, EventArgs e)
 		{
+			radioButton2.ForeColor = Color.Blue;
+			radioButton1.ForeColor = Color.Black;
 			label1.Text = "Nghiệp vụ";
 			textBox1.Clear();
 			textBox3.Clear();
@@ -233,6 +238,22 @@ namespace CustomerService
 		private void radioButton4_CheckedChanged(object sender, EventArgs e)
 		{
 			
+		}
+
+		private void radioButton6_CheckedChanged(object sender, EventArgs e)
+		{
+			radioButton1.Visible = false;
+			radioButton2.Visible = false;
+			radioButton6.ForeColor = Color.Red;
+			radioButton5.ForeColor = Color.Black;
+		}
+
+		private void radioButton5_CheckedChanged(object sender, EventArgs e)
+		{
+			radioButton1.Visible = true;
+			radioButton2.Visible = true;
+			radioButton5.ForeColor = Color.Red;
+			radioButton6.ForeColor = Color.Black;
 		}
 	}
 }

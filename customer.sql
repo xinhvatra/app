@@ -57,14 +57,14 @@ CREATE TABLE `cus_deal` (
   `client_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
   `gate` int(11) NOT NULL,
-  `rate` int(11) NOT NULL,
+  `question` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=321 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=329 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `cus_deal` */
 
-insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`rate`,`time`) values 
+insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`question`,`time`) values 
 (1,1061,6,1,6,1,'2020-06-05 10:40:00'),
 (2,1062,6,1,6,1,'2020-06-05 10:41:04'),
 (3,2004,8,2,2,1,'2020-06-05 10:40:36'),
@@ -384,7 +384,11 @@ insert  into `cus_deal`(`id`,`cus_id`,`client_id`,`service_id`,`gate`,`rate`,`ti
 (317,1276,3,1,3,1,'2020-07-07 14:42:53'),
 (318,1277,3,1,3,1,'2020-07-07 14:42:55'),
 (319,1278,3,1,3,1,'2020-07-07 14:43:47'),
-(320,1279,3,1,3,1,'2020-07-07 14:45:07');
+(320,1279,3,1,3,1,'2020-07-07 14:45:07'),
+(321,1280,3,1,3,1,'2020-07-09 17:39:43'),
+(326,1001,3,1,3,1,'2020-07-23 08:45:14'),
+(327,1002,3,1,3,1,'2020-07-23 08:50:05'),
+(328,1003,3,1,3,1,'2020-07-23 08:50:44');
 
 /*Table structure for table `cus_rating` */
 
@@ -399,9 +403,25 @@ CREATE TABLE `cus_rating` (
 /*Data for the table `cus_rating` */
 
 insert  into `cus_rating`(`id`,`value`) values 
-(1,'Tốt'),
-(2,'Bình thường'),
-(3,'Không tốt');
+(1,'Rất tốt'),
+(2,'Tốt'),
+(3,'Bình thường'),
+(4,'Không tốt');
+
+/*Table structure for table `cus_vote_data` */
+
+DROP TABLE IF EXISTS `cus_vote_data`;
+
+CREATE TABLE `cus_vote_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cus_id` int(11) DEFAULT NULL,
+  `question_id` int(11) DEFAULT NULL,
+  `question_attr_id` int(11) DEFAULT NULL,
+  `data` text COLLATE utf8_unicode_ci,
+  KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `cus_vote_data` */
 
 /*Table structure for table `cus_wait` */
 
@@ -417,36 +437,40 @@ CREATE TABLE `cus_wait` (
 
 /*Data for the table `cus_wait` */
 
-insert  into `cus_wait`(`cus_id`,`service_id`,`receive_client_id`,`priority`) values 
-(1265,1,1,1),
-(1278,2,7,1),
-(1279,2,9,1),
-(1280,1,0,0),
-(1281,1,0,0),
-(1282,1,0,0),
-(1283,1,0,0),
-(1284,1,0,0),
-(1285,1,0,0),
-(1286,1,0,0),
-(1287,1,0,0),
-(1288,1,0,0),
-(1289,1,0,0),
-(1290,1,0,0),
-(1291,1,0,0),
-(1292,1,0,0),
-(1293,1,0,0),
-(1294,1,0,0),
-(1295,1,0,0),
-(1296,1,0,0),
-(1297,1,0,0),
-(1298,1,0,0),
-(1299,1,0,0),
-(2190,2,0,0),
-(2191,2,0,0),
-(2192,2,0,0),
-(2193,2,0,0),
-(2194,2,0,0),
-(2195,2,0,0);
+/*Table structure for table `question` */
+
+DROP TABLE IF EXISTS `question`;
+
+CREATE TABLE `question` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `question` text COLLATE utf8_unicode_ci,
+  `active` tinyint(1) DEFAULT NULL,
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `question` */
+
+insert  into `question`(`id`,`question`,`active`) values 
+(1,'Bạn có hài lòng với dịch vụ của Agribank?',1);
+
+/*Table structure for table `question_attr` */
+
+DROP TABLE IF EXISTS `question_attr`;
+
+CREATE TABLE `question_attr` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `question_id` int(11) DEFAULT NULL,
+  `votes` text COLLATE utf8_unicode_ci,
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `question_attr` */
+
+insert  into `question_attr`(`id`,`question_id`,`votes`) values 
+(1,1,'Rất hài lòng'),
+(2,1,'Hài lòng'),
+(3,1,'Không hài lòng'),
+(4,1,'Ý kiến khác');
 
 /*Table structure for table `services` */
 
@@ -457,14 +481,15 @@ CREATE TABLE `services` (
   `name` text COLLATE utf8_unicode_ci NOT NULL,
   `current_cus` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `services` */
 
 insert  into `services`(`id`,`name`,`current_cus`) values 
-(1,'Giao dịch tiền gửi',1299),
-(2,'Giao dịch Thẻ, Emobile-banking',2195),
-(3,'Giao dịch tiền vay',3001);
+(1,'Giao dịch kế toán',1000),
+(2,'Giao dịch Thẻ, Emobile-banking',2000),
+(3,'Khách hàng cá nhân',3000),
+(4,'Khách hàng doanh nghiệp',4000);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
