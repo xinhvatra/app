@@ -94,6 +94,8 @@ namespace CustomerService
 			{
 				Control ed = new Control();
 				ed.Show();
+			}else if(e.Control && e.KeyCode == Keys.Q) {
+				System.Environment.Exit(1);
 			}
 		}
 

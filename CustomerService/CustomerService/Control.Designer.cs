@@ -48,6 +48,12 @@
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.radioButton5 = new System.Windows.Forms.RadioButton();
 			this.radioButton6 = new System.Windows.Forms.RadioButton();
+			this.label5 = new System.Windows.Forms.Label();
+			this.textBox2 = new System.Windows.Forms.TextBox();
+			this.textBox5 = new System.Windows.Forms.TextBox();
+			this.textBox6 = new System.Windows.Forms.TextBox();
+			this.textBox7 = new System.Windows.Forms.TextBox();
+			this.textBox8 = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -66,12 +72,12 @@
 			this.dataGridView1.ReadOnly = true;
 			this.dataGridView1.RowHeadersWidth = 51;
 			this.dataGridView1.RowTemplate.Height = 24;
-			this.dataGridView1.Size = new System.Drawing.Size(681, 308);
+			this.dataGridView1.Size = new System.Drawing.Size(681, 339);
 			this.dataGridView1.TabIndex = 0;
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(106, 295);
+			this.button1.Location = new System.Drawing.Point(107, 321);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(94, 34);
 			this.button1.TabIndex = 1;
@@ -84,13 +90,19 @@
 			this.groupBox2.Controls.Add(this.dataGridView1);
 			this.groupBox2.Location = new System.Drawing.Point(15, 48);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(692, 339);
+			this.groupBox2.Size = new System.Drawing.Size(692, 366);
 			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Danh sách";
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this.textBox8);
+			this.groupBox3.Controls.Add(this.textBox7);
+			this.groupBox3.Controls.Add(this.textBox6);
+			this.groupBox3.Controls.Add(this.textBox5);
+			this.groupBox3.Controls.Add(this.label5);
+			this.groupBox3.Controls.Add(this.textBox2);
 			this.groupBox3.Controls.Add(this.radioButton4);
 			this.groupBox3.Controls.Add(this.radioButton3);
 			this.groupBox3.Controls.Add(this.comboBox1);
@@ -104,7 +116,7 @@
 			this.groupBox3.Controls.Add(this.textBox1);
 			this.groupBox3.Location = new System.Drawing.Point(724, 48);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(274, 339);
+			this.groupBox3.Size = new System.Drawing.Size(274, 366);
 			this.groupBox3.TabIndex = 3;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Thuộc tính";
@@ -136,7 +148,7 @@
 			// comboBox1
 			// 
 			this.comboBox1.FormattingEnabled = true;
-			this.comboBox1.Location = new System.Drawing.Point(43, 131);
+			this.comboBox1.Location = new System.Drawing.Point(43, 123);
 			this.comboBox1.Name = "comboBox1";
 			this.comboBox1.Size = new System.Drawing.Size(219, 24);
 			this.comboBox1.TabIndex = 8;
@@ -144,7 +156,7 @@
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(40, 216);
+			this.label4.Location = new System.Drawing.Point(40, 209);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(52, 17);
 			this.label4.TabIndex = 7;
@@ -153,7 +165,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(40, 158);
+			this.label3.Location = new System.Drawing.Point(40, 159);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(33, 17);
 			this.label3.TabIndex = 6;
@@ -179,20 +191,21 @@
 			// 
 			// textBox4
 			// 
-			this.textBox4.Location = new System.Drawing.Point(41, 236);
+			this.textBox4.Location = new System.Drawing.Point(41, 229);
 			this.textBox4.Name = "textBox4";
 			this.textBox4.Size = new System.Drawing.Size(221, 22);
 			this.textBox4.TabIndex = 3;
 			// 
 			// textBox3
 			// 
-			this.textBox3.Location = new System.Drawing.Point(41, 178);
+			this.textBox3.Location = new System.Drawing.Point(41, 179);
 			this.textBox3.Name = "textBox3";
 			this.textBox3.Size = new System.Drawing.Size(221, 22);
 			this.textBox3.TabIndex = 2;
 			// 
 			// textBox1
 			// 
+			this.textBox1.AcceptsReturn = true;
 			this.textBox1.Location = new System.Drawing.Point(43, 69);
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(219, 22);
@@ -230,7 +243,7 @@
 			this.groupBox1.Controls.Add(this.groupBox2);
 			this.groupBox1.Location = new System.Drawing.Point(12, 62);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(1024, 414);
+			this.groupBox1.Size = new System.Drawing.Size(1024, 455);
 			this.groupBox1.TabIndex = 6;
 			this.groupBox1.TabStop = false;
 			// 
@@ -268,11 +281,55 @@
 			this.radioButton6.UseVisualStyleBackColor = true;
 			this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
 			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(40, 268);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(77, 17);
+			this.label5.TabIndex = 12;
+			this.label5.Text = "Đánh giá 4";
+			// 
+			// textBox2
+			// 
+			this.textBox2.Location = new System.Drawing.Point(41, 69);
+			this.textBox2.Name = "textBox2";
+			this.textBox2.Size = new System.Drawing.Size(221, 22);
+			this.textBox2.TabIndex = 11;
+			// 
+			// textBox5
+			// 
+			this.textBox5.Location = new System.Drawing.Point(41, 123);
+			this.textBox5.Name = "textBox5";
+			this.textBox5.Size = new System.Drawing.Size(221, 22);
+			this.textBox5.TabIndex = 13;
+			// 
+			// textBox6
+			// 
+			this.textBox6.Location = new System.Drawing.Point(41, 179);
+			this.textBox6.Name = "textBox6";
+			this.textBox6.Size = new System.Drawing.Size(221, 22);
+			this.textBox6.TabIndex = 14;
+			// 
+			// textBox7
+			// 
+			this.textBox7.Location = new System.Drawing.Point(41, 229);
+			this.textBox7.Name = "textBox7";
+			this.textBox7.Size = new System.Drawing.Size(221, 22);
+			this.textBox7.TabIndex = 15;
+			// 
+			// textBox8
+			// 
+			this.textBox8.Location = new System.Drawing.Point(41, 288);
+			this.textBox8.Name = "textBox8";
+			this.textBox8.Size = new System.Drawing.Size(221, 22);
+			this.textBox8.TabIndex = 16;
+			// 
 			// Control
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1046, 483);
+			this.ClientSize = new System.Drawing.Size(1047, 526);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox1);
 			this.MaximizeBox = false;
@@ -315,5 +372,11 @@
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.RadioButton radioButton5;
 		private System.Windows.Forms.RadioButton radioButton6;
+		private System.Windows.Forms.TextBox textBox8;
+		private System.Windows.Forms.TextBox textBox7;
+		private System.Windows.Forms.TextBox textBox6;
+		private System.Windows.Forms.TextBox textBox5;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.TextBox textBox2;
 	}
 }
