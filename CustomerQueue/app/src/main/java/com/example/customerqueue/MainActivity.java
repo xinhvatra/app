@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processData(final String stringData) {
-      //  Log.i("==================","truyen du lieu: "+stringData);
+       Log.i("==================","truyen du lieu: "+stringData);
         String[] st = stringData.split(",");
         txtCua.setText(st[0] + "");
         if (st[0].length() <= 1) txtCua.setText("0" + st[0]);

@@ -117,7 +117,7 @@ namespace CustomerService
 		}
 		public static void print(string service,string num)
 		{
-
+			if (!printTicket) return;
 			string pa = Directory.GetCurrentDirectory();
 					
 			Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
@@ -231,10 +231,16 @@ namespace CustomerService
 					//MessageBox.Show(ipAndroid);
 				}
 				catch (Exception) { }
+				try
+				{
+					printTicket = (node.SelectSingleNode("printBill").InnerText)=="1"?true:false;
+					//MessageBox.Show(ipAndroid);
+				}
+				catch (Exception) { }
 
 			}
 		}
-
+		private static bool printTicket = false;
 		[Obsolete]
 		private void Main_Load(object sender, EventArgs e)
 		{
@@ -431,7 +437,7 @@ namespace CustomerService
 					cmd.ExecuteNonQuery();
 
 					//ghi lịch sử giao dịch
-					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,rate) values(@cus_id,@client_id,@service_id,@gate,@rate)";
+					sql = "insert into cus_deal(cus_id,client_id,service_id,gate,question) values(@cus_id,@client_id,@service_id,@gate,@question)";
 					cmd = new MySqlCommand();
 					cmd.Connection = conn;
 					cmd.CommandText = sql;
@@ -440,7 +446,7 @@ namespace CustomerService
 					cmd.Parameters.Add("@client_id", MySqlDbType.Int32).Value = client_id;
 					cmd.Parameters.Add("@service_id", MySqlDbType.Int32).Value = service_id;
 					cmd.Parameters.Add("@gate", MySqlDbType.Int32).Value = gate;
-					cmd.Parameters.Add("@rate", MySqlDbType.Int32).Value = 1;
+					cmd.Parameters.Add("@question", MySqlDbType.Int32).Value = 1;
 					cmd.ExecuteNonQuery();
 				}
 				conn.Close();

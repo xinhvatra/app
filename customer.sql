@@ -37,7 +37,7 @@ CREATE TABLE `client` (
 insert  into `client`(`id`,`ipcas`,`service_id`,`name`,`gate`,`idle`,`active`,`ip_address`) values 
 (1,'TNGNQKY',1,'Nguyễn Quý Kỳ',1,1,1,'127.0.0.1'),
 (2,'TNGNTHAO',2,'Nguyễn Phương Thảo',2,1,1,''),
-(3,'TNGDLIEU',1,'Đinh Dương Liễu',3,0,0,'10.27.0.46'),
+(3,'TNGDLIEU',1,'Đinh Dương Liễu',3,0,1,'10.27.0.46'),
 (4,'TNGNTHP',1,'Nguyễn Thị Hà Phương',4,0,1,''),
 (5,'TNGNLH',1,'Nguyễn Lan Hương',5,0,1,''),
 (6,'TNGMDUNG',0,'Ma Thị Dung',7,1,1,''),
@@ -446,12 +446,13 @@ CREATE TABLE `question` (
   `question` text COLLATE utf8_unicode_ci,
   `active` tinyint(1) DEFAULT NULL,
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `question` */
 
 insert  into `question`(`id`,`question`,`active`) values 
-(1,'Bạn có hài lòng với dịch vụ của Agribank?',1);
+(1,'Bạn thấy dịch vụ thế nào?',0),
+(2,'Bạn có muốn sử dụng lâu dài dịch vụ của Agribank? Xin cho biết lý do',1);
 
 /*Table structure for table `question_attr` */
 
@@ -461,16 +462,21 @@ CREATE TABLE `question_attr` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `question_id` int(11) DEFAULT NULL,
   `votes` text COLLATE utf8_unicode_ci,
+  `has_attr` tinyint(1) NOT NULL DEFAULT '0',
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `question_attr` */
 
-insert  into `question_attr`(`id`,`question_id`,`votes`) values 
-(1,1,'Rất hài lòng'),
-(2,1,'Hài lòng'),
-(3,1,'Không hài lòng'),
-(4,1,'Ý kiến khác');
+insert  into `question_attr`(`id`,`question_id`,`votes`,`has_attr`) values 
+(1,1,'Rất hài lòng',0),
+(2,1,'Hài lòng',0),
+(3,1,'Không hài lòng',0),
+(4,1,'Ý kiến khác',1),
+(5,2,'Rất hài lòng',0),
+(6,2,'Hài lòng',0),
+(7,2,'Không hài lòng',0),
+(8,2,'Ý kiến khác',1);
 
 /*Table structure for table `services` */
 
@@ -490,6 +496,29 @@ insert  into `services`(`id`,`name`,`current_cus`) values
 (2,'Giao dịch Thẻ, Emobile-banking',2000),
 (3,'Khách hàng cá nhân',3000),
 (4,'Khách hàng doanh nghiệp',4000);
+
+/*Table structure for table `vote_attr` */
+
+DROP TABLE IF EXISTS `vote_attr`;
+
+CREATE TABLE `vote_attr` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vote_id` int(11) NOT NULL,
+  `value` text COLLATE utf8_unicode_ci NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+/*Data for the table `vote_attr` */
+
+insert  into `vote_attr`(`id`,`vote_id`,`value`,`active`) values 
+(1,4,'Chuyển tiền chậm',0),
+(2,4,'Thái độ phục vụ không tốt',0),
+(3,4,'Dịch vụ nghèo nàn',1),
+(4,8,'Dùng hay',1),
+(5,8,'Nhanh',1),
+(6,8,'Đẹp',1),
+(7,8,'Xịn',1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

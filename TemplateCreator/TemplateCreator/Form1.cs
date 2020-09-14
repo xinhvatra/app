@@ -34,7 +34,7 @@ namespace QuesttionRender
 				string pa = System.Environment.CurrentDirectory;
 
 				filename = (pa + "\\TBB DN.docx");
-				if (j > 14) filename = (pa + "\\TBB CN.docx");
+				if (j > 7) filename = (pa + "\\TBB CN.docx");
 				//MessageBox.Show(filename);
 				object missing = System.Type.Missing;
 				doc = word.Documents.Open(Path.GetFullPath(filename),
@@ -143,7 +143,7 @@ namespace QuesttionRender
 					}
 				}
 				//MessageBox.Show("OK XONG!");
-				if(j>=13) ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\CN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + dtName.Rows[j][5].ToString() + ".docx");
+				if(j>7) ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\CN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + dtName.Rows[j][5].ToString() + ".docx");
 				else ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\DN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + dtName.Rows[j][5].ToString() + ".docx");
 				((_Document)doc).Close();
 				((_Application)word).Quit();
@@ -172,14 +172,14 @@ namespace QuesttionRender
 					if (dbSchema != null && dbSchema.Rows.Count >= 1)
 					{
 						//string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
-						string sql = "SELECT * from [Sheet2$]";
+						string sql = "SELECT * from [Sheet2$]"; //dữ liệu lấy từ ipcas
 						using (OleDbDataAdapter cmd = new OleDbDataAdapter(sql, conn))
 						{
 							cmd.Fill(myDataSet);
 						}
 						dtData = myDataSet.Tables[0];
 						myDataSet = new DataSet();
-						sql = "SELECT * from [Sheet1$]";
+						sql = "SELECT * from [Sheet1$]";//bảng chọn mẫu
 						using (OleDbDataAdapter cmd = new OleDbDataAdapter(sql, conn))
 						{
 							cmd.Fill(myDataSet);

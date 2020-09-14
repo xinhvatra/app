@@ -39,40 +39,47 @@
 			this.groupBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox1.Location = new System.Drawing.Point(0, 0);
+			this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(335, 29);
+			this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox1.Size = new System.Drawing.Size(475, 36);
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			// 
 			// groupBox3
 			// 
 			this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
-			this.groupBox3.Location = new System.Drawing.Point(0, 29);
+			this.groupBox3.Location = new System.Drawing.Point(0, 36);
+			this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(335, 71);
+			this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox3.Size = new System.Drawing.Size(475, 87);
 			this.groupBox3.TabIndex = 3;
 			this.groupBox3.TabStop = false;
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox2.Location = new System.Drawing.Point(0, 100);
+			this.groupBox2.Location = new System.Drawing.Point(0, 123);
+			this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(335, 184);
+			this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox2.Size = new System.Drawing.Size(475, 233);
 			this.groupBox2.TabIndex = 4;
 			this.groupBox2.TabStop = false;
 			// 
 			// Client
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-			this.ClientSize = new System.Drawing.Size(335, 284);
+			this.ClientSize = new System.Drawing.Size(475, 356);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox1);
 			this.IsMdiContainer = true;
+			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "Client";
