@@ -1,4 +1,4 @@
-package com.example.customerqueue;
+package com.example.customerrating;
 
 import android.content.Context;
 

@@ -35,7 +35,7 @@ namespace CustomerService
 		public const int PORT_NUMBER = 9999;
 		public static TcpListener listener;
 		public static Dictionary<int, int> clients;
-		public static Dictionary<string, List<string>> questionList;
+		public static String questionList;
 		public Main()
 		{
 			InitializeComponent();
@@ -302,9 +302,8 @@ namespace CustomerService
 			string sql = "SELECT question.id, question, question_attr.id,question_attr.`votes`" +
 				" FROM question INNER JOIN question_attr ON question.id = question_attr.`question_id` " +
 				"AND active=1";
-			MySqlCommand cm = new MySqlCommand(sql, conn);
-			List<string> question_attr = new List<string>();
-			questionList = new Dictionary<string, List<string>>();
+			MySqlCommand cm = new MySqlCommand(sql, conn);			
+			
 			int id = 0;
 			using (DbDataReader reader = cm.ExecuteReader())
 			{
@@ -316,14 +315,13 @@ namespace CustomerService
 					{
 						if (id != (Int32)reader.GetValue(0))
 						{	
-							id = (Int32)reader.GetValue(0);	
-							if(question_attr.Count>0)
-							questionList.Add((Int32)reader.GetValue(0) + "|" + (string)reader.GetValue(1), question_attr);
-							question_attr = new List<string>();
+							id = (Int32)reader.GetValue(0);								
+							questionList += reader.GetValue(1).ToString() + "(" + reader.GetValue(3).ToString();
+							
 						}
 						else
 						{
-							question_attr.Add((Int32)reader.GetValue(2) + "|" + (string)reader.GetValue(3));
+							questionList +=  "|" + (string)reader.GetValue(3);
 						}
 						
 					}
@@ -373,6 +371,11 @@ namespace CustomerService
 				MySqlCommand cmd = new MySqlCommand(sql, conn);
 				cmd.ExecuteNonQuery();
 				conn.Close();
+			}
+			else if (arrRs[0] == "question")
+			{
+				SocketRun.sendData("question",0,0,"android",0,0,questionList );
+				MessageBox.Show(questionList);
 			}
 			else if (arrRs[0] == "idle")
 			{

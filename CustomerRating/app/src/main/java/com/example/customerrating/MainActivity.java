@@ -1,23 +1,13 @@
-package com.example.customerqueue;
+package com.example.customerrating;
 
 import android.app.Activity;
-import android.app.IntentService;
-import android.content.Intent;
 import android.graphics.Color;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
-import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -26,56 +16,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 
 public class MainActivity extends AppCompatActivity {
-    Button btRathailong, btHailong, btKhonghailong;
+    Button btRathailong, btHailong, btKhonghailong,btYkienkhac;
     ScrollTextView txtViewTop, txtViewBot;
-    LinearLayout lnButton, lnText;
-    TextView txtCua, txtKhach;
-    String IP="10.0.2.2";
-    int PORT = 9998;
+    LinearLayout lnButton, lnImage;
+    TextView txtLabel;
+
+    String IP = "10.27.0.46";
+    int PORT = 9999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+
 
         lnButton = (LinearLayout) findViewById((R.id.lnButton));
-        lnButton.setVisibility(View.INVISIBLE);
+       // lnButton.setVisibility(View.INVISIBLE);
+        lnImage = (LinearLayout) findViewById((R.id.lnImage));
+        //lnImage.setVisibility(View.INVISIBLE);
+
+
         btRathailong = (Button) findViewById(R.id.btRatot);
         btHailong = (Button) findViewById(R.id.btTot);
         btKhonghailong = (Button) findViewById(R.id.btKhongtot);
+        btYkienkhac = (Button) findViewById(R.id.btYkienkhac);
 
-        txtCua = (TextView) findViewById(R.id.textCua);
-        txtCua.setTextSize(330);
+        txtLabel = (TextView) findViewById(R.id.txtLabel);
+        txtLabel.setTextSize(35);
 
         txtViewTop = (ScrollTextView) findViewById(R.id.txtViewTop);
         txtViewTop.setText("AGRIBANK TỈNH THÁI NGUYÊN KÍNH CHÀO QUÝ KHÁCH!");
@@ -92,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
 //        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 //        IP = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 //        Toast.makeText(getApplicationContext(),"Ip address: "+IP,Toast.LENGTH_LONG).show();
-       // Log.i("==================", IP+"iiiippppppp");
-        startServerSocket1();
+        // Log.i("==================", IP+"iiiippppppp");
+      //  serverConnect();
 
         //=============CHECK ACTIVE=============================
         btRathailong.setOnClickListener(new View.OnClickListener() {
@@ -124,17 +107,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void startServerSocket1() {
         Thread thread = new Thread(new Runnable() {
-            private String stringData = null;
             Socket sk;
+
             @Override
             public void run() {
 
                 while (true) {
                     try {
-                       // InetAddress add = InetAddress.getByName(IP);
+                        // InetAddress add = InetAddress.getByName(IP);
                         ServerSocket s = new ServerSocket(PORT, 0);
-                        Toast.makeText(getApplicationContext(),"doi client ket noi"+s.getInetAddress(),Toast.LENGTH_LONG).show();
-                        Log.i("==================","doi client ket noi");
+                        //  Toast.makeText(getApplicationContext(), "doi client ket noi" + s.getInetAddress(), Toast.LENGTH_LONG).show();
+                        Log.i("==================", "doi client ket noi");
                         sk = s.accept();
                         BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
                         final String st = input.readLine();
@@ -150,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         sk.close();
                         s.close();
                     } catch (IOException e) {
-                            e.printStackTrace();
+                        e.printStackTrace();
 
                     }
 
@@ -163,59 +146,32 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-    private void startServerSocket() {
+    private void serverConnect() {
+
         Thread thread = new Thread(new Runnable() {
-            private String stringData = null;
+
 
             @Override
             public void run() {
-
                 try {
-                    while (true) {
-                        Socket s = new Socket(IP, 9998);
-                        //  Log.d("==================","ket noi den server ok"+s.getRemoteSocketAddress());
-                        //   OutputStream out = s.getOutputStream();
-                        //   PrintWriter output = new PrintWriter(out);
-                        //  output.println("");
-                        //  output.flush();
-                        // while (true) {
-                        // InputStream input = s.getInputStream();
-                        //  PrintWriter output = new PrintWriter( new BufferedWriter( new OutputStreamWriter(s.getOutputStream())),true);
-                        //  output.println("test");
-                        // Log.d("==================","ket noi den server ok"+s.getRemoteSocketAddress());
+                    Socket sk = new Socket(IP, PORT);
+                    BufferedWriter output = new BufferedWriter(new OutputStreamWriter(sk.getOutputStream()));
+                    output.write("question");
+                    output.flush();
+                    Log.i("==================", "send request for getting question");
 
-                        // try {
-                        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                        // DataInputStream dt = new DataInputStream((s.getInputStream()));
-                        final String st = input.readLine();
-                        // input.close();
-                       // Log.d("==================", st);
-                        Handler refresh = new Handler(Looper.getMainLooper());
-                        refresh.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                processData(st);
-                            }
-                        });
-
-                        // }catch(IOException w){
-
-                        // }
-                    }
-                } catch (IOException e) {
-                    // e.printStackTrace();
-                    Handler refresh = new Handler((Looper.getMainLooper()));
+                    BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
+                    final String st = input.readLine();
+                    Handler refresh = new Handler(Looper.getMainLooper());
                     refresh.post(new Runnable() {
                         @Override
                         public void run() {
-                            txtCua.setText("ĐANG BẬN");
-                            txtCua.setTextSize(170);
-                            txtCua.setTextColor(Color.RED);
+                            processData(st);
                         }
                     });
+                } catch (IOException e) {
                 }
             }
-
         });
         thread.start();
     }
@@ -226,20 +182,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processData(final String stringData) {
-       Log.i("==================","nhan du lieu: "+stringData);
-        String[] st = stringData.split(",");
-        txtCua.setText(st[0] + "");
-        if (st[0].length() <= 1) txtCua.setText("0" + st[0]);
-        if (st[1].toString().trim().equals("0")) {
-            txtCua.setTextSize(330);
-            txtCua.setTextColor(Color.BLUE);
-        } else {
-
-            txtCua.setText(st[0] + "\n"+st[1]);
-            if (st[0].length() <= 1) txtCua.setText("0" + st[0]+"\n"+st[1]);
-            txtCua.setTextSize(180);
-            txtCua.setTextColor(Color.RED);
-        }
+        Log.i("==================", "nhan du lieu: " + stringData);
+        String[] st = stringData.split("\\(");
+        txtLabel.setText(st[0] + "");
+        if (st[0].length() <= 1) txtLabel.setText("AGRIBANK TỈNH THÁI NGUYÊN KÍNH CHÀO QUÝ KHÁCH!");
+//        if (st[1].toString().trim().equals("0")) {
+//            txtLabel.setTextSize(35);
+//            txtLabel.setTextColor(Color.BLUE);
+//        } else {
+//
+//            txtLabel.setText(st[0] + "\n" + st[1]);
+//            if (st[0].length() <= 1) txtLabel.setText("0" + st[0] + "\n" + st[1]);
+//            txtLabel.setTextSize(180);
+//            txtLabel.setTextColor(Color.RED);
+//        }
     }
 
     @Override
@@ -248,24 +204,24 @@ public class MainActivity extends AppCompatActivity {
         //Here you can get the size!
         //    Toast.makeText(getApplicationContext(), txtViewTop.getHeight()+"----"+" ----"+txtViewBot.getHeight() , Toast.LENGTH_LONG).show();
 
+//
+//        DisplayMetrics displayMetrics = new DisplayMetrics();
+//        ((Activity) this).getWindowManager()
+//                .getDefaultDisplay()
+//                .getMetrics(displayMetrics);
+//        int statusBarHeight = (int) Math.ceil(25 * getApplicationContext().getResources().getDisplayMetrics().density);
+//        final int height = displayMetrics.heightPixels;
+//        final int width = displayMetrics.widthPixels;
+//        final int btHeight = height - txtViewTop.getHeight() - txtViewBot.getHeight() - statusBarHeight - 10;
+//        btKhonghailong.setHeight(btHeight);
+//        btRathailong.setHeight(btHeight);
+//        btHailong.setHeight(btHeight);
+//
+//        btRathailong.setWidth(width / 3);
+//        btHailong.setWidth(width / 3);
+//        btKhonghailong.setWidth(width / 3);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) this).getWindowManager()
-                .getDefaultDisplay()
-                .getMetrics(displayMetrics);
-        int statusBarHeight = (int) Math.ceil(25 * getApplicationContext().getResources().getDisplayMetrics().density);
-        final int height = displayMetrics.heightPixels;
-        final int width = displayMetrics.widthPixels;
-        final int btHeight = height - txtViewTop.getHeight() - txtViewBot.getHeight() - statusBarHeight - 10;
-        btKhonghailong.setHeight(btHeight);
-        btRathailong.setHeight(btHeight);
-        btHailong.setHeight(btHeight);
-
-        btRathailong.setWidth(width / 3);
-        btHailong.setWidth(width / 3);
-        btKhonghailong.setWidth(width / 3);
-
-        txtCua.setHeight(btHeight);
+       // txtLabel.setHeight(btHeight);
         //  txtKhach.setHeight(btHeight/2);
     }
 

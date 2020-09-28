@@ -1,9 +1,8 @@
-package com.example.customerqueue;
+package com.example.customerrating;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class NetworkHandler extends IntentService {
                 try {
 
                     Socket s = new Socket("10.0.2.2", 9998);
-                    Log.d("==================","ket noi den server ok"+s.getRemoteSocketAddress());
+                    Log.d("==================", "ket noi den server ok" + s.getRemoteSocketAddress());
                     //   OutputStream out = s.getOutputStream();
                     //   PrintWriter output = new PrintWriter(out);
                     //  output.println("");
@@ -42,14 +41,14 @@ public class NetworkHandler extends IntentService {
                     // InputStream input = s.getInputStream();
                     //  PrintWriter   output = new PrintWriter( new BufferedWriter( new OutputStreamWriter(s.getOutputStream())),true);
                     //  output.println("test");
-                    while (true){
+                    while (true) {
                         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
                         final String st = input.readLine();
                         Log.d("==================", st);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.d("==================","ket noi den server khong ok ty nao");
+                    Log.d("==================", "ket noi den server khong ok ty nao");
                 }
             }
 
