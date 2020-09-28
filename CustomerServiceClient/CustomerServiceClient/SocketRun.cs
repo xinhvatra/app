@@ -19,7 +19,7 @@ namespace CustomerServiceClient
 		private static Stream stream;
 		public static Form fm;
 		public static int client_id, android;
-		public static string ipcas, gate, ipServer, ipAndroid;
+		public static string ipcas, gate, serverIp, androidIp;
 		public static void SocketCreate()
 		{
 			loadConfig();
@@ -32,7 +32,7 @@ namespace CustomerServiceClient
 			try
 			{
 				client = new TcpClient();
-				client.Connect(ipServer, PORT_NUMBER);
+				client.Connect(serverIp, PORT_NUMBER);
 				stream = client.GetStream();
 			}
 			catch (Exception)
@@ -48,7 +48,7 @@ namespace CustomerServiceClient
 			try
 			{
 				clientAndroid = new TcpClient();
-				clientAndroid.Connect(ipAndroid, PORT_NUMBER_ANDROID);
+				clientAndroid.Connect(androidIp, PORT_NUMBER_ANDROID);
 				//MessageBox.Show(data + "");
 				streamAndroid = clientAndroid.GetStream();
 				StreamWriter writer = new StreamWriter(streamAndroid);
@@ -173,12 +173,12 @@ namespace CustomerServiceClient
 				catch (Exception) { }
 				try
 				{
-					ipServer = node.SelectSingleNode("ipServer").InnerText;
+					serverIp = node.SelectSingleNode("serverIp").InnerText;
 				}
 				catch (Exception) { }
 				try
 				{
-					ipAndroid = (node.SelectSingleNode("ipAndroid").InnerText);
+					androidIp = (node.SelectSingleNode("androidIp").InnerText);
 					//MessageBox.Show(ipAndroid);
 				}
 				catch (Exception) { }

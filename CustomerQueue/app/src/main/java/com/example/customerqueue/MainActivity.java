@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     ScrollTextView txtViewTop, txtViewBot;
     LinearLayout lnButton, lnText;
     TextView txtCua, txtKhach;
-    String IP;
+    String IP="10.0.2.2";
     int PORT = 9998;
 
     @Override
@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity {
 
                 while (true) {
                     try {
-                        InetAddress add = InetAddress.getByName("192.168.42.129");
+                       // InetAddress add = InetAddress.getByName(IP);
                         ServerSocket s = new ServerSocket(PORT, 0);
-                      //  Toast.makeText(getApplicationContext(),"doi client ket noi"+s.getInetAddress(),Toast.LENGTH_LONG).show();
-                      //  Log.i("==================","doi client ket noi"+add);
+                        Toast.makeText(getApplicationContext(),"doi client ket noi"+s.getInetAddress(),Toast.LENGTH_LONG).show();
+                        Log.i("==================","doi client ket noi");
                         sk = s.accept();
                         BufferedReader input = new BufferedReader(new InputStreamReader(sk.getInputStream()));
                         final String st = input.readLine();
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processData(final String stringData) {
-       Log.i("==================","truyen du lieu: "+stringData);
+       Log.i("==================","nhan du lieu: "+stringData);
         String[] st = stringData.split(",");
         txtCua.setText(st[0] + "");
         if (st[0].length() <= 1) txtCua.setText("0" + st[0]);
