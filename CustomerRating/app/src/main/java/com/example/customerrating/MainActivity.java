@@ -10,10 +10,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,7 +35,7 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity {
     Button btRathailong, btHailong, btKhonghailong,btYkienkhac;
     ScrollTextView txtViewTop, txtViewBot;
-    LinearLayout lnButton, lnImage;
+    LinearLayout lnButton, body;
     TextView txtLabel;
 
     String IP = "10.27.0.46";
@@ -47,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         lnButton = (LinearLayout) findViewById((R.id.lnButton));
-       // lnButton.setVisibility(View.INVISIBLE);
-        lnImage = (LinearLayout) findViewById((R.id.lnImage));
-        //lnImage.setVisibility(View.INVISIBLE);
+        body = (LinearLayout) findViewById((R.id.body));
+
 
 
         btRathailong = (Button) findViewById(R.id.btRatot);
@@ -72,18 +73,19 @@ public class MainActivity extends AppCompatActivity {
         txtViewBot.setTextSize(30);
         txtViewBot.startScroll();
 
-//        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-//        IP = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-//        Toast.makeText(getApplicationContext(),"Ip address: "+IP,Toast.LENGTH_LONG).show();
-        // Log.i("==================", IP+"iiiippppppp");
-      //  serverConnect();
+
+        final ViewGroup.LayoutParams lp = body.getLayoutParams();
+      //  int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, <HEIGHT>, getResources().getDisplayMetrics());
+        lp.height=630;
+
+
 
         //=============CHECK ACTIVE=============================
         btRathailong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Quý khách rất hài lòng với dịch vụ của Agribank", Toast.LENGTH_SHORT).show();
-                // Toast.makeText(getApplicationContext(), txtViewTop.getHeight()+"----"+btHeight+" ----"+txtViewBot.getHeight() , Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(getApplicationContext(), "Quý khách rất hài lòng với dịch vụ của Agribank", Toast.LENGTH_SHORT).show();
+              //   Toast.makeText(getApplicationContext(), statusBarHeight+"----"+txtViewTop.getHeight()+"----"+height+"----"+lp.height+"-----"+txtViewBot.getHeight() , Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        serverConnect();
     }
 
     private void startServerSocket1() {
@@ -147,12 +150,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void serverConnect() {
-
-        Thread thread = new Thread(new Runnable() {
-
-
-            @Override
-            public void run() {
+        Log.i("==================", "start socket");
+//        Thread thread = new Thread(new Runnable() {
+//
+//
+//            @Override
+//            public void run() {
                 try {
                     Socket sk = new Socket(IP, PORT);
                     BufferedWriter output = new BufferedWriter(new OutputStreamWriter(sk.getOutputStream()));
@@ -171,9 +174,9 @@ public class MainActivity extends AppCompatActivity {
                     });
                 } catch (IOException e) {
                 }
-            }
-        });
-        thread.start();
+//            }
+//        });
+//        thread.start();
     }
 
     private void updateUI(final String stringData) {
@@ -205,14 +208,17 @@ public class MainActivity extends AppCompatActivity {
         //    Toast.makeText(getApplicationContext(), txtViewTop.getHeight()+"----"+" ----"+txtViewBot.getHeight() , Toast.LENGTH_LONG).show();
 
 //
-//        DisplayMetrics displayMetrics = new DisplayMetrics();
-//        ((Activity) this).getWindowManager()
-//                .getDefaultDisplay()
-//                .getMetrics(displayMetrics);
-//        int statusBarHeight = (int) Math.ceil(25 * getApplicationContext().getResources().getDisplayMetrics().density);
-//        final int height = displayMetrics.heightPixels;
-//        final int width = displayMetrics.widthPixels;
-//        final int btHeight = height - txtViewTop.getHeight() - txtViewBot.getHeight() - statusBarHeight - 10;
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) this).getWindowManager()
+                .getDefaultDisplay()
+                .getMetrics(displayMetrics);
+        int statusBarHeight = (int) Math.ceil(25 * getApplicationContext().getResources().getDisplayMetrics().density);
+        final int height = displayMetrics.heightPixels;
+        final int width = displayMetrics.widthPixels;
+        final ViewGroup.LayoutParams lp = body.getLayoutParams();
+        //  int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, <HEIGHT>, getResources().getDisplayMetrics());
+       // lp.height=height-txtViewTop.getHeight()*2-statusBarHeight*2;
+
 //        btKhonghailong.setHeight(btHeight);
 //        btRathailong.setHeight(btHeight);
 //        btHailong.setHeight(btHeight);
