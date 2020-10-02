@@ -244,8 +244,7 @@ namespace CustomerService
 		[Obsolete]
 		private void Main_Load(object sender, EventArgs e)
 		{
-			loadConfig();
-			
+			loadConfig();			
 			
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
@@ -287,15 +286,14 @@ namespace CustomerService
 				cm = new MySqlCommand(sql, conn);
 				cm.ExecuteNonQuery();
 			}
-			conn.Close();
-			loadQuestion();
+			conn.Close();			
 			clients = new Dictionary<int, int>();
 			Thread t = new Thread(sound);
 			t.Start();
 			SocketRun.SocketCreate();
 
 		}
-		private void loadQuestion()
+		private static void loadQuestion()
 		{
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
@@ -316,22 +314,18 @@ namespace CustomerService
 						if (id != (Int32)reader.GetValue(0))
 						{	
 							id = (Int32)reader.GetValue(0);								
-							questionList += reader.GetValue(1).ToString() + "(" + reader.GetValue(3).ToString();
+							questionList += reader.GetValue(1).ToString() + "{{" + reader.GetValue(3).ToString();
 							
 						}
 						else
 						{
-							questionList +=  "|" + (string)reader.GetValue(3);
+							questionList +=  "[[" + (string)reader.GetValue(3);
 						}
 						
 					}
 				}
 			}
-			Function.data_services = "";
-			foreach (DataRow dtrow in Function.services.Rows)
-			{
-				Function.data_services += "|" + dtrow[1];
-			}
+			
 		}
 		public static bool isProcess = false;
 		public static void processData(string st)
@@ -346,7 +340,7 @@ namespace CustomerService
 			{
 				MySqlConnection conn = Function.GetConnection();
 				conn.Open();
-				string sql = "select * from client where ipcas like '" + arrRs[1] + "'";
+				string sql = "select * from client where lower(ipcas) like '" + arrRs[1] + "'";
 				MySqlCommand cmd = new MySqlCommand(sql, conn);
 				using (DbDataReader reader = cmd.ExecuteReader())
 				{
@@ -374,8 +368,9 @@ namespace CustomerService
 			}
 			else if (arrRs[0] == "question")
 			{
+				loadQuestion();
 				SocketRun.sendData("question",0,0,"android",0,0,questionList );
-				MessageBox.Show(questionList);
+				
 			}
 			else if (arrRs[0] == "idle")
 			{

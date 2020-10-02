@@ -43,10 +43,8 @@ namespace CustomerService
 
 					label2.Location = new Point(textBox1.Location.X, textBox1.Location.Y + textBox1.Height + 6);
 					comboBox1.Location = new Point(textBox1.Location.X, label2.Location.Y + label2.Height + 5);
-					//label3.Location = new Point(textBox1.Location.X, comboBox1.Location.Y + comboBox1.Height + 6);
-					//textBox3.Location = new Point(textBox1.Location.X, label3.Location.Y + label3.Height + 5);
-					//label4.Location = new Point(textBox1.Location.X, textBox3.Location.Y + textBox3.Height + 6);
-					//textBox4.Location = new Point(textBox1.Location.X, label4.Location.Y + label4.Height + 5);
+					button2.Visible = true;
+					button2.Text = "Chi tiết";
 				}
 			}
 			else if (is_vote)
@@ -58,7 +56,7 @@ namespace CustomerService
 					textBox1.Height = (Text.Split('\n').Length + 4) * textBox1.Font.Height;
 					comboBox1.SelectedIndex = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString() == "True" ? 1 : 0;
 					vote_attr_id = (int)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
-					
+					button2.Text = "Quay lại";
 				}
 			}
 			else
@@ -410,7 +408,7 @@ namespace CustomerService
 			{
 				textBox1.Clear();				
 				textBox1.Focus();
-				
+				button2.Visible = true;
 				label2.Location = new Point(textBox1.Location.X, textBox1.Location.Y + textBox1.Height + 6);
 				comboBox1.Location = new Point(textBox1.Location.X, label2.Location.Y + label2.Height + 5);				
 			}
@@ -484,7 +482,7 @@ namespace CustomerService
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			if (!is_vote)
+			if (isQuestion)
 			{
 				is_vote = true;
 				isQuestion = false;
@@ -500,8 +498,7 @@ namespace CustomerService
 			{
 				is_vote = false;
 				isQuestion = true;
-				button2.Visible = false;
-				button2.Text = "Sửa";
+				button2.Text = "Chi tiết";
 				comboBox1.Items.Clear();
 				comboBox1.Items.Add("Không");
 				comboBox1.Items.Add("Có");

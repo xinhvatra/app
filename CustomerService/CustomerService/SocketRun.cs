@@ -21,6 +21,8 @@ namespace CustomerService
 		public static List<string> clientsList = new List<string>();
 		const int MAX_CONNECTION = 100;
 		const int PORT_NUMBER = 9999;
+		const int PORT_NUMBER_CLIENT = 9997;
+		public static TcpClient client;
 		public static TcpListener listener;
 		public static Socket clientSocket;
 		public static Form fm;
@@ -44,39 +46,50 @@ namespace CustomerService
 		{
 			while (true)
 			{
-				clientSocket = listener.AcceptSocket();				
+				clientSocket = listener.AcceptSocket();
+				
 				Thread t = new Thread((obj) =>
 				{
-					getData((Socket)obj);
+					getData();
 				});
-				t.Start(clientSocket);
+				t.Start();
 			}
+		}
+		public static void encoding(String utf8String)
+		{
+			byte[] outbyte = new byte[1024];
+			BufferedStream bfStream = new BufferedStream(new NetworkStream(clientSocket));
+			bfStream.Write(Encoding.UTF8.GetBytes(utf8String), 0, Encoding.UTF8.GetBytes(utf8String).Length);
+			bfStream.Flush();
 		}
 		public static void sendData(string method, int client_id, int service_id, string client_name, int gate, int customer_id, string data)
 		{
 			try
 			{
-				var netStream = new NetworkStream(clientSocket);
-				BinaryWriter writer = new BinaryWriter(netStream);
+				//var netStream = new NetworkStream(clientSocket);
+				//BinaryWriter writer = new BinaryWriter(netStream);
 				//writer.AutoFlush = true;
 				//	MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
-				writer.Write(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
+				encoding(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id+ "|"+ data);
 				//writer.Close();
 			}
 			catch (Exception) { }
 		}
 		public static IPEndPoint ip;
-		private static void getData(Socket soc)
+		private static void getData()
 		{
 			try
 			{
-				ip = clientSocket.RemoteEndPoint as IPEndPoint;				
-				var netStream = new NetworkStream(clientSocket);
-				BinaryReader reader = new BinaryReader(netStream);
-				string processStr = reader.ReadString();
+				ip = clientSocket.LocalEndPoint as IPEndPoint;
+				Byte[] inputByte = new Byte[1024];
+				BufferedStream strd = new BufferedStream(new NetworkStream(clientSocket));
+				int read = strd.Read(inputByte, 0, inputByte.Length);
+				string processStr = Encoding.UTF8.GetString(inputByte,0, read);
+
+				//MessageBox.Show("get data from client :"+ processStr);
 				Delegate a = new Action<String>(Main.processData);
 				fm.Invoke(a, processStr);
-				netStream.Close();
+				strd.Close();
 			}
 			catch (Exception)
 			{
@@ -84,8 +97,7 @@ namespace CustomerService
 			}
 		}
 
-		const int PORT_NUMBER_CLIENT = 9997;		
-		public static TcpClient client;
+		
 		public static void connectClient(string ipClient, string send_name,int customer_id)
 		{
 			try

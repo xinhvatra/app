@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     ScrollTextView txtViewTop, txtViewBot;
     LinearLayout lnButton, lnText;
     TextView txtCua, txtKhach;
-    String IP="10.0.2.2";
     int PORT = 9998;
 
     @Override
@@ -56,17 +55,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         lnButton = (LinearLayout) findViewById((R.id.lnButton));
         lnButton.setVisibility(View.INVISIBLE);
@@ -75,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         btKhonghailong = (Button) findViewById(R.id.btKhongtot);
 
         txtCua = (TextView) findViewById(R.id.textCua);
-        txtCua.setTextSize(330);
+        txtCua.setTextSize(320);
 
         txtViewTop = (ScrollTextView) findViewById(R.id.txtViewTop);
         txtViewTop.setText("AGRIBANK TỈNH THÁI NGUYÊN KÍNH CHÀO QUÝ KHÁCH!");
@@ -88,38 +76,11 @@ public class MainActivity extends AppCompatActivity {
         txtViewBot.setTextColor(Color.GREEN);
         txtViewBot.setTextSize(30);
         txtViewBot.startScroll();
-
 //        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 //        IP = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 //        Toast.makeText(getApplicationContext(),"Ip address: "+IP,Toast.LENGTH_LONG).show();
        // Log.i("==================", IP+"iiiippppppp");
         startServerSocket1();
-
-        //=============CHECK ACTIVE=============================
-        btRathailong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Quý khách rất hài lòng với dịch vụ của Agribank", Toast.LENGTH_SHORT).show();
-                // Toast.makeText(getApplicationContext(), txtViewTop.getHeight()+"----"+btHeight+" ----"+txtViewBot.getHeight() , Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        btHailong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Quý khách hài lòng với dịch vụ của Agribank", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        btKhonghailong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Quý khách không hài lòng với dịch vụ của Agribank", Toast.LENGTH_SHORT).show();
-
-            }
-        });
     }
 
     private void startServerSocket1() {
@@ -163,62 +124,6 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-    private void startServerSocket() {
-        Thread thread = new Thread(new Runnable() {
-            private String stringData = null;
-
-            @Override
-            public void run() {
-
-                try {
-                    while (true) {
-                        Socket s = new Socket(IP, 9998);
-                        //  Log.d("==================","ket noi den server ok"+s.getRemoteSocketAddress());
-                        //   OutputStream out = s.getOutputStream();
-                        //   PrintWriter output = new PrintWriter(out);
-                        //  output.println("");
-                        //  output.flush();
-                        // while (true) {
-                        // InputStream input = s.getInputStream();
-                        //  PrintWriter output = new PrintWriter( new BufferedWriter( new OutputStreamWriter(s.getOutputStream())),true);
-                        //  output.println("test");
-                        // Log.d("==================","ket noi den server ok"+s.getRemoteSocketAddress());
-
-                        // try {
-                        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                        // DataInputStream dt = new DataInputStream((s.getInputStream()));
-                        final String st = input.readLine();
-                        // input.close();
-                       // Log.d("==================", st);
-                        Handler refresh = new Handler(Looper.getMainLooper());
-                        refresh.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                processData(st);
-                            }
-                        });
-
-                        // }catch(IOException w){
-
-                        // }
-                    }
-                } catch (IOException e) {
-                    // e.printStackTrace();
-                    Handler refresh = new Handler((Looper.getMainLooper()));
-                    refresh.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            txtCua.setText("ĐANG BẬN");
-                            txtCua.setTextSize(170);
-                            txtCua.setTextColor(Color.RED);
-                        }
-                    });
-                }
-            }
-
-        });
-        thread.start();
-    }
 
     private void updateUI(final String stringData) {
 
@@ -245,28 +150,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        //Here you can get the size!
-        //    Toast.makeText(getApplicationContext(), txtViewTop.getHeight()+"----"+" ----"+txtViewBot.getHeight() , Toast.LENGTH_LONG).show();
 
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) this).getWindowManager()
-                .getDefaultDisplay()
-                .getMetrics(displayMetrics);
-        int statusBarHeight = (int) Math.ceil(25 * getApplicationContext().getResources().getDisplayMetrics().density);
-        final int height = displayMetrics.heightPixels;
-        final int width = displayMetrics.widthPixels;
-        final int btHeight = height - txtViewTop.getHeight() - txtViewBot.getHeight() - statusBarHeight - 10;
-        btKhonghailong.setHeight(btHeight);
-        btRathailong.setHeight(btHeight);
-        btHailong.setHeight(btHeight);
-
-        btRathailong.setWidth(width / 3);
-        btHailong.setWidth(width / 3);
-        btKhonghailong.setWidth(width / 3);
-
-        txtCua.setHeight(btHeight);
-        //  txtKhach.setHeight(btHeight/2);
     }
 
     @Override

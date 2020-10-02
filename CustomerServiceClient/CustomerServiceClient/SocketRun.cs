@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
@@ -43,7 +45,8 @@ namespace CustomerServiceClient
 		}
 		//====================================android port============================================/
 		static TcpClient clientAndroid;
-		public static void connectAndroid(string data)
+		static NetworkStream streamAndroid;
+		public static void androidConnect(string data)
 		{
 			try
 			{
@@ -68,7 +71,7 @@ namespace CustomerServiceClient
 		static TcpListener listenerServer;
 		static Socket serverClient;
 		static NetworkStream streamServer;
-		static NetworkStream streamAndroid;
+		
 		public static void listenServer()
 		{
 			string ipadress = Dns.GetHostEntry(Dns.GetHostName())
@@ -102,9 +105,14 @@ namespace CustomerServiceClient
 		}
 		private static void getDataServer()
 		{
-			streamServer = new NetworkStream(serverClient);
-			BinaryReader reader = new BinaryReader(streamServer);
-			string processStr = reader.ReadString();
+			Byte[] inputByte = new Byte[1024];
+			BufferedStream strd = new BufferedStream(new NetworkStream(serverClient));
+			strd.Read(inputByte, 0, inputByte.Length);
+			string processStr = Encoding.UTF8.GetString(inputByte);
+			//MessageBox.Show("get data: " + processStr);
+			//streamServer = new NetworkStream(serverClient);
+			//BinaryReader reader = new BinaryReader(streamServer);
+			//string processStr = reader.ReadString();
 			Delegate a = new Action<String>(Client.processDataAsync);
 			fm.Invoke(a, processStr);
 			stream.Close();
@@ -120,27 +128,47 @@ namespace CustomerServiceClient
 			//loadConfig();
 			client.Close();
 		}
+		//get response from server
 		private static void getData()
 		{
-			BinaryReader reader = new BinaryReader(stream);
-			string processStr = reader.ReadString();
+
+			//BinaryReader reader = new BinaryReader(stream);
+			//string processStr = reader.ReadString();
 			//MessageBox.Show("client "+id+" nhan duoc tin nhan tu server: " + processStr);
+			
+			//MessageBox.Show("get data: " + processStr);
 			Delegate a = new Action<String>(Client.processDataAsync);
-			fm.Invoke(a, processStr);
+			fm.Invoke(a, decoding());
 			stream.Close();
 
 		}
-
-		public static void sendData(string method, int service)
+		public static string decoding()
 		{
-			BinaryWriter writer = new BinaryWriter(stream);
+			Byte[] inputByte = new Byte[1024];
+			BufferedStream strd = new BufferedStream(stream);
+			int read = strd.Read(inputByte, 0, inputByte.Length);
+			return Encoding.UTF8.GetString(inputByte,0,read);
+		}
+		//chyển mã tring sang byte
+		public static void encoding(String utf8String)
+		{
+			byte[] outbyte = new byte[1024];			
+			BufferedStream bfStream = new BufferedStream(stream);
+			bfStream.Write(Encoding.UTF8.GetBytes(utf8String), 0, Encoding.UTF8.GetBytes(utf8String).Length);
+			bfStream.Flush();
+		}
+		public static void sendData(string method, int service)
+		{			
+			
+			//BinaryWriter writer = new BinaryWriter(stream);
 			if (method.Equals("login"))
 			{
-				writer.Write(method + "|" + ipcas + "|" + service);
+				encoding(method + "|" + ipcas + "|" + service);
+				//writer.Write((method + "|" + ipcas + "|" + service));
 			}
 			else
 			{
-				writer.Write(method + "|" + client_id + "|" + service);
+				encoding(method + "|" + client_id + "|" + service);
 			}
 
 			if (!method.Equals("logout"))
@@ -152,8 +180,8 @@ namespace CustomerServiceClient
 		}
 		public static void sendDataSwitch(string method, int service_id, int receive_id, int customer)
 		{
-			BinaryWriter writer = new BinaryWriter(stream);
-			writer.Write(method + "|" + client_id + "|" + service_id + "|" + receive_id + "|" + customer + "|" + gate);
+			//BinaryWriter writer = new BinaryWriter(stream);
+			encoding(method + "|" + client_id + "|" + service_id + "|" + receive_id + "|" + customer + "|" + gate);
 			Thread thr = new Thread(getData);
 			thr.Start();
 		}

@@ -93,7 +93,7 @@ namespace CustomerServiceClient
 			if (SocketRun.android == 1)
 
 			{
-				SocketRun.connectAndroid(SocketRun.gate + ",0");
+				SocketRun.androidConnect(SocketRun.gate + ",0");
 			}
 			System.Environment.Exit(1);
 		}
@@ -144,7 +144,7 @@ namespace CustomerServiceClient
 				if (SocketRun.android == 1)
 				{
 					SocketRun.gate = arrRs[4];
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.androidConnect(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "data")
@@ -161,7 +161,7 @@ namespace CustomerServiceClient
 				btOnoff.Visible = false;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + "," + arrRs[5]);
+					SocketRun.androidConnect(SocketRun.gate + "," + arrRs[5]);
 
 				}
 			}
@@ -179,7 +179,7 @@ namespace CustomerServiceClient
 				btOnoff.BackgroundImage = Properties.Resources.off;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.androidConnect(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "notidle")
@@ -193,7 +193,7 @@ namespace CustomerServiceClient
 				btOnoff.BackgroundImage = Properties.Resources.on;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.androidConnect(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "switch")
@@ -263,7 +263,7 @@ namespace CustomerServiceClient
 				bt2.Visible = false;
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + ",0");
+					SocketRun.androidConnect(SocketRun.gate + ",0");
 				}
 			}
 			else if (arrRs[0] == "forcecustomer")
@@ -276,7 +276,7 @@ namespace CustomerServiceClient
 				await ChangeColor(bt1);
 				if (SocketRun.android == 1)
 				{
-					SocketRun.connectAndroid(SocketRun.gate + "," + arrRs[2]);
+					SocketRun.androidConnect(SocketRun.gate + "," + arrRs[2]);
 
 				}
 			}
