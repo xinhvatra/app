@@ -42,24 +42,24 @@ namespace TSBD
 				LAV = new string[5] { "", "", "", "", "" };
 				ngayvay = new string[5] { "", "", "", "", "" };
 				mucdichvay = new string[5] { "", "", "", "", "" };
-				diachits = new string[10] { "", "", "", "", "","", "", "", "", ""};
-				dientich = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				loaidat = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				sothua = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				tobando = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				soqsdđ = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				noicap = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				ngaycapsdđ = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				sovaoso = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				tsganlien = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				dientichxaydung = new string[10] { "", "", "", "", "", "", "", "", "", "" };
-				dientichsudung = new string[10] { "", "", "", "", "", "", "", "", "", "" };
+				diachits = new string[5] { "", "", "", "", ""};
+				dientich = new string[5] { "", "", "", "", ""};
+				loaidat = new string[5] { "", "", "", "", "" };
+				sothua = new string[5] { "", "", "", "", "" };
+				tobando = new string[5] { "", "", "", "", ""};
+				soqsdđ = new string[5] { "", "", "", "", "" };
+				noicap = new string[5] { "", "", "", "", "" };
+				ngaycapsdđ = new string[5] { "", "", "", "", "" };
+				sovaoso = new string[5] { "", "", "", "", "" };
+				tsganlien = new string[5] { "", "", "", "", "" };
+				dientichxaydung = new string[5] { "", "", "", "", "" };
+				dientichsudung = new string[5] { "", "", "", "", "" };
 				dunoht = new int[5] { 0, 0, 0, 0, 0 };
 				sotiengiaingan = new int[5] { 0, 0, 0, 0, 0 };
-				giatritsbđ = new int[10] { 0, 0, 0, 0, 0,0,0,0,0,0 };
-				phamvibđ = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				tongts = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				tongbaodam = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				giatritsbđ = new int[5] { 0, 0, 0, 0, 0};
+				phamvibđ = new int[5] { 0, 0, 0, 0, 0 };
+				tongts = new int[5] { 0, 0, 0, 0, 0};
+				tongbaodam = new int[5] { 0, 0, 0, 0, 0 };
 
 
 				//thêm dữ liệu mới cho khách hàng mới
@@ -93,35 +93,36 @@ namespace TSBD
 					else break; // không trùng mã Kh thì bỏ qua
 				}
 
-				for (int m = 0; m < dtTaisan.Rows.Count; m++)// chạy bảng tài sản để nhặt dữ liệu
-				{	if (dtTaisan.Rows[m][0].ToString() == "") break;
-					if (dtDuno.Rows[j][0].ToString() == dtTaisan.Rows[m][2].ToString())// trùng mã KH với bên tài sản
-					{
-						if (dtTaisan.Rows[m][7].ToString() == "1") // có thế chấp tại ngân hàng
-						{	
-							diachits[countts] = "";							
-							dientich[countts] = dtTaisan.Rows[m][24].ToString();						
-							loaidat[countts] = "";
-							sothua[countts] = "";
-							tobando[countts] = "";
+				//for (int m = 0; m < dtTaisan.Rows.Count; m++)// chạy bảng tài sản để nhặt dữ liệu
+				//{	if (dtTaisan.Rows[m][0].ToString() == "") break;
+				//	if (dtDuno.Rows[j][0].ToString() == dtTaisan.Rows[m][2].ToString())// trùng mã KH với bên tài sản
+				//	{
+				//		if (dtTaisan.Rows[m][7].ToString() == "1") // có thế chấp tại ngân hàng
+				//		{	
+				//			diachits[countts] = "";							
+				//			dientich[countts] = dtTaisan.Rows[m][24].ToString();						
+				//			loaidat[countts] = "";
+				//			sothua[countts] = "";
+				//			tobando[countts] = "";
 							
-							soqsdđ[countts] = dtTaisan.Rows[m][59].ToString();
+				//			soqsdđ[countts] = dtTaisan.Rows[m][59].ToString();
 					
-						noicap[countts] = "";
-							ngaycapsdđ[countts] = "";
-							sovaoso[countts] = "";
-							tsganlien[countts] = "";
-							dientichxaydung[countts] = "";
-							dientichsudung[countts] = "";
+				//		noicap[countts] = "";
+				//			ngaycapsdđ[countts] = "";
+				//			sovaoso[countts] = "";
+				//			tsganlien[countts] = "";
+				//			dientichxaydung[countts] = "";
+				//			dientichsudung[countts] = "";
 							
-							giatritsbđ[countts] = 0;
-							phamvibđ[countts] = 0;
-							tongts[countts] = 0;
-							tongbaodam[countts] = 0;
-							countts++;
-						}
-					}
-				}
+				//			giatritsbđ[countts] = 0;
+				//			phamvibđ[countts] = 0;
+				//			tongts[countts] = 0;
+				//			tongbaodam[countts] = 0;
+				//			countts++;
+				//			if (countts >= 5) break;
+				//		}
+				//	}
+				//}
 
 				Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
 				Document doc = new Document();
