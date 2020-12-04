@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout lnButton, body;
     TextView txtLabel;
 
-    String IP = "192.168.1.34";
+    String IP = "192.168.42.200";
     int PORT = 9999;
 
     @Override
