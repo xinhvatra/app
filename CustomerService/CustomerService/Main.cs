@@ -43,7 +43,8 @@ namespace CustomerService
 			SocketRun.fm = this;
 			this.TopMost = true;
 
-			this.Size = new Size(825, 850);
+			this.Size = new Size(1280, 1024);
+			//this.Location = new System.Drawing.Point(-10, 0);
 			bt1 = new Button();
 			bt2 = new Button();
 			bt3 = new Button();
@@ -57,8 +58,8 @@ namespace CustomerService
 			bt2.MouseHover += new EventHandler(bt2_hover);
 			bt2.MouseLeave += new EventHandler(bt2_leave);
 
-			bt1.Location = new System.Drawing.Point(5, 30);
-			bt1.Size = new Size(400, 400);
+			bt1.Location = new System.Drawing.Point(3, 30);
+			bt1.Size = new Size(625, 510);
 			bt1.BackgroundImage = CustomerService.Properties.Resources.guitien;
 			bt1.BackgroundImageLayout = ImageLayout.Zoom;
 			bt1.Text = "Tiền gửi";
@@ -67,8 +68,8 @@ namespace CustomerService
 			bt1.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt1);
 
-			bt2.Location = new Point(405, 30);
-			bt2.Size = new Size(400, 400);
+			bt2.Location = new Point(635, 30);
+			bt2.Size = new Size(625, 510);
 			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu1;
 			bt2.BackgroundImageLayout = ImageLayout.Zoom;
 			bt2.Text = "Mở tài khoản";
@@ -77,12 +78,12 @@ namespace CustomerService
 			bt2.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt2);
 
-			bt3.Location = new Point(5, 430);
-			bt3.Size = new Size(400, 400);
+			bt3.Location = new Point(3, 545);
+			bt3.Size = new Size(625, 512);
 			this.Controls.Add(bt3);
 
-			bt4.Location = new Point(405, 430);
-			bt4.Size = new Size(400, 400);
+			bt4.Location = new Point(635, 545);
+			bt4.Size = new Size(625, 512);
 			this.Controls.Add(bt4);
 
 			this.KeyPreview = true;

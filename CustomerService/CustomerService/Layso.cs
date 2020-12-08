@@ -18,23 +18,24 @@ namespace CustomerService
 		public Layso()
 		{
 			InitializeComponent();
-			this.Size = new Size(600, 490);
+			this.Size = new Size(1280, 1024);
 			lb = new Label();
-			lb.Location = new Point(5, this.Height / 5);
-			button1.Location = new Point(this.Width / 2 - button1.Width / 2, this.Height / 6 * 4);
+			//label1.Visible = true;
+			label1.Location = new Point(this.Width / 2-label1.Width/3*2, this.Height / 9);
+			button1.Location = new Point(this.Width / 2 - button1.Width / 2, this.Height / 7 * 4);
 
-			button2.Location = new Point(this.Width / 2 - button1.Width / 2, this.Height / 6 * 5 + 30);
+			button2.Location = new Point(this.Width / 2 - button1.Width / 2, this.Height / 7 * 5 );
 
 
-			lb.Text = (Convert.ToInt32(Function.services.Rows[Function.fmName - 1][2]) + 1) + "";
+			label1.Text = (Convert.ToInt32(Function.services.Rows[Function.fmName - 1][2]) + 1) + "";
 
-			lb.Size = new Size(600, 200);
-			lb.Font = new Font("Arial", 99, FontStyle.Bold);
-			lb.ForeColor = Color.Red;
-			lb.TextAlign = ContentAlignment.MiddleCenter;
-			lb.FlatStyle = FlatStyle.Flat;
+			label1.Size = new Size(1280, 500);
+			label1.Font = new Font("Arial", 250, FontStyle.Bold);
+			label1.ForeColor = Color.Red;
+			label1.TextAlign = ContentAlignment.MiddleCenter;
+			label1.FlatStyle = FlatStyle.Flat;
 
-			lb.BackColor = Color.Transparent;
+			label1.BackColor = Color.Transparent;
 			this.Controls.Add(lb);
 		}
 		static int cur_cus;
