@@ -124,16 +124,22 @@
   <data name="maunen1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\maunen1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="dichvu1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dichvu1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="guitien" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\guitien.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="dichvu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dichvu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dichvu1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dichvu1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="khcn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\khcn.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="chuyen-tien-qua-so-the-agribank" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\chuyen-tien-qua-so-the-agribank.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="khdn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\khdn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="agribank" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\agribank.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

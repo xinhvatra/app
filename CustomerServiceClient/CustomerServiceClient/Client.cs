@@ -127,6 +127,7 @@ namespace CustomerServiceClient
 
 			//try
 			//{
+			//MessageBox.Show("get data: " + st);
 			String[] arrRs = st.Split('|');
 			if (arrRs[0] == "login")
 			{
@@ -268,7 +269,8 @@ namespace CustomerServiceClient
 			}
 			else if (arrRs[0] == "forcecustomer")
 			{
-				MessageBox.Show(new Form { TopMost = true }, "Bạn có khách hàng chuyển tiếp từ GVD " + arrRs[1], "Chuyển tiếp khách hàng!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				//MessageBox.Show(new Form { TopMost = true }, "Bạn có khách hàng chuyển tiếp từ GVD " + arrRs[1], "Chuyển tiếp khách hàng!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show("Bạn có khách hàng chuyển tiếp từ GVD " + arrRs[1], "Chuyển tiếp khách hàng!");
 				inforce = true;
 				bt1.Text = "Nhận khách chuyển tiếp";
 				force_customer = Int32.Parse(arrRs[2]);

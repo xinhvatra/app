@@ -41,10 +41,29 @@ namespace CustomerService
 		{
 			InitializeComponent();
 			SocketRun.fm = this;
-			this.TopMost = true;
+			//this.TopMost = true;
 
 			this.Size = new Size(1280, 1024);
-			//this.Location = new System.Drawing.Point(-10, 0);
+			//this.Location = new System.Drawing.Point(600, -300);
+			loadConfig();
+			MySqlConnection conn = Function.GetConnection();
+			conn.Open();
+			string sql = "select * from services";
+			MySqlCommand cm = new MySqlCommand(sql, conn);
+			using (DbDataReader reader = cm.ExecuteReader())
+			{
+				if (reader.HasRows)
+				{
+					Function.services = new DataTable();
+					Function.services.Load(reader);
+				}
+			}
+			Function.data_services = "";
+			foreach (DataRow dtrow in Function.services.Rows)
+			{
+				Function.data_services += "|" + dtrow[1];
+			}
+
 			bt1 = new Button();
 			bt2 = new Button();
 			bt3 = new Button();
@@ -58,32 +77,52 @@ namespace CustomerService
 			bt2.MouseHover += new EventHandler(bt2_hover);
 			bt2.MouseLeave += new EventHandler(bt2_leave);
 
-			bt1.Location = new System.Drawing.Point(3, 30);
-			bt1.Size = new Size(625, 510);
+			bt3.Click += new EventHandler(bt3_click);
+			bt3.MouseHover += new EventHandler(bt2_hover);
+			bt3.MouseLeave += new EventHandler(bt2_leave);
+
+			bt4.Click += new EventHandler(bt4_click);
+			bt4.MouseHover += new EventHandler(bt2_hover);
+			bt4.MouseLeave += new EventHandler(bt2_leave);
+
+			bt1.Location = new System.Drawing.Point(3, 28);
+			bt1.Size = new Size(630, 490);
 			bt1.BackgroundImage = CustomerService.Properties.Resources.guitien;
 			bt1.BackgroundImageLayout = ImageLayout.Zoom;
-			bt1.Text = "Tiền gửi";
+			bt1.Text = Function.services.Rows[0][1]+"";
 			bt1.Font = new Font("Timesnewroman", 30, FontStyle.Italic);
 			bt1.ForeColor = Color.Blue;
 			bt1.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt1);
 
-			bt2.Location = new Point(635, 30);
-			bt2.Size = new Size(625, 510);
+			bt2.Location = new Point(635, 28);
+			bt2.Size = new Size(630, 490);
 			bt2.BackgroundImage = CustomerService.Properties.Resources.dichvu1;
 			bt2.BackgroundImageLayout = ImageLayout.Zoom;
-			bt2.Text = "Mở tài khoản";
+			bt2.Text = Function.services.Rows[1][1] + "";
 			bt2.Font = new System.Drawing.Font("Timesnewroman", 30, FontStyle.Italic);
 			bt2.ForeColor = Color.Blue;
 			bt2.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt2);
 
-			bt3.Location = new Point(3, 545);
-			bt3.Size = new Size(625, 512);
+			bt3.Location = new Point(3, 500);
+			bt3.Size = new Size(630, 490);
+			bt3.Text = Function.services.Rows[2][1] + "";
+			bt3.BackgroundImage = Properties.Resources.khdn;
+			bt3.BackgroundImageLayout = ImageLayout.Zoom;
+			bt3.Font = new System.Drawing.Font("Timesnewroman", 30, FontStyle.Italic);
+			bt3.ForeColor = Color.Blue;
+			bt3.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt3);
 
-			bt4.Location = new Point(635, 545);
-			bt4.Size = new Size(625, 512);
+			bt4.Location = new Point(635, 500);
+			bt4.Size = new Size(630, 490);
+			bt4.Text = Function.services.Rows[3][1] + "";
+			bt4.BackgroundImage = CustomerService.Properties.Resources.khcn;
+			bt4.BackgroundImageLayout = ImageLayout.Zoom;
+			bt4.Font = new System.Drawing.Font("Timesnewroman", 30, FontStyle.Italic);
+			bt4.ForeColor = Color.Blue;
+			bt4.TextAlign = ContentAlignment.BottomCenter;
 			this.Controls.Add(bt4);
 
 			this.KeyPreview = true;
@@ -115,6 +154,22 @@ namespace CustomerService
 		private void bt2_leave(object sender, EventArgs e)
 		{
 			bt2.ForeColor = Color.Blue;
+		}
+		private void bt3_hover(object sender, EventArgs e)
+		{
+			bt3.ForeColor = Color.Orange;
+		}
+		private void bt3_leave(object sender, EventArgs e)
+		{
+			bt3.ForeColor = Color.Blue;
+		}
+		private void bt4_hover(object sender, EventArgs e)
+		{
+			bt4.ForeColor = Color.Orange;
+		}
+		private void bt4_leave(object sender, EventArgs e)
+		{
+			bt4.ForeColor = Color.Blue;
 		}
 		public static void print(string service,string num)
 		{
@@ -201,6 +256,14 @@ namespace CustomerService
 			bt3.Hide();
 			bt4.Hide();
 		}
+		private void bt3_click(object sender, EventArgs e)
+		{
+			
+		}
+		private void bt4_click(object sender, EventArgs e)
+		{
+			
+		}
 		public static void loadConfig()
 		{
 			XmlDocument xd = new XmlDocument();
@@ -245,25 +308,13 @@ namespace CustomerService
 		[Obsolete]
 		private void Main_Load(object sender, EventArgs e)
 		{
-			loadConfig();			
+						
 			
 			MySqlConnection conn = Function.GetConnection();
 			conn.Open();
-			string sql = "select * from services";
-			MySqlCommand cm = new MySqlCommand(sql, conn);
-			using (DbDataReader reader = cm.ExecuteReader())
-			{
-				if (reader.HasRows)
-				{
-					Function.services = new DataTable();
-					Function.services.Load(reader);
-				}
-			}
-			Function.data_services = "";
-			foreach (DataRow dtrow in Function.services.Rows)
-			{
-				Function.data_services += "|" + dtrow[1];
-			}
+			string sql = "";
+			MySqlCommand cm ;
+
 
 			sql = "SELECT TIME FROM cus_deal ORDER BY TIME DESC LIMIT 1";
 			cm = new MySqlCommand(sql, conn);
@@ -354,7 +405,7 @@ namespace CustomerService
 						}
 					}
 				}
-				sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip.Address + "' WHERE  ipcas like '" + arrRs[1] + "'";
+				sql = "UPDATE client SET idle=1, active=1, ip_address ='" + SocketRun.ip + "' WHERE  ipcas like '" + arrRs[1] + "'";
 				cmd = new MySqlCommand(sql, conn);
 				cmd.ExecuteNonQuery();
 				conn.Close();
@@ -604,25 +655,25 @@ namespace CustomerService
 							WMPLib.IWMPPlaylist playlist = mp.playlistCollection.newPlaylist("customerCall");
 							WMPLib.IWMPMedia media, media1, media2, media3, media4, media5, media6;
 
-							string moi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\moi.mp3";
+							string moi = Directory.GetCurrentDirectory()+"\\Resources\\moi.mp3";
 							media = mp.newMedia(moi);
 
-							string sokhachnghin = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + nghin + ".mp3";
+							string sokhachnghin = Directory.GetCurrentDirectory() + "\\Resources\\" + nghin + ".mp3";
 							media1 = mp.newMedia(sokhachnghin);
 
-							string sokhachtram = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + tram + ".mp3";
+							string sokhachtram = Directory.GetCurrentDirectory() + "\\Resources\\" + tram + ".mp3";
 							media2 = mp.newMedia(sokhachtram);
 
-							string sokhachchuc = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + chuc + ".mp3";
+							string sokhachchuc = Directory.GetCurrentDirectory() + "\\Resources\\" + chuc + ".mp3";
 							media3 = mp.newMedia(sokhachchuc);
 
-							string sokhachdonvi = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + donvi + ".mp3";
+							string sokhachdonvi = Directory.GetCurrentDirectory() + "\\Resources\\" + donvi + ".mp3";
 							media4 = mp.newMedia(sokhachdonvi);
 
-							string vaocua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\cuaso.mp3";
+							string vaocua = Directory.GetCurrentDirectory() + "\\Resources\\cuaso.mp3";
 							media5 = mp.newMedia(vaocua);
 
-							string socua = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\")) + "Resources\\" + ra + ".mp3";
+							string socua = Directory.GetCurrentDirectory() + "\\Resources\\" + ra + ".mp3";
 							media6 = mp.newMedia(socua);
 
 							playlist.appendItem(media);

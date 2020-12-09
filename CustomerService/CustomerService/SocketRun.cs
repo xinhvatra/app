@@ -42,12 +42,14 @@ namespace CustomerService
 				t.Start();
 			}
 		}
+		public static string ip;
 		public static void ListenSocket()
 		{
 			while (true)
 			{
 				clientSocket = listener.AcceptSocket();
-				
+				ip = ((IPEndPoint)(clientSocket.RemoteEndPoint)).Address.ToString(); 
+				//MessageBox.Show("get data from client :" + Function.ip);
 				Thread t = new Thread((obj) =>
 				{
 					getData();
@@ -70,23 +72,23 @@ namespace CustomerService
 				//BinaryWriter writer = new BinaryWriter(netStream);
 				//writer.AutoFlush = true;
 				//	MessageBox.Show(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id + data);
-				encoding(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id+ "|"+ data);
+				encoding(method + "|" + client_id + "|" + service_id + "|" + client_name + "|" + gate + "|" + customer_id+ data);
 				//writer.Close();
 			}
 			catch (Exception) { }
 		}
-		public static IPEndPoint ip;
+		
 		private static void getData()
 		{
 			try
 			{
-				ip = clientSocket.LocalEndPoint as IPEndPoint;
+				
 				Byte[] inputByte = new Byte[1024];
 				BufferedStream strd = new BufferedStream(new NetworkStream(clientSocket));
 				int read = strd.Read(inputByte, 0, inputByte.Length);
 				string processStr = Encoding.UTF8.GetString(inputByte,0, read);
 
-				//MessageBox.Show("get data from client :"+ processStr);
+				
 				Delegate a = new Action<String>(Main.processData);
 				fm.Invoke(a, processStr);
 				strd.Close();
