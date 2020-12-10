@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  	<host>10.27.0.10</host>
+	<user>root</user>
+	<pass>tng@123</pass>
+	<db>customer</db>
+	<printBill>1</printBill>
+</config>
