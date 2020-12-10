@@ -97,6 +97,8 @@ namespace CustomerServiceClient
 			}
 			System.Environment.Exit(1);
 		}
+
+		[Obsolete]
 		private void Client_Load(object sender, EventArgs e)
 		{
 			//button3.BackgroundImage = Properties.Resources.on;
@@ -269,8 +271,9 @@ namespace CustomerServiceClient
 			}
 			else if (arrRs[0] == "forcecustomer")
 			{
-				//MessageBox.Show(new Form { TopMost = true }, "Bạn có khách hàng chuyển tiếp từ GVD " + arrRs[1], "Chuyển tiếp khách hàng!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				MessageBox.Show("Bạn có khách hàng chuyển tiếp từ GVD " + arrRs[1], "Chuyển tiếp khách hàng!");
+				
+				MessageBox.Show(new Form { TopMost = true }, "Bạn có khách hàng chuyển tiếp từ GVD " + arrRs[1], "Chuyển tiếp khách hàng!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				
 				inforce = true;
 				bt1.Text = "Nhận khách chuyển tiếp";
 				force_customer = Int32.Parse(arrRs[2]);

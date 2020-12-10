@@ -22,6 +22,8 @@ namespace CustomerServiceClient
 		public static Form fm;
 		public static int client_id, android;
 		public static string ipcas, gate, serverIp, androidIp;
+
+		[Obsolete]
 		public static void SocketCreate()
 		{
 			loadConfig();
@@ -71,15 +73,16 @@ namespace CustomerServiceClient
 		static TcpListener listenerServer;
 		static Socket serverClient;
 		static NetworkStream streamServer;
-		
+
+		[Obsolete]
 		public static void listenServer()
 		{
 			string ipadress = Dns.GetHostEntry(Dns.GetHostName())
 .AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)
 .ToString();
 			IPAddress address = IPAddress.Parse(ipadress);
-			//ssageBox.Show(address + "");
-			listenerServer = new TcpListener(address, PORT_NUMBER_CLIENT);
+			//MessageBox.Show(address + "");
+			listenerServer = new TcpListener(PORT_NUMBER_CLIENT);
 			listenerServer.Start();
 
 			Thread t = new Thread((obj) =>
@@ -94,25 +97,30 @@ namespace CustomerServiceClient
 
 		public static void ListenServer()
 		{
+			//MessageBox.Show("listten");
 			while (true)
 			{
 				serverClient = listenerServer.AcceptSocket();
 
-				Thread thr = new Thread(getDataServer);
-				thr.Start();
-				//getDataServer();
+				Thread t = new Thread((obj) =>
+				{
+					getDataServer();
+				});
+				t.Start();
 			}
 		}
 		private static void getDataServer()
 		{
-			Byte[] inputByte = new Byte[1024];
-			BufferedStream strd = new BufferedStream(new NetworkStream(serverClient));
-			strd.Read(inputByte, 0, inputByte.Length);
-			string processStr = Encoding.UTF8.GetString(inputByte);
-			//MessageBox.Show("get data: " + processStr);
-			//streamServer = new NetworkStream(serverClient);
-			//BinaryReader reader = new BinaryReader(streamServer);
-			//string processStr = reader.ReadString();
+			//MessageBox.Show("get data");
+			//Byte[] inputByte = new Byte[1024];
+			//BufferedStream strd = new BufferedStream(new NetworkStream(serverClient));
+			//strd.Read(inputByte, 0, inputByte.Length);
+			//string processStr = Encoding.UTF8.GetString(inputByte);
+
+			streamServer = new NetworkStream(serverClient);
+			BinaryReader reader = new BinaryReader(streamServer);
+			string processStr = reader.ReadString();
+			//MessageBox.Show("get data from server : " + processStr);
 			Delegate a = new Action<String>(Client.processDataAsync);
 			fm.Invoke(a, processStr);
 			stream.Close();

@@ -187,18 +187,20 @@ namespace CustomerService
 					ref missing, ref missing, ref missing);
 			for (int i = 1; i <= doc.Paragraphs.Count; i++)
 			{
-				
+				//MessageBox.Show(doc.Paragraphs[i].Range.Text);
+
 				if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "{giaodich}"))
 				{
 					//MessageBox.Show(doc.Paragraphs[i].Range.Text);
-					doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "{giaodich}", service, RegexOptions.IgnoreCase);
-
+					doc.Paragraphs[i].Range.Text = doc.Paragraphs[i].Range.Text.Replace("{giaodich}", service);
+					doc.Paragraphs[i].Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 				}
 				else
 					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "{sothutu}"))
 				{
 					//MessageBox.Show(doc.Paragraphs[i].Range.Text);
-					doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "{sothutu}", num, RegexOptions.IgnoreCase);
+					doc.Paragraphs[i].Range.Text = doc.Paragraphs[i].Range.Text.Replace( "{sothutu}", num);
+					doc.Paragraphs[i].Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 
 				}
 
@@ -213,7 +215,7 @@ namespace CustomerService
 			p.StartInfo.Verb = "printto";
 			p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			p.Start();
-			
+
 		}
 	
 		private void bt1_click(object sender, EventArgs e)
@@ -546,17 +548,17 @@ namespace CustomerService
 				cmd = new MySqlCommand(sql, conn);
 				cmd.ExecuteNonQuery();
 
-				sql = "select name,ip_address from client where id = " + arrRs[1] + " or id = " + arrRs[3];
+				sql = "select name,ip_address from client where id = " + arrRs[3] ;
 				MySqlDataAdapter adap = new MySqlDataAdapter(sql, conn);
 				DataTable dt = new DataTable();
 				adap.Fill(dt);
-				if (dt.Rows.Count > 1)
+				if (dt.Rows.Count > 0)
 				{
 					using (adap)
 					{
 						string send_name, receive_ip;
 						receive_ip = dt.Rows[0][1].ToString();
-						send_name = dt.Rows[1][0].ToString();
+						send_name = dt.Rows[0][0].ToString();
 						SocketRun.connectClient(receive_ip, send_name, Int32.Parse(arrRs[4]));
 					}
 				}
