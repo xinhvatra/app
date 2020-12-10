@@ -457,7 +457,7 @@ namespace CustomerService
 				int client_id = 0, service_id = 0, gate = 0;
 				MySqlConnection conn = Function.GetConnection();
 				conn.Open();
-				string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cus.`receive_client_id`=0 AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
+				string sql = "SELECT * FROM cus_wait AS cus  INNER JOIN `client` AS cl  ON cus.service_id=cl.service_id AND cl.active=1 AND cl.id= " + arrRs[1] + " ORDER BY cus.`priority` DESC, cus.cus_id ASC LIMIT 1";
 				MySqlCommand cm = new MySqlCommand(sql, conn);
 				using (DbDataReader reader = cm.ExecuteReader())
 				{
