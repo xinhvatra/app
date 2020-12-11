@@ -78,12 +78,12 @@ namespace CustomerService
 			bt2.MouseLeave += new EventHandler(bt2_leave);
 
 			bt3.Click += new EventHandler(bt3_click);
-			bt3.MouseHover += new EventHandler(bt2_hover);
-			bt3.MouseLeave += new EventHandler(bt2_leave);
+			bt3.MouseHover += new EventHandler(bt3_hover);
+			bt3.MouseLeave += new EventHandler(bt3_leave);
 
 			bt4.Click += new EventHandler(bt4_click);
-			bt4.MouseHover += new EventHandler(bt2_hover);
-			bt4.MouseLeave += new EventHandler(bt2_leave);
+			bt4.MouseHover += new EventHandler(bt4_hover);
+			bt4.MouseLeave += new EventHandler(bt4_leave);
 
 			bt1.Location = new System.Drawing.Point(3, 28);
 			bt1.Size = new Size(630, 490);

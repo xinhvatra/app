@@ -49,6 +49,7 @@
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.radioButton5 = new System.Windows.Forms.RadioButton();
 			this.radioButton6 = new System.Windows.Forms.RadioButton();
+			this.button3 = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -233,9 +234,9 @@
 			this.groupBox1.Controls.Add(this.radioButton1);
 			this.groupBox1.Controls.Add(this.groupBox3);
 			this.groupBox1.Controls.Add(this.groupBox2);
-			this.groupBox1.Location = new System.Drawing.Point(12, 62);
+			this.groupBox1.Location = new System.Drawing.Point(12, 66);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(1109, 427);
+			this.groupBox1.Size = new System.Drawing.Size(1109, 423);
 			this.groupBox1.TabIndex = 6;
 			this.groupBox1.TabStop = false;
 			// 
@@ -252,11 +253,12 @@
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.button3);
 			this.groupBox4.Controls.Add(this.radioButton5);
 			this.groupBox4.Controls.Add(this.radioButton6);
 			this.groupBox4.Location = new System.Drawing.Point(14, 12);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(1022, 48);
+			this.groupBox4.Size = new System.Drawing.Size(1107, 62);
 			this.groupBox4.TabIndex = 7;
 			this.groupBox4.TabStop = false;
 			// 
@@ -283,6 +285,16 @@
 			this.radioButton6.Text = "Câu hỏi";
 			this.radioButton6.UseVisualStyleBackColor = true;
 			this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
+			// 
+			// button3
+			// 
+			this.button3.Location = new System.Drawing.Point(981, 17);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(112, 37);
+			this.button3.TabIndex = 6;
+			this.button3.Text = "Load cofig";
+			this.button3.UseVisualStyleBackColor = true;
+			this.button3.Click += new System.EventHandler(this.button3_Click);
 			// 
 			// Control
 			// 
@@ -332,5 +344,6 @@
 		private System.Windows.Forms.RadioButton radioButton5;
 		private System.Windows.Forms.RadioButton radioButton6;
 		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.Button button3;
 	}
 }

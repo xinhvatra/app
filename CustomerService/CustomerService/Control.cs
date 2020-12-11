@@ -536,6 +536,11 @@ namespace CustomerService
 
 		}
 
+		private void button3_Click(object sender, EventArgs e)
+		{
+			Main.loadConfig();
+		}
+
 		private bool is_vote = false;
 		private void getVote_attr()
 		{
