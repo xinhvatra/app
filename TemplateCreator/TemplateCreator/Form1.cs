@@ -20,21 +20,27 @@ namespace QuesttionRender
 		public Form1()
 		{
 			InitializeComponent();
-			textBox1.Text = "1";
 			button1.Visible = false;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
 		{
+			int roww = 20;
+			DateTime dt = new DateTime();
+			List<string> tempLav =new List<string>();
+			List<string> tempLavDuno =new List<string>();
+			List<string> tempLavSdctd =new List<string>();
+			
 			for (int j = 0; j < dtName.Rows.Count; j++) // chạy bảng khách hàng đã phân công theo cán bộ
 			{
+				label2.Text = "Đang chạy khách hàng thứ: " + (j + 1);
 				Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
 				Document doc = new Document();
 				string filename = "";
 				string pa = System.Environment.CurrentDirectory;
 
 				filename = (pa + "\\TBB DN.docx");
-				if (j > 7) filename = (pa + "\\TBB CN.docx");
+				if (j > roww) filename = (pa + "\\TBB CN.docx");
 				//MessageBox.Show(filename);
 				object missing = System.Type.Missing;
 				doc = word.Documents.Open(Path.GetFullPath(filename),
@@ -44,90 +50,130 @@ namespace QuesttionRender
 						ref missing, ref missing, ref missing);
 				for (int i = 1; i <= doc.Paragraphs.Count; i++)
 				{
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "canbotindung"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[cán bộ quản lý]"))
 					{
 						for (int k = 0; k < dtData.Rows.Count; k++)
 						{
 							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString())) //so sánh mã KH ở bảng phân công cán bộ với dữ liệu lấy từ ipcas
 							{
-								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "canbotindung", dtData.Rows[k][32].ToString(), RegexOptions.IgnoreCase);
+								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[cán bộ quản lý]", dtData.Rows[k][32].ToString(), RegexOptions.IgnoreCase);
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
 								break;
 							}
 						}
 					}
 					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "mucdichvay"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[mục đích vay]"))
 					{
 						for (int k = 0; k < dtData.Rows.Count; k++)
 						{
 							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
 							{
-								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "mucdichvay", dtData.Rows[k][61].ToString(), RegexOptions.IgnoreCase);
+								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[mục đích vay]", dtData.Rows[k][61].ToString(), RegexOptions.IgnoreCase);
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
 								break;
 							}
 						}
 					}
 					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "soducaptindung"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[số dư cấp tín dụng]"))
 					{
 						long sum = 0;
 						for (int k = 0; k < dtData.Rows.Count; k++)
 						{
 							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
 							{
-
+								if (tempLavSdctd.Contains(dtData.Rows[k][3].ToString())) {
+									//MessageBox.Show("LAV số dư cấp tín dụng: " + dtData.Rows[k][3].ToString()+"-"+ Convert.ToInt64(dtData.Rows[k][7].ToString()).ToString("N0"));
+									continue; }
+								else
+								{
+									doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[số dư cấp tín dụng]", Convert.ToInt64(dtData.Rows[k][7].ToString()).ToString("N0"), RegexOptions.IgnoreCase);
+									tempLavSdctd.Add(dtData.Rows[k][3].ToString());
+									break;
+								}
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
-								sum = long.Parse(dtData.Rows[k][7].ToString());
+								//sum = long.Parse(dtData.Rows[k][7].ToString());
 							}
 						}
-						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "soducaptindung",Convert.ToInt64(sum).ToString("N0"), RegexOptions.IgnoreCase);
+						//doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[số dư cấp tín dụng] ", Convert.ToInt64(dtData.Rows[k][7].ToString()).ToString("N0"), RegexOptions.IgnoreCase);
 					}
 					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "duno"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[dư nợ]"))
 					{
 						for (int k = 0; k < dtData.Rows.Count; k++)
 						{
 							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
 							{
-								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "duno", Convert.ToInt64(dtName.Rows[j][3].ToString()).ToString("N0"), RegexOptions.IgnoreCase);
+								if (tempLavDuno.Contains(dtData.Rows[k][3].ToString()))
+								{
+									//MessageBox.Show("LAV dư nợ tín dụng: " + dtData.Rows[k][3].ToString() + "-" + Convert.ToInt64(dtName.Rows[j][4].ToString()).ToString("N0"));
+									continue;
+								}
+								else
+								{
+									doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[dư nợ]", Convert.ToInt64(dtName.Rows[j][4].ToString()).ToString("N0"), RegexOptions.IgnoreCase);
+									//MessageBox.Show(dtData.Rows[k][32].ToString());
+									tempLavDuno.Add(dtData.Rows[k][3].ToString());
+									break;
+								}
+							}
+						}
+					}
+					else
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[số hợp đồng tín dụng]"))
+					{
+						for (int k = 0; k < dtData.Rows.Count; k++)
+						{
+							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
+							{
+								if (tempLav.Contains(dtData.Rows[k][3].ToString()))
+								{
+									//MessageBox.Show("LAV số hd tín dụng: " + dtData.Rows[k][3].ToString() );
+									continue;
+								}
+								else
+								{
+									doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[số hợp đồng tín dụng]", dtData.Rows[k][3].ToString(), RegexOptions.IgnoreCase);
+									//MessageBox.Show(dtData.Rows[k][32].ToString());
+									tempLav.Add(dtData.Rows[k][3].ToString());
+									break;
+								}
+							}
+						}
+					}
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[dư nợ hđ]"))
+					{
+						for (int k = 0; k < dtData.Rows.Count; k++)
+						{
+							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
+							{
+								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[dư nợ hđ]", dtData.Rows[k][17].ToString(), RegexOptions.IgnoreCase);
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
 								break;
 							}
 						}
 					}
 					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "sohopdongtindung"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[số tiền giải ngân]"))
 					{
 						for (int k = 0; k < dtData.Rows.Count; k++)
 						{
 							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
 							{
-								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "sohopdongtindung", dtData.Rows[k][3].ToString(), RegexOptions.IgnoreCase);
+								
+								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[số tiền giải ngân]", Convert.ToInt64(dtData.Rows[k][13].ToString()).ToString("N0"), RegexOptions.IgnoreCase);
 								//MessageBox.Show(dtData.Rows[k][32].ToString());
+								
 								break;
 							}
 						}
 					}
 					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "sotiengiaingan"))
-					{
-						for (int k = 0; k < dtData.Rows.Count; k++)
-						{
-							if (Regex.IsMatch(dtName.Rows[j][1].ToString(), dtData.Rows[k][0].ToString()))
-							{
-								doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "sotiengiaingan", Convert.ToInt64(dtData.Rows[k][13].ToString()).ToString("N0"), RegexOptions.IgnoreCase);
-								//MessageBox.Show(dtData.Rows[k][32].ToString());
-								break;
-							}
-						}
-					}
-					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "tenkhachhang"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[tên khách hàng]"))
 					{
 						//MessageBox.Show(dtName.Rows[j][2].ToString());
-						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "tenkhachhang", dtName.Rows[j][2].ToString(), RegexOptions.IgnoreCase);
+						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[tên khách hàng]", dtName.Rows[j][2].ToString(), RegexOptions.IgnoreCase);
 					}
 					else
 					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "canbokiemtra"))
@@ -136,15 +182,15 @@ namespace QuesttionRender
 						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "canbokiemtra", dtName.Rows[j][5].ToString(), RegexOptions.IgnoreCase);
 					}
 					else
-					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "makhachhang"))
+					if (Regex.IsMatch(doc.Paragraphs[i].Range.Text, "\\[mã khách hàng]"))
 					{
 						//MessageBox.Show(dtName.Rows[j][2].ToString());
-						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "makhachhang", dtName.Rows[j][1].ToString(), RegexOptions.IgnoreCase);
+						doc.Paragraphs[i].Range.Text = Regex.Replace(doc.Paragraphs[i].Range.Text, "\\[mã khách hàng]", dtName.Rows[j][1].ToString(), RegexOptions.IgnoreCase);
 					}
 				}
 				//MessageBox.Show("OK XONG!");
-				if(j>7) ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\CN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + dtName.Rows[j][5].ToString() + ".docx");
-				else ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\DN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + dtName.Rows[j][5].ToString() + ".docx");
+				if (j > roww) ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\CN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".docx");
+				else ((_Document)doc).SaveAs2(@"" + pa + "\\maubieu\\DN\\" + dtName.Rows[j][2].ToString() + "_" + dtName.Rows[j][1].ToString() + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".docx");
 				((_Document)doc).Close();
 				((_Application)word).Quit();
 			}
@@ -190,6 +236,7 @@ namespace QuesttionRender
 
 					}
 					button1.Visible = true;
+					label1.Text = "Số khách hàng: " + dtName.Rows.Count;
 				}
 			}
 		}
